@@ -23,7 +23,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/4, self.height*3/4),
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
-            onCorrect = function()
+            onClicked = function()
                 self.power = self.power + .1
             end,
         }))
@@ -32,12 +32,18 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/2, self.height*3/4),
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
+            onClicked = function()
+                self.power = self.power + .1
+            end,
         }))
 
     table.insert(self.entities, Button:new(self, {
             position = Vector(self.width*3/4, self.height*3/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
+            onClicked = function()
+                self.power = self.power + .1
+            end,
         }))
 
     table.insert(self.entities, Wheel:new(self, {
@@ -50,6 +56,9 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*3/4, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
+            onClicked = function()
+                self.power = self.power + .1
+            end,
         }))
 
     -- power meter

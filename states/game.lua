@@ -34,8 +34,8 @@ function game:init()
     self.grid = columnMajorGrid
 
     local function screenToGrid(sx, sy)
-        local gx = ((sx / self.tileWidth / 2) + (sy / self.tileDepth / 2)) / 2 + 1
-        local gy = ((sy / self.tileDepth / 2) - (sx / self.tileWidth / 2)) / 2 + 1
+        local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileDepth / 2))) / 2
+        local gy = ((sy / (self.tileDepth / 2)) - (sx / (self.tileWidth / 2))) / 2
         return Lume.round(gx), Lume.round(gy)
         -- local a = 0.5
         -- local b = self.tileDepth

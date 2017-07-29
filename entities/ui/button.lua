@@ -6,7 +6,7 @@ function Button:initialize(parent, props)
     self.inactiveColor = {255, 255, 255}
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
-    self.onCorrect = function() end
+    self.onClicked = function() end
 
     for k, prop in pairs(props) do
         self[k] = prop
@@ -29,7 +29,7 @@ function Button:mousepressed(x, y, mbutton)
         self.isPressed = self:getPressed(x, y)
 
         if self.isPressed then
-            self.onCorrect()
+            self.onClicked()
         end
     end
 end

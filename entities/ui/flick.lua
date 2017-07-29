@@ -7,6 +7,7 @@ function Flick:initialize(parent, props)
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
     self.angle = 0
+    self.onClicked = function(angleInterval) end
 
     for k, prop in pairs(props) do
         self[k] = prop
@@ -16,6 +17,7 @@ function Flick:initialize(parent, props)
 
     self.rawPosition = Vector(0, 0)
     self.dist = 0
+    self.beganPress = false
 end
 
 function Flick:getPressed(x, y)
@@ -32,6 +34,7 @@ function Flick:mousepressed(x, y, mbutton)
         self.isPressed = self:getPressed(x, y)
         self.rawPosition = Vector(0, 0)
         self.dist = 0
+        self.beganPress = true
     end
 end
 
@@ -43,7 +46,12 @@ function Flick:mousemoved(x, y, dx, dy, istouch)
         local currentAngle = Lume.angle(self.position.x, self.position.y, self.rawPosition.x + self.position.x, self.rawPosition.y + self.position.y)
         self.dist = math.min(self.radius, dist)
         local increment = math.rad(90)
-        self.angle = math.floor(currentAngle/increment + increment/2)*increment
+        local angleInterval = math.floor(currentAngle/increment + increment/2)
+        self.angle = angleInterval*increment
+
+        if self.dist == self.radius then
+            self.onCorrect(angleInterval)
+        end
     end
 end
 
@@ -52,6 +60,7 @@ function Flick:mousereleased(x, y, mbutton)
         self.isPressed = false
         self.rawPosition = Vector(0, 0)
         self.dist = 0
+        self.beganPress = false
     end
 end
 
