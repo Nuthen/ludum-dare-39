@@ -24,13 +24,16 @@ function game:init()
 
     self.grid = {}
     self.rooms = {}
+    self.enemies = {}
     for x = 1, self.shipBitmask:getWidth() do
         self.grid[x] = {}
         self.rooms[x] = {}
+        self.enemies[x] = {}
         for y = 1, self.shipBitmask:getHeight() do
             local r, g, b, a = self.shipBitmask:getPixel(x - 1, y - 1)
             self.grid[x][y] = 0
             self.rooms[x][y] = 0
+            self.enemies[x][y] = 0
             if not (r == 0 and g == 0 and b == 0 and a == 0) then
                 self.grid[x][y] = 1
                 self.rooms[x][y] = getColorHash(r, g, b)
@@ -76,6 +79,8 @@ function game:init()
 
                     if x == self.hoverX and y == self.hoverY then
                         love.graphics.setColor(255, 0, 0)
+                    elseif game.enemies[x][y] > 0 then
+                        love.graphics.setColor(0, 255, 0)
                     elseif roomNumber > 0 then
                         love.graphics.setColor(255, 128, 255)
                     else
@@ -95,6 +100,21 @@ function game:init()
             love.graphics.pop()
         end,
     }
+
+    -- Every so often add a new enemy
+    Timer.every(1, function()
+        local ex, ey
+        local enemy
+        local notAnEmptySpace
+        -- Locate empty square
+        repeat
+            ex = love.math.random(self.gridWidth)
+            ey = love.math.random(self.gridHeight)
+            enemy = self.enemies[ex][ey]
+            notAnEmptySpace = self.grid[ex][ey] > 0
+        until (enemy == 0 and notAnEmptySpace)
+        self.enemies[ex][ey] = 1
+    end)
 end
 
 function game:enter()
