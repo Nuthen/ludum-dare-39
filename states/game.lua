@@ -13,8 +13,37 @@ function game:init()
     }
 
     self.isoSprite = love.graphics.newImage(self.catalogs.art.iso_tile)
+    self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
 
-    self.grid = require 'data.ship'
+    self.grid = {}
+    for x = 1, self.shipBitmask:getWidth() do
+        self.grid[x] = {}
+        for y = 1, self.shipBitmask:getHeight() do
+            local r, g, b, a = self.shipBitmask:getPixel(x - 1, y - 1)
+            self.grid[x][y] = 1
+            if r == 0 and g == 0 and b == 0 and a == 0 then
+                self.grid[x][y] = 0
+            end
+        end
+    end
+
+    self.rooms = {
+        {
+            id = 1,
+            x = 12,
+            y = 11,
+            w = 2,
+            h = 3,
+        },
+        {
+            id = 2,
+            x = 13,
+            y = 15,
+            w = 4,
+            h = 3,
+        }
+    }
+
     self.gridX = love.graphics.getWidth()/2
     self.gridY = love.graphics.getHeight()/2
     self.gridWidth = #self.grid[1] -- tiles
@@ -23,58 +52,26 @@ function game:init()
     self.tileHeight = self.isoSprite:getHeight() -- pixels
     self.tileDepth = self.tileHeight / 2
 
-    -- Convert row-major to column-major
-    local columnMajorGrid = {}
-    for x = 1, self.gridWidth do
-        columnMajorGrid[x] = {}
-        for y = 1, self.gridHeight do
-            columnMajorGrid[x][y] = self.grid[y][x]
-        end
-    end
-    self.grid = columnMajorGrid
-
-    local function screenToGrid(sx, sy)
-        local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileDepth / 2))) / 2 + 1
-        local gy = ((sy / (self.tileDepth / 2)) - (sx / (self.tileWidth / 2))) / 2 + 1
-        return Lume.round(gx), Lume.round(gy)
-    end
-
-    local function gridToScreen(gx, gy)
-        local x = (gx - gy) * game.tileWidth / 2
-        local y = (gx + gy) * game.tileDepth / 2
-        return x, y
-    end
-
-    local function getGridBoundingBox()
-        local xFudge = 0
-        local yFudge = 4
-        local w = self.gridWidth  * self.tileWidth + xFudge
-        local h = self.gridHeight * self.tileDepth + yFudge
-        local x = -w/2 + self.tileWidth/2 - xFudge * 2
-        local y = self.tileHeight         - yFudge * 2
-        return x, y, w, h
-    end
-
     self.scene:add{
         hoverX = nil,
         hoverY = nil,
 
         update = function(self, dt)
             local mx, my = love.mouse.getPosition()
-            local gx, gy, gw, gh = getGridBoundingBox()
+            local gx, gy, gw, gh = game:getGridBoundingBox()
             local translatedX = gx - game.gridX + gw/2
             local translatedY = gy - game.gridY + gh/2
             mx = -translatedX - mx
             my = -translatedY - my
             mx = mx + game.tileWidth / 2
             my = my + game.tileHeight
-            self.hoverX, self.hoverY = screenToGrid(-mx, -my)
+            self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
         end,
 
         draw = function(self)
             love.graphics.print(self.hoverX .. ', ' .. self.hoverY, 10, 10)
             love.graphics.push()
-            local gx, gy, gw, gh = getGridBoundingBox()
+            local gx, gy, gw, gh = game:getGridBoundingBox()
             local translatedX = gx - game.gridX + gw/2
             local translatedY = gy - game.gridY + gh/2
             love.graphics.translate(-translatedX, -translatedY)
@@ -87,8 +84,12 @@ function game:init()
                         love.graphics.setColor(255, 255, 255)
                     end
 
-                    tx, ty = gridToScreen(x, y)
+                    tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
+                    local roomNumber = game:getRoom(x, y)
+                    if roomNumber then
+                        love.graphics.setColor(255 * love.math.random(), 0, 0)
+                    end
                     if cellValue == 1 then
                         love.graphics.draw(game.isoSprite, tx, ty)
                     end
@@ -139,6 +140,37 @@ end
 function game:draw()
     self.scene:draw()
     self.dynamo:draw()
+end
+
+function game:screenToGrid(sx, sy)
+    local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileDepth / 2))) / 2 + 1
+    local gy = ((sy / (self.tileDepth / 2)) - (sx / (self.tileWidth / 2))) / 2 + 1
+    return Lume.round(gx), Lume.round(gy)
+end
+
+function game:gridToScreen(gx, gy)
+    local x = (gx - gy) * game.tileWidth / 2
+    local y = (gx + gy) * game.tileDepth / 2
+    return x, y
+end
+
+function game:getGridBoundingBox()
+    local xFudge = 0
+    local yFudge = 4
+    local w = self.gridWidth  * self.tileWidth + xFudge
+    local h = self.gridHeight * self.tileDepth + yFudge
+    local x = -w/2 + self.tileWidth/2 - xFudge * 2
+    local y = self.tileHeight         - yFudge * 2
+    return x, y, w, h
+end
+
+function game:getRoom(gx, gy)
+    for i, room in ipairs(self.rooms) do
+        if gx >= room.x and gx <= room.x + room.w - 1 and
+           gy >= room.y and gy <= room.y + room.h - 1 then
+            return room.id
+       end
+    end
 end
 
 return game
