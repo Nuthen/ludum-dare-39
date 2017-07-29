@@ -66,6 +66,8 @@ CONFIG = {
     }
 }
 
+SETTINGS = require 'config.settings'
+
 local function makeFont(path)
     return setmetatable({}, {
         __index = function(t, size)
