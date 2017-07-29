@@ -72,7 +72,7 @@ function Dynamo:initialize(parent, props)
     self.power = 1 -- [0, 1]
     self.powerDropMultiplier = 0.1
 
-    self.tweenMoveTime = 1
+    self.tweenMoveTime = .5
 end
 
 function Dynamo:toggleScreen()
