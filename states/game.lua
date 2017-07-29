@@ -65,6 +65,10 @@ function game:init()
             self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
         end,
 
+        mousepressed = function(self, mx, my)
+            game.enemies[self.hoverX][self.hoverY] = 0
+        end,
+
         draw = function(self)
             love.graphics.print(self.hoverX .. ', ' .. self.hoverY, 10, 10)
             love.graphics.push()
