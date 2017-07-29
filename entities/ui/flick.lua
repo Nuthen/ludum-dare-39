@@ -49,8 +49,9 @@ function Flick:mousemoved(x, y, dx, dy, istouch)
         local angleInterval = math.floor(currentAngle/increment + increment/2)
         self.angle = angleInterval*increment
 
-        if self.dist == self.radius then
-            self.onCorrect(angleInterval)
+        if self.beganPress and self.dist == self.radius then
+            self.beganPress = false
+            self.onClicked(angleInterval)
         end
     end
 end

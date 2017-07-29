@@ -25,8 +25,8 @@ end
 
 function Button:mousepressed(x, y, mbutton)
     self.isPressed = false
-    if mbutton == 1 then
-        self.isPressed = self:getPressed(x, y)
+    if mbutton == 1 and self:getPressed(x, y) then
+        self.isPressed = true
 
         if self.isPressed then
             self.onClicked()
@@ -36,8 +36,8 @@ end
 
 function Button:mousemoved(x, y, dx, dy, istouch)
     self.isPressed = false
-    if love.mouse.isDown(1) then
-        self.isPressed = self:getPressed(x, y)
+    if love.mouse.isDown(1) and self:getPressed(x, y) then
+        self.isPressed = true
     end
 end
 

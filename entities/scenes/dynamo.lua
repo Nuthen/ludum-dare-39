@@ -50,13 +50,16 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*2/5, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
+            onClicked = function(dirRot)
+                self.power = self.power + .1
+            end,
         }))
 
     table.insert(self.entities, Flick:new(self, {
             position = Vector(self.width*3/4, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            onClicked = function()
+            onClicked = function(dir)
                 self.power = self.power + .1
             end,
         }))
