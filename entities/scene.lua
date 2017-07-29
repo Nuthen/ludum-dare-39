@@ -1,14 +1,9 @@
-local Bump = require 'libs.bump'
+local Scene = Class('Scene')
 
-local Scene = Class{}
-
-function Scene:init(props)
+function Scene:initialize(props)
     self.entities = {}
     self.timer = Timer()
     self.signal = Signal.new()
-
-    local cellSize = 64
-    self.world = Bump.newWorld(cellSize)
 
     props = props or {}
     for k, v in pairs(props) do
@@ -21,11 +16,6 @@ function Scene:update(dt)
         local object = self.entities[i]
         if object.update then
             object:update(dt)
-        end
-        if self.world:hasItem(object) then
-            local x, y = object.position:unpack()
-            local w, h = object.width, object.height
-            self.world:update(object, x, y, w, h)
         end
         if object.dead then
             self:remove(object)
@@ -65,13 +55,6 @@ end
 function Scene:add(target)
     table.insert(self.entities, target)
 
-    if target.collidable then
-        local x, y = object.position:unpack()
-        local w, h = object.width, object.height
-
-        self.world:add(target, x, y, w, h)
-    end
-
     if self.onAdd then
         self:onAdd(target)
     end
@@ -79,10 +62,6 @@ function Scene:add(target)
 end
 
 function Scene:remove(target, index)
-    if target.collidable then
-        self.world:remove(target)
-    end
-
     if index then
         table.remove(self.entities, index)
         return true
@@ -97,14 +76,18 @@ function Scene:remove(target, index)
     return false
 end
 
-function Scene:queryRect(x, y, w, h, filter)
-    return self.world:queryRect(x, y, w, h, filter)
-end
-
 function Scene:keypressed(...)
     for i=1, #self.entities do
         if self.entities[i].keypressed then
             self.entities[i].keypressed(self.entities[i], ...)
+        end
+    end
+end
+
+function Scene:keyreleased(...)
+    for i=1, #self.entities do
+        if self.entities[i].keyreleased then
+            self.entities[i].keyreleased(self.entities[i], ...)
         end
     end
 end

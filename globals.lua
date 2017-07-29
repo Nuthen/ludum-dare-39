@@ -66,6 +66,8 @@ CONFIG = {
     }
 }
 
+SETTINGS = require 'config.settings'
+
 local function makeFont(path)
     return setmetatable({}, {
         __index = function(t, size)
@@ -106,9 +108,11 @@ Camera  = require 'libs.camera'
 Timer   = require 'libs.timer'
 
 States = {
-    menu = require 'states.menu',
-    game = require 'states.game',
+    splash = require 'states.splash',
+    menu   = require 'states.menu',
+    game   = require 'states.game',
 }
+
 
 if DEBUG then
     Lovebird = require 'libs.lovebird'

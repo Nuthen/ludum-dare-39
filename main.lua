@@ -2,25 +2,6 @@ local loadTimeStart = love.timer.getTime()
 
 require 'globals'
 
-if DEBUG then
-    Lovebird = require 'libs.lovebird'
-    Lovebird.port = CONFIG.debug.lovebird.port
-    Lovebird.wrapprint = CONFIG.debug.lovebird.wrapPrint
-    Lovebird.echoinput = CONFIG.debug.lovebird.echoInput
-    Lovebird.updateinterval = CONFIG.debug.lovebird.updateInterval
-    Lovebird.maxlines = CONFIG.debug.lovebird.maxLines
-    print('Running lovebird on localhost:' .. Lovebird.port)
-    if CONFIG.debug.lovebird.openInBrowser then
-        love.system.openURL("http://localhost:" .. Lovebird.port)
-    end
-end
-
-States = {
-    splash = require 'states.splash',
-    menu   = require 'states.menu',
-    game   = require 'states.game',
-}
-
 function love.load()
     love.window.setIcon(love.image.newImageData(CONFIG.window.icon))
     love.graphics.setDefaultFilter(CONFIG.graphics.filter.down,
@@ -34,7 +15,12 @@ function love.load()
     end
 
     State.registerEvents(callbacks)
-    State.switch(States.splash)
+
+    if SETTINGS.skipSplashAndMenu then
+        State.switch(States.game)
+    else
+        State.switch(States.splash)
+    end
 
     if DEBUG then
         local loadTimeEnd = love.timer.getTime()
