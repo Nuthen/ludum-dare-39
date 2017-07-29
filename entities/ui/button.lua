@@ -32,7 +32,8 @@ function Button:draw()
     if self.isPressed then
         love.graphics.setColor(self.pressColor)
     end
-    love.graphics.circle('fill', self.position.x, self.position.y, self.radius)
+    love.graphics.circle('fill', self.position.x, self.position.y, self.radius - 3)
+    love.graphics.circle('line', self.position.x, self.position.y, self.radius)
 end
 
 return Button

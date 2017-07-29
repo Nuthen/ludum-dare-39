@@ -70,8 +70,8 @@ function game:mousereleased(x, y, mbutton)
 end
 
 function game:mousemoved(x, y, dx, dy, istouch)
-    self.scene:mousereleased(x, y, dx, dy, istouch)
-    self.dynamo:mousereleased(x, y, dx, dy, istouch)
+    self.scene:mousemoved(x, y, dx, dy, istouch)
+    self.dynamo:mousemoved(x, y, dx, dy, istouch)
 end
 
 function game:draw()

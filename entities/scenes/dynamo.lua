@@ -1,5 +1,6 @@
 local Scene = require 'entities.scene'
 local Button = require 'entities.ui.button'
+local Wheel = require 'entities.ui.wheel'
 
 local Dynamo = Class('Dynamo', Scene)
 
@@ -29,6 +30,12 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
         }))
+
+        table.insert(self.entities, Wheel:new(self, {
+                position = Vector(self.width/2, self.height*1/4),
+                inactiveColor = {147, 162, 77},
+                pressColor = {255, 202, 66},
+            }))
 
     self.active = false
 end
@@ -78,6 +85,8 @@ function Dynamo:draw()
 
     love.graphics.push()
     love.graphics.translate(self.position:unpack())
+    love.graphics.setColor(100, 100, 100, 100)
+    love.graphics.rectangle('fill', 0, 0, self.width, self.height)
     Scene.draw(self)
     love.graphics.pop()
 end
