@@ -6,6 +6,7 @@ function Button:initialize(parent, props)
     self.inactiveColor = {255, 255, 255}
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
+    self.onCorrect = function() end
 
     for k, prop in pairs(props) do
         self[k] = prop
@@ -19,11 +20,30 @@ function Button:getPressed(x, y)
 end
 
 function Button:update(dt)
+
+end
+
+function Button:mousepressed(x, y, mbutton)
+    self.isPressed = false
+    if mbutton == 1 then
+        self.isPressed = self:getPressed(x, y)
+
+        if self.isPressed then
+            self.onCorrect()
+        end
+    end
+end
+
+function Button:mousemoved(x, y, dx, dy, istouch)
     self.isPressed = false
     if love.mouse.isDown(1) then
-        local mouse = Vector(love.mouse.getPosition())
-        mouse = mouse - self.parent.position
-        self.isPressed = self:getPressed(mouse.x, mouse.y)
+        self.isPressed = self:getPressed(x, y)
+    end
+end
+
+function Button:mousereleased(x, y, mbutton)
+    if mbutton == 1 then
+        self.isPressed = false
     end
 end
 

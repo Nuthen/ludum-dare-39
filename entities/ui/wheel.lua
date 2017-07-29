@@ -26,21 +26,15 @@ end
 function Wheel:mousepressed(x, y, mbutton)
     self.isPressed = false
     if mbutton == 1 then
-        local mouse = Vector(x, y)
-        mouse = mouse - self.parent.position
-        self.isPressed = self:getPressed(mouse.x, mouse.y)
+        self.isPressed = self:getPressed(x, y)
     end
 end
 
 function Wheel:mousemoved(x, y, dx, dy, istouch)
     if self.isPressed then
-        local mouse = Vector(x, y)
-        mouse = mouse - self.parent.position
-        --local prevMouse = mouse - Vector(dx, dy)
-
         -- makes a good spinning behavior regardless of how far inside or outside of the wheel the mouse is
-        local dist = Lume.distance(self.position.x, self.position.y, mouse.x, mouse.y)
-        local currentAngle = Lume.angle(self.position.x, self.position.y, mouse.x, mouse.y)
+        local dist = Lume.distance(self.position.x, self.position.y, x, y)
+        local currentAngle = Lume.angle(self.position.x, self.position.y, x, y)
         local extrapLength = math.max(self.radius, dist)
         local extrapOffset = Vector(math.cos(currentAngle)*extrapLength, math.sin(currentAngle)*extrapLength)
         extrapOffset = extrapOffset - Vector(dx, dy)

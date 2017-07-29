@@ -29,9 +29,7 @@ end
 function Flick:mousepressed(x, y, mbutton)
     self.isPressed = false
     if mbutton == 1 then
-        local mouse = Vector(x, y)
-        mouse = mouse - self.parent.position
-        self.isPressed = self:getPressed(mouse.x, mouse.y)
+        self.isPressed = self:getPressed(x, y)
         self.rawPosition = Vector(0, 0)
         self.dist = 0
     end
