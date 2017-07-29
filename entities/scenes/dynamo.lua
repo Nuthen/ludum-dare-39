@@ -11,32 +11,23 @@ function Dynamo:initialize(parent, props)
     self.position = Vector(love.graphics.getWidth()/2  - self.width/2,
                      love.graphics.getHeight()/2 - self.height/2)
 
-    table.insert(self.entities, {
-        parent = self,
-        position = Vector(self.width/2, self.height/2),
-        radius = 20,
-        color = {80, 164, 242},
-        pressColor = {31, 117, 60},
-        isPressed = false,
-        getPressed = function(self, x, y)
-            return Lume.distance(self.position.x, self.position.y, x, y) <= self.radius
-        end,
-        update = function(self, dt)
-            self.isPressed = false
-            if love.mouse.isDown(1) then
-                local mouse = Vector(love.mouse.getPosition())
-                mouse = mouse - self.parent.position
-                self.isPressed = self:getPressed(mouse.x, mouse.y)
-            end
-        end,
-        draw = function(self)
-            love.graphics.setColor(self.color)
-            if self.isPressed then
-                love.graphics.setColor(self.pressColor)
-            end
-            love.graphics.circle('fill', self.position.x, self.position.y, self.radius)
-        end,
-    })
+    table.insert(self.entities, Button:new(self, {
+            position = Vector(self.width/4, self.height*3/4),
+            inactiveColor = {31, 117, 60},
+            pressColor = {80, 164, 242},
+        }))
+
+    table.insert(self.entities, Button:new(self, {
+            position = Vector(self.width/2, self.height*3/4),
+            inactiveColor = {89, 10, 74},
+            pressColor = {222, 81, 144},
+        }))
+
+    table.insert(self.entities, Button:new(self, {
+            position = Vector(self.width*3/4, self.height*3/4),
+            inactiveColor = {147, 162, 77},
+            pressColor = {255, 202, 66},
+        }))
 
     self.active = false
 end
