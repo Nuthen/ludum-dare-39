@@ -66,7 +66,9 @@ function game:init()
         end,
 
         mousepressed = function(self, mx, my)
-            game.enemies[self.hoverX][self.hoverY] = 0
+            if game.enemies[self.hoverX] and game.enemies[self.hoverX][self.hoverY] then
+                game.enemies[self.hoverX][self.hoverY] = 0
+            end
         end,
 
         draw = function(self)
