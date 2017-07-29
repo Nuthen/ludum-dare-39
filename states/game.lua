@@ -4,8 +4,40 @@ local Dynamo = require 'entities.scenes.dynamo'
 local game = {}
 
 function game:init()
-    self.scene = Scene()
     self.dynamo = Dynamo:new()
+    self.scene = Scene:new()
+
+    self.grid = require 'data.ship'
+    self.gridWidth = #self.grid[1] -- cells
+    self.gridHeight = #self.grid -- cells
+    self.cellWidth = 32 -- pixels
+    self.cellHeight = 32 -- pixels
+
+    -- Convert row-major to column-major
+    local columnMajorGrid = {}
+    for x = 1, self.gridWidth do
+        columnMajorGrid[x] = {}
+        for y = 1, self.gridHeight do
+            columnMajorGrid[x][y] = self.grid[y][x]
+        end
+    end
+    self.grid = columnMajorGrid
+
+    self.scene:add{
+        draw = function(self)
+            for x = 1, game.gridWidth do
+                for y = 1, game.gridHeight do
+                    local cellValue = game.grid[x][y]
+                    if cellValue == 0 then
+                        love.graphics.setColor(33, 33, 33)
+                    elseif cellValue == 1 then
+                        love.graphics.setColor(255, 255, 255)
+                    end
+                    love.graphics.rectangle('fill', x*game.cellWidth, y*game.cellHeight, game.cellWidth, game.cellHeight)
+                end
+            end
+        end,
+    }
 end
 
 function game:enter()
