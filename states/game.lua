@@ -11,11 +11,13 @@ local game = {}
 function game:init()
     self.tweak = require 'config.tweak'
 
-    self.scene = Scene:new()
-
     self.catalogs = {
         art = require 'catalogs.art',
     }
+end
+
+function game:reset()
+    self.scene = Scene:new()
 
     self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
@@ -55,7 +57,8 @@ function game:init()
     self.mouseAction = self.scene:add(MouseAction:new(self))
 
     -- Every so often add a new enemy
-    Timer.every(self.tweak.enemySpawnRate, function()
+    self.timer = Timer.new()
+    self.timer:every(self.tweak.enemySpawnRate, function()
         local ex, ey
         local enemy
         local notAnEmptySpace
@@ -72,6 +75,7 @@ function game:init()
         self:addEnemy(ex, ey)
     end)
 
+    -- Grid drawing code
     self.scene:add{
         draw = function(self)
             love.graphics.push()
@@ -114,10 +118,11 @@ function game:init()
 end
 
 function game:enter()
-
+    self:reset()
 end
 
 function game:update(dt)
+    self.timer:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
 end

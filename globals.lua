@@ -108,9 +108,10 @@ Camera  = require 'libs.camera'
 Timer   = require 'libs.timer'
 
 States = {
-    splash = require 'states.splash',
-    menu   = require 'states.menu',
-    game   = require 'states.game',
+    splash   = require 'states.splash',
+    menu     = require 'states.menu',
+    game     = require 'states.game',
+    gameover = require 'states.gameover'
 }
 
 
