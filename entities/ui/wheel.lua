@@ -38,8 +38,11 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
         mouse = mouse - self.parent.position
         --local prevMouse = mouse - Vector(dx, dy)
 
+        -- makes a good spinning behavior regardless of how far inside or outside of the wheel the mouse is
+        local dist = Lume.distance(self.position.x, self.position.y, mouse.x, mouse.y)
         local currentAngle = Lume.angle(self.position.x, self.position.y, mouse.x, mouse.y)
-        local extrapOffset = Vector(math.cos(currentAngle)*self.radius, math.sin(currentAngle)*self.radius)
+        local extrapLength = math.max(self.radius, dist)
+        local extrapOffset = Vector(math.cos(currentAngle)*extrapLength, math.sin(currentAngle)*extrapLength)
         extrapOffset = extrapOffset - Vector(dx, dy)
 
         local prevAngle = Lume.angle(0, 0, extrapOffset.x, extrapOffset.y)
