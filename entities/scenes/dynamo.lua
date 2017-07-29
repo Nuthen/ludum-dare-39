@@ -95,8 +95,6 @@ function Dynamo:initialize(parent, props)
 
     table.insert(self.entities, Map:new(self, {
         game = self.parent,
-        width = 200,
-        height = 200,
         position = Vector(120, 120),
     }))
 

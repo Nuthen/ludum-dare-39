@@ -98,12 +98,16 @@ function game:reset()
 
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
-                    if cellValue == 1 then
+                    if cellValue == 1 and
+                       (roomNumber == 0 or
+                        roomNumber == game.currentRoom) then
                         love.graphics.draw(sprite, tx, ty)
                     end
 
                     local enemy = game:getEnemy(x, y)
-                    if enemy then
+                    if enemy and
+                       (roomNumber == 0 or
+                        roomNumber == game.currentRoom) then
                         enemy:draw()
                     end
                 end
@@ -119,6 +123,8 @@ function game:reset()
     })
 
     self.power = 1 -- [0, 1]
+
+    self.currentRoom = -1
 end
 
 function game:enter()
