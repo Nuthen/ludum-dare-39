@@ -13,7 +13,6 @@ local ENEMY = {
 local MAX_ENEMY = 2
 
 function game:init()
-    self.dynamo = Dynamo:new()
     self.scene = Scene:new()
 
     self.catalogs = {
@@ -142,6 +141,8 @@ function game:init()
             love.graphics.pop()
         end,
     }
+
+    self.dynamo = Dynamo:new(self)
 
     -- Every so often add a new enemy
     Timer.every(0.1, function()

@@ -106,18 +106,23 @@ end
 
 function Wheel:draw()
     love.graphics.setColor(self.inactiveColor)
-    if self.isPressed or self.activated then
+    if self.activated then
         love.graphics.setColor(self.pressColor)
     end
-
-    local handleX, handleY = self.position.x + math.cos(self.angle)*self.radius, self.position.y + math.sin(self.angle)*self.radius
-
-    love.graphics.circle('line', self.position.x, self.position.y, self.radius)
-    love.graphics.circle('fill', handleX, handleY , 6)
 
     local angle1Raw, angle2Raw = self.startAngle, self.startAngle + self.rotationAccumulator
     local angle1, angle2 = math.min(angle1Raw, angle2Raw), math.max(angle1Raw, angle2Raw)
     love.graphics.arc('line', self.position.x, self.position.y, self.radius + 5, angle1, angle2)
+
+    love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+
+    love.graphics.setColor(self.inactiveColor)
+    if self.isPressed then
+        love.graphics.setColor(self.pressColor)
+    end
+    local handleX, handleY = self.position.x + math.cos(self.angle)*self.radius, self.position.y + math.sin(self.angle)*self.radius
+
+    love.graphics.circle('fill', handleX, handleY , 6)
 
     if self.activated then
         local deltaRad
@@ -128,6 +133,8 @@ function Wheel:draw()
         end
         love.graphics.line(handleX, handleY, handleX + math.cos(self.angle+deltaRad)*20, handleY + math.sin(self.angle+deltaRad)*20)
     end
+
+
 
     --love.graphics.print(math.deg(self.rotationAccumulator), self.position.x, self.position.y)
 end

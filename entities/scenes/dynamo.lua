@@ -3,10 +3,13 @@ local Button = require 'entities.ui.button'
 local Wheel = require 'entities.ui.wheel'
 local Flick = require 'entities.ui.flick'
 local Meter = require 'entities.ui.meter'
+local Map = require 'entities.ui.map'
 
 local Dynamo = Class('Dynamo', Scene)
 
 function Dynamo:initialize(parent, props)
+    self.parent = parent
+
     self.width = love.graphics.getWidth()*.8
     self.height = love.graphics.getHeight()*.6
 
@@ -89,6 +92,14 @@ function Dynamo:initialize(parent, props)
     self.positionSet.x = self.positionSet.x + meter.height
 
     table.insert(self.entities, meter)
+
+    table.insert(self.entities, Map:new(self, {
+        grid = self.parent.grid,
+        rooms = self.parent.rooms,
+        width = 200,
+        height = 200,
+        position = Vector(120, 120),
+    }))
 
     self.fidgets = {
         button1 = firstButton,
