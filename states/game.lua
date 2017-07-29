@@ -6,6 +6,12 @@ local Bit = require 'bit'
 
 local game = {}
 
+local ENEMY = {
+    NORMAL = 1,
+    EVOLVED = 2,
+}
+local MAX_ENEMY = 2
+
 function game:init()
     self.dynamo = Dynamo:new()
     self.scene = Scene:new()
@@ -14,8 +20,9 @@ function game:init()
         art = require 'catalogs.art',
     }
 
-    self.isoSprite = love.graphics.newImage(self.catalogs.art.iso_tile)
-    self.enemySprite = love.graphics.newImage(self.catalogs.art.enemy_tile)
+    self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
+    self.enemySprite = love.graphics.newImage(self.catalogs.art.enemy)
+    self.enemyEvolvedSprite = love.graphics.newImage(self.catalogs.art.enemy_evolved)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
 
     -- Map (r, g, b) -> unique int
@@ -46,8 +53,8 @@ function game:init()
     self.gridY = love.graphics.getHeight()/2
     self.gridWidth = #self.grid[1] -- tiles
     self.gridHeight = #self.grid -- tiles
-    self.tileWidth = self.isoSprite:getWidth() -- pixels
-    self.tileHeight = self.isoSprite:getHeight() -- pixels
+    self.tileWidth = self.emptyTile:getWidth() -- pixels
+    self.tileHeight = self.emptyTile:getHeight() -- pixels
     self.tileDepth = self.tileHeight / 2
 
     self.scene:add{
@@ -68,6 +75,30 @@ function game:init()
 
         mousepressed = function(self, mx, my)
             if game.enemies[self.hoverX] and game.enemies[self.hoverX][self.hoverY] then
+                local enemy = game.enemies[self.hoverX][self.hoverY]
+                local up    = game.grid[self.hoverX][self.hoverY - 1]
+                local down  = game.grid[self.hoverX][self.hoverY + 1]
+                local left  = game.grid[self.hoverX - 1][self.hoverY]
+                local right = game.grid[self.hoverX + 1][self.hoverY]
+
+                if enemy == ENEMY.EVOLVED then
+                    if up > 0 then
+                        game:addEnemy(self.hoverX, self.hoverY - 1)
+                    end
+
+                    if down > 0 then
+                        game:addEnemy(self.hoverX, self.hoverY + 1)
+                    end
+
+                    if left > 0 then
+                        game:addEnemy(self.hoverX - 1, self.hoverY)
+                    end
+
+                    if right > 0 then
+                        game:addEnemy(self.hoverX + 1, self.hoverY)
+                    end
+                end
+
                 game.enemies[self.hoverX][self.hoverY] = 0
             end
         end,
@@ -84,7 +115,7 @@ function game:init()
                 for y = 1, game.gridHeight do
                     local roomNumber = game.rooms[x][y]
 
-                    local sprite = game.isoSprite
+                    local sprite = game.emptyTile
 
                     if x == self.hoverX and y == self.hoverY then
                         love.graphics.setColor(255, 0, 0)
@@ -92,8 +123,10 @@ function game:init()
                         love.graphics.setColor(255, 255, 255)
                     end
 
-                    if game.enemies[x][y] > 0 then
+                    if game.enemies[x][y] == ENEMY.NORMAL then
                         sprite = game.enemySprite
+                    elseif game.enemies[x][y] == ENEMY.EVOLVED then
+                        sprite = game.enemyEvolvedSprite
                     end
 
                     tx, ty = game:gridToScreen(x, y)
@@ -111,7 +144,7 @@ function game:init()
     }
 
     -- Every so often add a new enemy
-    Timer.every(1, function()
+    Timer.every(0.1, function()
         local ex, ey
         local enemy
         local notAnEmptySpace
@@ -124,8 +157,8 @@ function game:init()
             ey = love.math.random(self.gridHeight)
             enemy = self.enemies[ex][ey]
             notAnEmptySpace = self.grid[ex][ey] > 0
-        until ((enemy == 0 and notAnEmptySpace) or tries >= maxTries)
-        self.enemies[ex][ey] = 1
+        until (notAnEmptySpace or tries >= maxTries)
+        self:addEnemy(ex, ey)
     end)
 end
 
@@ -188,6 +221,14 @@ function game:getGridBoundingBox()
     local x = -w/2 + self.tileWidth/2 - xFudge * 2
     local y = self.tileHeight         - yFudge * 2
     return x, y, w, h
+end
+
+function game:addEnemy(x, y)
+    if self.enemies[x][y] == 0 then
+        self.enemies[x][y] = ENEMY.NORMAL
+    else
+        self.enemies[x][y] = math.min(MAX_ENEMY, self.enemies[x][y] + 1)
+    end
 end
 
 return game
