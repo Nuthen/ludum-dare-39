@@ -15,6 +15,7 @@ function splash:init()
             init = function(self)
                 self.image.position = Vector(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
                 self.image.scale = Vector(2, 2)
+                self.image:moveOriginToCorner('center')
 
                 self.alpha = self.initialAlpha
                 Timer.tween(self.fadeInTime, self, {alpha=self.finalAlpha}, 'linear', function()
