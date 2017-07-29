@@ -15,6 +15,7 @@ function game:init()
     }
 
     self.isoSprite = love.graphics.newImage(self.catalogs.art.iso_tile)
+    self.enemySprite = love.graphics.newImage(self.catalogs.art.enemy_tile)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
 
     -- Map (r, g, b) -> unique int
@@ -83,20 +84,22 @@ function game:init()
                 for y = 1, game.gridHeight do
                     local roomNumber = game.rooms[x][y]
 
+                    local sprite = game.isoSprite
+
                     if x == self.hoverX and y == self.hoverY then
                         love.graphics.setColor(255, 0, 0)
-                    elseif game.enemies[x][y] > 0 then
-                        love.graphics.setColor(0, 255, 0)
-                    elseif roomNumber > 0 then
-                        love.graphics.setColor(255, 128, 255)
                     else
                         love.graphics.setColor(255, 255, 255)
+                    end
+
+                    if game.enemies[x][y] > 0 then
+                        sprite = game.enemySprite
                     end
 
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
                     if cellValue == 1 then
-                        love.graphics.draw(game.isoSprite, tx, ty)
+                        love.graphics.draw(sprite, tx, ty)
                     end
                 end
             end
