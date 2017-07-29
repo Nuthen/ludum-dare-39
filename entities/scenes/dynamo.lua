@@ -19,50 +19,60 @@ function Dynamo:initialize(parent, props)
 
     Scene.initialize(self, props)
 
-    table.insert(self.entities, Button:new(self, {
+    local firstButton = Button:new(self, {
             position = Vector(self.width/4, self.height*3/4),
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
             onClicked = function()
                 self.power = self.power + .1
+                self:activateFidget()
             end,
-        }))
+        })
+    table.insert(self.entities, firstButton)
 
-    table.insert(self.entities, Button:new(self, {
+    local secondButton = Button:new(self, {
             position = Vector(self.width/2, self.height*3/4),
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
             onClicked = function()
                 self.power = self.power + .1
+                self:activateFidget()
             end,
-        }))
+        })
+    table.insert(self.entities, secondButton)
 
-    table.insert(self.entities, Button:new(self, {
+    local thirdButton = Button:new(self, {
             position = Vector(self.width*3/4, self.height*3/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function()
                 self.power = self.power + .1
+                self:activateFidget()
             end,
-        }))
+        })
+    table.insert(self.entities, thirdButton)
 
-    table.insert(self.entities, Wheel:new(self, {
+    local wheel = Wheel:new(self, {
             position = Vector(self.width*2/5, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            onClicked = function(dirRot)
+            onClicked = function(dirRot) -- "cw", "ccw"
                 self.power = self.power + .1
+                self:activateFidget()
             end,
-        }))
+        })
+    table.insert(self.entities, wheel)
 
-    table.insert(self.entities, Flick:new(self, {
+    local flick = Flick:new(self, {
             position = Vector(self.width*3/4, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            onClicked = function(dir)
+            onClicked = function(dir) -- "up", "down", "left", "right"
                 self.power = self.power + .1
+                self:activateFidget()
             end,
-        }))
+        })
+    table.insert(self.entities, flick)
 
     -- power meter
     local meter = Meter:new(self, {
@@ -80,7 +90,15 @@ function Dynamo:initialize(parent, props)
 
     table.insert(self.entities, meter)
 
-    self.active = true
+    self.fidgets = {
+        button1 = firstButton,
+        button2 = secondButton,
+        button3 = thirdButton,
+        wheel = wheel,
+        flick = flick,
+    }
+
+    self.active = false
     self.power = 1 -- [0, 1]
     self.powerDropMultiplier = 0.1
 
@@ -91,10 +109,25 @@ function Dynamo:toggleScreen()
     self.active = not self.active
 
     if self.active then
-        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y})
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'linear', function()
+            self:activateFidget()
+        end)
     else
-        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x})
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y})
     end
+end
+
+function Dynamo:activateFidget()
+    local keys = {}
+
+    for k, fidget in pairs(self.fidgets) do
+        table.insert(keys, k)
+    end
+
+    local keyIndex = love.math.random(1, #keys)
+    local key = keys[keyIndex]
+    local newFidget = self.fidgets[key]
+    newFidget:activate()
 end
 
 function Dynamo:update(dt)

@@ -16,7 +16,20 @@ function Wheel:initialize(parent, props)
     self.isPressed = false
     self.beganPress = false
     self.rotationAccumulator = 0
-    self.startAngle = 0
+    self.startAngle = self.angle
+    self.activeRotDirection = "cw"
+end
+
+function Wheel:activate()
+    self.activated = true
+    local randDir = love.math.random(0, 1)
+    if randDir == 0 then
+        self.activeRotDirection = "cw"
+    elseif randDir == 1 then
+        self.activeRotDirection = "ccw"
+    else
+        error("Unexpected var for randDir: " .. randDir)
+    end
 end
 
 function Wheel:getPressed(x, y)
@@ -32,8 +45,8 @@ function Wheel:mousepressed(x, y, mbutton)
     if mbutton == 1 and self:getPressed(x, y) then
         self.isPressed = true
         self.beganPress = true
-        self.rotationAccumulator = 0
-        self.startAngle = self.angle
+        --self.rotationAccumulator = 0
+        --self.startAngle = self.angle
     end
 end
 
@@ -63,10 +76,16 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
         self.rotationAccumulator = self.rotationAccumulator + deltaAngle
         if self.rotationAccumulator >= 2*math.pi then
             self.rotationAccumulator = self.rotationAccumulator - 2*math.pi
-            self.onClicked("cw")
+            if self.activated and self.activeRotDirection == "cw" then
+                self.activated = false
+                self.onClicked("cw")
+            end
         elseif self.rotationAccumulator <= -2*math.pi then
             self.rotationAccumulator = self.rotationAccumulator + 2*math.pi
-            self.onClicked("ccw")
+            if self.activated and self.activeRotDirection == "ccw" then
+                self.activated = false
+                self.onClicked("ccw")
+            end
         end
 
         if self.angle >= 2*math.pi then
@@ -81,23 +100,36 @@ function Wheel:mousereleased(x, y, mbutton)
     if mbutton == 1 then
         self.isPressed = false
         self.beganPress = false
-        self.rotationAccumulator = 0
+        --self.rotationAccumulator = 0
     end
 end
 
 function Wheel:draw()
     love.graphics.setColor(self.inactiveColor)
-    if self.isPressed then
+    if self.isPressed or self.activated then
         love.graphics.setColor(self.pressColor)
     end
+
+    local handleX, handleY = self.position.x + math.cos(self.angle)*self.radius, self.position.y + math.sin(self.angle)*self.radius
+
     love.graphics.circle('line', self.position.x, self.position.y, self.radius)
-    love.graphics.circle('fill', self.position.x + math.cos(self.angle)*self.radius, self.position.y + math.sin(self.angle)*self.radius, 6)
+    love.graphics.circle('fill', handleX, handleY , 6)
 
     local angle1Raw, angle2Raw = self.startAngle, self.startAngle + self.rotationAccumulator
     local angle1, angle2 = math.min(angle1Raw, angle2Raw), math.max(angle1Raw, angle2Raw)
     love.graphics.arc('line', self.position.x, self.position.y, self.radius + 5, angle1, angle2)
 
-    love.graphics.print(math.deg(self.rotationAccumulator), self.position.x, self.position.y)
+    if self.activated then
+        local deltaRad
+        if self.activeRotDirection == "cw" then
+            deltaRad = math.pi/4
+        elseif self.activeRotDirection == "ccw" then
+            deltaRad = -math.pi/4
+        end
+        love.graphics.line(handleX, handleY, handleX + math.cos(self.angle+deltaRad)*20, handleY + math.sin(self.angle+deltaRad)*20)
+    end
+
+    --love.graphics.print(math.deg(self.rotationAccumulator), self.position.x, self.position.y)
 end
 
 return Wheel

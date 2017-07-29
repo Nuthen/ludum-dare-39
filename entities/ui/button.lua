@@ -13,6 +13,11 @@ function Button:initialize(parent, props)
     end
 
     self.isPressed = false
+    self.activated = false
+end
+
+function Button:activate()
+    self.activated = true
 end
 
 function Button:getPressed(x, y)
@@ -28,7 +33,8 @@ function Button:mousepressed(x, y, mbutton)
     if mbutton == 1 and self:getPressed(x, y) then
         self.isPressed = true
 
-        if self.isPressed then
+        if self.isPressed and self.activated then
+            self.activated = false
             self.onClicked()
         end
     end
@@ -49,7 +55,7 @@ end
 
 function Button:draw()
     love.graphics.setColor(self.inactiveColor)
-    if self.isPressed then
+    if self.isPressed or self.activated then
         love.graphics.setColor(self.pressColor)
     end
     love.graphics.circle('fill', self.position.x, self.position.y, self.radius - 3)
