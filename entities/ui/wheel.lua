@@ -36,10 +36,13 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
     if self.isPressed then
         local mouse = Vector(x, y)
         mouse = mouse - self.parent.position
-        local prevMouse = mouse - Vector(dx, dy)
+        --local prevMouse = mouse - Vector(dx, dy)
 
         local currentAngle = Lume.angle(self.position.x, self.position.y, mouse.x, mouse.y)
-        local prevAngle = Lume.angle(self.position.x, self.position.y, prevMouse.x, prevMouse.y)
+        local extrapOffset = Vector(math.cos(currentAngle)*self.radius, math.sin(currentAngle)*self.radius)
+        extrapOffset = extrapOffset - Vector(dx, dy)
+
+        local prevAngle = Lume.angle(0, 0, extrapOffset.x, extrapOffset.y)
         self.angle = self.angle + (currentAngle - prevAngle)
     end
 end
