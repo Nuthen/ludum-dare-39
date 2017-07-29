@@ -1,4 +1,5 @@
 local Scene = require 'entities.scene'
+local Button = require 'entities.ui.button'
 
 local Dynamo = Class('Dynamo', Scene)
 
