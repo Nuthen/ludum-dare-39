@@ -2,6 +2,8 @@ local Scene = require 'entities.scene'
 local Dynamo = require 'entities.scenes.dynamo'
 local Sprite = require 'entities.sprite'
 
+local Bit = require 'bit'
+
 local game = {}
 
 function game:init()
@@ -15,34 +17,26 @@ function game:init()
     self.isoSprite = love.graphics.newImage(self.catalogs.art.iso_tile)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
 
+    -- Map (r, g, b) -> unique int
+    local function getColorHash(r, g, b)
+        return Bit.bor(Bit.lshift(r, 32), Bit.lshift(g, 16), b)
+    end
+
     self.grid = {}
+    self.rooms = {}
     for x = 1, self.shipBitmask:getWidth() do
         self.grid[x] = {}
+        self.rooms[x] = {}
         for y = 1, self.shipBitmask:getHeight() do
             local r, g, b, a = self.shipBitmask:getPixel(x - 1, y - 1)
-            self.grid[x][y] = 1
-            if r == 0 and g == 0 and b == 0 and a == 0 then
-                self.grid[x][y] = 0
+            self.grid[x][y] = 0
+            self.rooms[x][y] = 0
+            if not (r == 0 and g == 0 and b == 0 and a == 0) then
+                self.grid[x][y] = 1
+                self.rooms[x][y] = getColorHash(r, g, b)
             end
         end
     end
-
-    self.rooms = {
-        {
-            id = 1,
-            x = 12,
-            y = 11,
-            w = 2,
-            h = 3,
-        },
-        {
-            id = 2,
-            x = 13,
-            y = 15,
-            w = 4,
-            h = 3,
-        }
-    }
 
     self.gridX = love.graphics.getWidth()/2
     self.gridY = love.graphics.getHeight()/2
@@ -78,18 +72,18 @@ function game:init()
 
             for x = 1, game.gridWidth do
                 for y = 1, game.gridHeight do
+                    local roomNumber = game.rooms[x][y]
+
                     if x == self.hoverX and y == self.hoverY then
                         love.graphics.setColor(255, 0, 0)
+                    elseif roomNumber > 0 then
+                        love.graphics.setColor(255, 128, 255)
                     else
                         love.graphics.setColor(255, 255, 255)
                     end
 
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
-                    local roomNumber = game:getRoom(x, y)
-                    if roomNumber then
-                        love.graphics.setColor(255 * love.math.random(), 0, 0)
-                    end
                     if cellValue == 1 then
                         love.graphics.draw(game.isoSprite, tx, ty)
                     end
@@ -162,15 +156,6 @@ function game:getGridBoundingBox()
     local x = -w/2 + self.tileWidth/2 - xFudge * 2
     local y = self.tileHeight         - yFudge * 2
     return x, y, w, h
-end
-
-function game:getRoom(gx, gy)
-    for i, room in ipairs(self.rooms) do
-        if gx >= room.x and gx <= room.x + room.w - 1 and
-           gy >= room.y and gy <= room.y + room.h - 1 then
-            return room.id
-       end
-    end
 end
 
 return game
