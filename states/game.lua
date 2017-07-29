@@ -15,8 +15,8 @@ function game:init()
     self.isoSprite = love.graphics.newImage(self.catalogs.art.iso_tile)
 
     self.grid = require 'data.ship'
-    self.gridX = 300
-    self.gridY = 300
+    self.gridX = love.graphics.getWidth()/2
+    self.gridY = love.graphics.getHeight()/2
     self.gridWidth = #self.grid[1] -- tiles
     self.gridHeight = #self.grid -- tiles
     self.tileWidth = self.isoSprite:getWidth() -- pixels
@@ -45,8 +45,15 @@ function game:init()
         return x, y
     end
 
-    self.gridScreenWidth  = self.gridWidth  * self.tileWidth
-    self.gridScreenHeight = self.gridHeight * self.tileDepth
+    local function getGridBoundingBox()
+        local xFudge = 0
+        local yFudge = 4
+        local w = self.gridWidth  * self.tileWidth + xFudge
+        local h = self.gridHeight * self.tileDepth + yFudge
+        local x = -w/2 + self.tileWidth/2 - xFudge * 2
+        local y = self.tileHeight         - yFudge * 2
+        return x, y, w, h
+    end
 
     self.scene:add{
         hoverX = nil,
@@ -54,8 +61,11 @@ function game:init()
 
         update = function(self, dt)
             local mx, my = love.mouse.getPosition()
-            mx = game.gridX - mx
-            my = game.gridY - my
+            local gx, gy, gw, gh = getGridBoundingBox()
+            local translatedX = gx - game.gridX + gw/2
+            local translatedY = gy - game.gridY + gh/2
+            mx = -translatedX - mx
+            my = -translatedY - my
             mx = mx + game.tileWidth / 2
             my = my + game.tileHeight
             self.hoverX, self.hoverY = screenToGrid(-mx, -my)
@@ -64,7 +74,11 @@ function game:init()
         draw = function(self)
             love.graphics.print(self.hoverX .. ', ' .. self.hoverY, 10, 10)
             love.graphics.push()
-            love.graphics.translate(game.gridX, game.gridY)
+            local gx, gy, gw, gh = getGridBoundingBox()
+            local translatedX = gx - game.gridX + gw/2
+            local translatedY = gy - game.gridY + gh/2
+            love.graphics.translate(-translatedX, -translatedY)
+
             for x = 1, game.gridWidth do
                 for y = 1, game.gridHeight do
                     if x == self.hoverX and y == self.hoverY then
@@ -73,20 +87,16 @@ function game:init()
                         love.graphics.setColor(255, 255, 255)
                     end
 
-                    -- Calculate isometric tile positions
-                    -- @TODO gridX and gridY are actually nowhere near the center of the grid
                     tx, ty = gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
                     if cellValue == 1 then
-                        love.graphics.setFont(Fonts.monospace[12])
-                        love.graphics.print(x .. ',' .. y, tx, ty - 15)
                         love.graphics.draw(game.isoSprite, tx, ty)
                     end
-
-                    -- @Debug
-                    love.graphics.rectangle('line',  0, 0, game.gridScreenWidth, game.gridScreenHeight)
                 end
             end
+
+            -- Grid bounding box
+            love.graphics.rectangle('line',  gx, gy, gw, gh)
             love.graphics.pop()
         end,
     }
