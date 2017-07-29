@@ -27,7 +27,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
             onClicked = function()
-                self.power = self.power + .1
+                self:addPower(.1)
                 self:activateFidget()
             end,
         })
@@ -38,7 +38,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
             onClicked = function()
-                self.power = self.power + .1
+                self:addPower(.1)
                 self:activateFidget()
             end,
         })
@@ -49,7 +49,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function()
-                self.power = self.power + .1
+                self:addPower(.1)
                 self:activateFidget()
             end,
         })
@@ -60,7 +60,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function(dirRot) -- "cw", "ccw"
-                self.power = self.power + .1
+                self:addPower(.1)
                 self:activateFidget()
             end,
         })
@@ -71,7 +71,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function(dir) -- "up", "down", "left", "right"
-                self.power = self.power + .1
+                self:addPower(.1)
                 self:activateFidget()
             end,
         })
@@ -94,8 +94,7 @@ function Dynamo:initialize(parent, props)
     table.insert(self.entities, meter)
 
     table.insert(self.entities, Map:new(self, {
-        grid = self.parent.grid,
-        rooms = self.parent.rooms,
+        game = self.parent,
         width = 200,
         height = 200,
         position = Vector(120, 120),
@@ -110,10 +109,13 @@ function Dynamo:initialize(parent, props)
     }
 
     self.active = false
-    self.power = 1 -- [0, 1]
-    self.powerDropMultiplier = 0.1
+    self.powerDropMultiplier = 0.01
 
     self.tweenMoveTime = .5
+end
+
+function Dynamo:addPower(amount)
+    self.game.power = math.max(0, math.min(1, self.game.power + amount))
 end
 
 function Dynamo:toggleScreen()
@@ -146,7 +148,7 @@ function Dynamo:update(dt)
 
     Scene.update(self, dt)
 
-    self.power = math.max(0, math.min(1, self.power - dt*self.powerDropMultiplier))
+    self:addPower(-dt*self.powerDropMultiplier)
 end
 
 function Dynamo:keypressed(key, code)

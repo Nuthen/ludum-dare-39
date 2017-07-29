@@ -18,9 +18,9 @@ function Map:initialize(parent, props)
         self[k] = prop
     end
 
-    if self.grid then
-        self.mapWidth  = #self.grid * self.tileWidth
-        self.mapHeight = #self.grid[1] * self.tileHeight
+    if self.game.grid then
+        self.mapWidth  = #self.game.grid * self.tileWidth
+        self.mapHeight = #self.game.grid[1] * self.tileHeight
     end
 
     self.isPressed = false
@@ -31,6 +31,17 @@ function Map:getPressed(x, y)
            (x <= self.position.x + self.width/2 ) and
            (y >= self.position.y - self.height/2) and
            (y <= self.position.y + self.height/2)
+end
+
+function Map:screenToTile(x, y)
+    if (x >= self.position.x - self.width/2 ) and
+       (x <= self.position.x + self.width/2 ) and
+       (y >= self.position.y - self.height/2) and
+       (y <= self.position.y + self.height/2) then
+
+    else
+        return nil, nil
+    end
 end
 
 function Map:mousepressed(x, y, mbutton)
@@ -66,9 +77,9 @@ function Map:draw()
     love.graphics.push()
     love.graphics.translate(w/2, h/2)
     love.graphics.translate(-self.mapWidth/2, -self.mapHeight/2)
-    for ix = 1, #self.grid do
-        for iy = 1, #self.grid[ix] do
-            local cellNumber = self.grid[ix][iy]
+    for ix = 1, #self.game.grid do
+        for iy = 1, #self.game.grid[ix] do
+            local cellNumber = self.game.grid[ix][iy]
             if cellNumber == 1 then
                 love.graphics.rectangle('fill', x + (ix-1) * self.tileWidth, y + (iy-1) * self.tileHeight, self.tileWidth, self.tileHeight)
             end

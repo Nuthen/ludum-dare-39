@@ -114,7 +114,11 @@ function game:reset()
             love.graphics.pop()
         end,
     }
-    self.dynamo = Dynamo:new(self)
+    self.dynamo = Dynamo:new(self, {
+        game = self,
+    })
+
+    self.power = 1 -- [0, 1]
 end
 
 function game:enter()

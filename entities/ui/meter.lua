@@ -39,7 +39,7 @@ function Meter:mousemoved(x, y, dx, dy, istouch)
 end
 
 function Meter:draw()
-    local power = self.parent.power
+    local power = self.parent.game.power
 
     love.graphics.setColor(self.inactiveColor)
 
