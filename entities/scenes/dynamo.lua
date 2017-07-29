@@ -15,7 +15,7 @@ function Dynamo:initialize(parent, props)
     self.position = Vector(love.graphics.getWidth()/2  - self.width/2,
                            self.positionSet.y)
 
-    self.bgColor = {100, 100, 100, 100}
+    self.bgColor = {100, 100, 100, 255}
 
     Scene.initialize(self, props)
 
