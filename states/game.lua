@@ -34,19 +34,12 @@ function game:init()
     self.grid = columnMajorGrid
 
     local function screenToGrid(sx, sy)
-        local gx = ((sx / self.tileWidth / 2) + (sy / self.tileDepth / 2)) / 2 + 1
-        local gy = ((sy / self.tileDepth / 2) - (sx / self.tileWidth / 2)) / 2 + 1
+        local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileDepth / 2))) / 2 + 1
+        local gy = ((sy / (self.tileDepth / 2)) - (sx / (self.tileWidth / 2))) / 2 + 1
         return Lume.round(gx), Lume.round(gy)
-        -- local a = 0.5
-        -- local b = self.tileDepth
-        -- local x = math.floor((x-y*a)/b)
-        -- local y = math.floor((x+y*a)/b)
-        -- return x, y
     end
 
     local function gridToScreen(gx, gy)
-        -- local tx = game.gridX + ((x-y) * (game.tileWidth / 2))
-        -- local ty = game.gridY + ((x+y) * (game.tileDepth / 2)) - (game.tileDepth * (game.tileHeight / 2))
         local x = (gx - gy) * game.tileWidth / 2
         local y = (gx + gy) * game.tileDepth / 2
         return x, y
@@ -63,6 +56,8 @@ function game:init()
             local mx, my = love.mouse.getPosition()
             mx = game.gridX - mx
             my = game.gridY - my
+            mx = mx + game.tileWidth / 2
+            my = my + game.tileHeight
             self.hoverX, self.hoverY = screenToGrid(-mx, -my)
         end,
 
