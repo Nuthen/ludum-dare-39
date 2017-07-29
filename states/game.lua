@@ -112,13 +112,16 @@ function game:init()
         local ex, ey
         local enemy
         local notAnEmptySpace
+        local tries = 0
+        local maxTries = 25
         -- Locate empty square
         repeat
+            tries = tries + 1
             ex = love.math.random(self.gridWidth)
             ey = love.math.random(self.gridHeight)
             enemy = self.enemies[ex][ey]
             notAnEmptySpace = self.grid[ex][ey] > 0
-        until (enemy == 0 and notAnEmptySpace)
+        until ((enemy == 0 and notAnEmptySpace) or tries >= maxTries)
         self.enemies[ex][ey] = 1
     end)
 end
