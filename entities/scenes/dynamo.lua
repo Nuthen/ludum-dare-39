@@ -1,6 +1,7 @@
 local Scene = require 'entities.scene'
 local Button = require 'entities.ui.button'
 local Wheel = require 'entities.ui.wheel'
+local Flick = require 'entities.ui.flick'
 
 local Dynamo = Class('Dynamo', Scene)
 
@@ -31,11 +32,17 @@ function Dynamo:initialize(parent, props)
             pressColor = {255, 202, 66},
         }))
 
-        table.insert(self.entities, Wheel:new(self, {
-                position = Vector(self.width/2, self.height*1/4),
-                inactiveColor = {147, 162, 77},
-                pressColor = {255, 202, 66},
-            }))
+    table.insert(self.entities, Wheel:new(self, {
+            position = Vector(self.width*2/5, self.height*1/4),
+            inactiveColor = {147, 162, 77},
+            pressColor = {255, 202, 66},
+        }))
+
+    table.insert(self.entities, Flick:new(self, {
+            position = Vector(self.width*3/4, self.height*1/4),
+            inactiveColor = {147, 162, 77},
+            pressColor = {255, 202, 66},
+        }))
 
     self.active = false
 end
