@@ -1,16 +1,12 @@
 local Scene = require 'entities.scene'
 local Dynamo = require 'entities.scenes.dynamo'
 local Sprite = require 'entities.sprite'
+local Enemy = require 'entities.enemy'
+local MouseAction = require 'entities.mouse_action'
 
 local Bit = require 'bit'
 
 local game = {}
-
-local ENEMY = {
-    NORMAL = 1,
-    EVOLVED = 2,
-}
-local MAX_ENEMY = 2
 
 function game:init()
     self.tweak = require 'config.tweak'
@@ -23,8 +19,6 @@ function game:init()
     }
 
     self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
-    self.enemySprite = love.graphics.newImage(self.catalogs.art.enemy)
-    self.enemyEvolvedSprite = love.graphics.newImage(self.catalogs.art.enemy_evolved)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
 
     -- Map (r, g, b) -> unique int
@@ -43,7 +37,7 @@ function game:init()
             local r, g, b, a = self.shipBitmask:getPixel(x - 1, y - 1)
             self.grid[x][y] = 0
             self.rooms[x][y] = 0
-            self.enemies[x][y] = 0
+            self.enemies[x][y] = nil
             if not (r == 0 and g == 0 and b == 0 and a == 0) then
                 self.grid[x][y] = 1
                 self.rooms[x][y] = getColorHash(r, g, b)
@@ -59,91 +53,7 @@ function game:init()
     self.tileHeight = self.emptyTile:getHeight() -- pixels
     self.tileDepth = self.tileHeight / 2
 
-    self.scene:add{
-        hoverX = nil,
-        hoverY = nil,
-
-        update = function(self, dt)
-            local mx, my = love.mouse.getPosition()
-            local gx, gy, gw, gh = game:getGridBoundingBox()
-            local translatedX = gx - game.gridX + gw/2
-            local translatedY = gy - game.gridY + gh/2
-            mx = -translatedX - mx
-            my = -translatedY - my
-            mx = mx + game.tileWidth / 2
-            my = my + game.tileHeight
-            self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
-        end,
-
-        mousepressed = function(self, mx, my)
-            if game:hasEnemy(self.hoverX, self.hoverY) then
-                local enemy = game.enemies[self.hoverX][self.hoverY]
-                local upX,    upY    = self.hoverX,     self.hoverY + 1
-                local downX,  downY  = self.hoverX,     self.hoverY - 1
-                local leftX,  leftY  = self.hoverX - 1, self.hoverY
-                local rightX, rightY = self.hoverX + 1, self.hoverY
-
-                if enemy == ENEMY.EVOLVED then
-                    if game:isShipTile(upX, upY) then
-                        game:addEnemy(upX, upY)
-                    end
-
-                    if game:isShipTile(downX, downY) then
-                        game:addEnemy(downX, downY)
-                    end
-
-                    if game:isShipTile(leftX, leftY) then
-                        game:addEnemy(leftX, leftY)
-                    end
-
-                    if game:isShipTile(rightX, rightY) then
-                        game:addEnemy(rightX, rightY)
-                    end
-                end
-
-                game.enemies[self.hoverX][self.hoverY] = 0
-            end
-        end,
-
-        draw = function(self)
-            love.graphics.print(self.hoverX .. ', ' .. self.hoverY, 10, 10)
-            love.graphics.push()
-            local gx, gy, gw, gh = game:getGridBoundingBox()
-            local translatedX = gx - game.gridX + gw/2
-            local translatedY = gy - game.gridY + gh/2
-            love.graphics.translate(-translatedX, -translatedY)
-
-            for x = 1, game.gridWidth do
-                for y = 1, game.gridHeight do
-                    local roomNumber = game.rooms[x][y]
-
-                    local sprite = game.emptyTile
-
-                    if x == self.hoverX and y == self.hoverY then
-                        love.graphics.setColor(255, 0, 0)
-                    else
-                        love.graphics.setColor(255, 255, 255)
-                    end
-
-                    if game.enemies[x][y] == ENEMY.NORMAL then
-                        sprite = game.enemySprite
-                    elseif game.enemies[x][y] == ENEMY.EVOLVED then
-                        sprite = game.enemyEvolvedSprite
-                    end
-
-                    tx, ty = game:gridToScreen(x, y)
-                    local cellValue = game.grid[x][y]
-                    if cellValue == 1 then
-                        love.graphics.draw(sprite, tx, ty)
-                    end
-                end
-            end
-
-            -- Grid bounding box
-            love.graphics.rectangle('line',  gx, gy, gw, gh)
-            love.graphics.pop()
-        end,
-    }
+    self.mouseAction = self.scene:add(MouseAction:new(self))
 
     -- Every so often add a new enemy
     Timer.every(self.tweak.enemySpawnRate, function()
@@ -162,6 +72,45 @@ function game:init()
         until (notAnEmptySpace or tries >= maxTries)
         self:addEnemy(ex, ey)
     end)
+
+    self.scene:add{
+        draw = function(self)
+            love.graphics.push()
+            local gx, gy, gw, gh = game:getGridBoundingBox()
+            local translatedX = gx - game.gridX + gw/2
+            local translatedY = gy - game.gridY + gh/2
+            love.graphics.translate(-translatedX, -translatedY)
+
+            for x = 1, game.gridWidth do
+                for y = 1, game.gridHeight do
+                    local roomNumber = game.rooms[x][y]
+
+                    local sprite = game.emptyTile
+
+                    if x == game.mouseAction.hoverX and y == game.mouseAction.hoverY then
+                        love.graphics.setColor(255, 0, 0)
+                    else
+                        love.graphics.setColor(255, 255, 255)
+                    end
+
+                    tx, ty = game:gridToScreen(x, y)
+                    local cellValue = game.grid[x][y]
+                    if cellValue == 1 then
+                        love.graphics.draw(sprite, tx, ty)
+                    end
+
+                    local enemy = game:getEnemy(x, y)
+                    if enemy then
+                        enemy:draw()
+                    end
+                end
+            end
+
+            -- Grid bounding box
+            love.graphics.rectangle('line',  gx, gy, gw, gh)
+            love.graphics.pop()
+        end,
+    }
 end
 
 function game:enter()
@@ -230,14 +179,19 @@ function game:isShipTile(x, y)
 end
 
 function game:hasEnemy(x, y)
-    return self:isShipTile(x, y) and self.enemies[x] and self.enemies[x][y] > 0
+    return self:isShipTile(x, y) and self.enemies[x] and self.enemies[x][y] ~= nil
+end
+
+function game:getEnemy(x, y)
+    return self:hasEnemy(x, y) and self.enemies[x][y] or nil
 end
 
 function game:addEnemy(x, y)
-    if self.enemies[x][y] == 0 then
-        self.enemies[x][y] = ENEMY.NORMAL
+    local enemy = self:getEnemy(x, y)
+    if enemy then
+        enemy:evolve()
     else
-        self.enemies[x][y] = math.min(MAX_ENEMY, self.enemies[x][y] + 1)
+        self.enemies[x][y] = Enemy:new(self, x, y)
     end
 end
 
