@@ -32,12 +32,12 @@ end
 
 local function euler_integrate(state, dt)
     state.velocity = state.velocity + state.acceleration * dt
-    state.position = state.position + state.velocity * dt 
+    state.position = state.position + state.velocity * dt
 end
 
-local PhysicsBody = Class("PhysicsBody")
+local PhysicsBody = Class{}
 
-function PhysicsBody:initialize(x, y)
+function PhysicsBody:init(x, y)
     self.position = Vector(x, y)
     self.velocity = Vector()
     self.acceleration = Vector()
@@ -53,12 +53,18 @@ function PhysicsBody:initialize(x, y)
 
     -- Velocity units less than this will be floored to zero
     self.minForce = 0.0001
+
+    self.integrationMethod = 'rk4'
 end
 
 function PhysicsBody:update(dt)
     self.acceleration = self.acceleration + self.gravity
 
-    rk4_integrate(self, dt)
+    if self.integrationMethod == 'rk4' then
+        rk4_integrate(self, dt)
+    elseif self.integrationMethod == 'euler' then
+        euler_integrate(self, dt)
+    end
 
     -- Clamp velocity to max value
     self.velocity:trimInplace(self.maxForce)
@@ -109,6 +115,28 @@ end
 
 function PhysicsBody:getPosition()
     return self.position
+end
+
+function PhysicsBody:__index(key)
+    if key == 'x' then
+        return self.position.x
+    elseif key == 'y' then
+        return self.position.y
+    elseif key == 'vx' then
+        return self.velocity.x
+    elseif key == 'vy' then
+        return self.velocity.y
+    elseif key == 'ax' then
+        return self.acceleration.x
+    elseif key == 'ay' then
+        return self.acceleration.y
+    elseif key == 'gx' then
+        return self.gravity.x
+    elseif key == 'gy' then
+        return self.gravity.y
+    else
+        return rawget(PhysicsBody, key)
+    end
 end
 
 return PhysicsBody
