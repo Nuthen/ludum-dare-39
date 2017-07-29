@@ -13,6 +13,8 @@ local ENEMY = {
 local MAX_ENEMY = 2
 
 function game:init()
+    self.tweak = require 'config.tweak'
+
     self.dynamo = Dynamo:new()
     self.scene = Scene:new()
 
@@ -74,28 +76,28 @@ function game:init()
         end,
 
         mousepressed = function(self, mx, my)
-            if game.enemies[self.hoverX] and game.enemies[self.hoverX][self.hoverY] then
+            if game:hasEnemy(self.hoverX, self.hoverY) then
                 local enemy = game.enemies[self.hoverX][self.hoverY]
-                local up    = game.grid[self.hoverX][self.hoverY - 1]
-                local down  = game.grid[self.hoverX][self.hoverY + 1]
-                local left  = game.grid[self.hoverX - 1][self.hoverY]
-                local right = game.grid[self.hoverX + 1][self.hoverY]
+                local upX,    upY    = self.hoverX,     self.hoverY + 1
+                local downX,  downY  = self.hoverX,     self.hoverY - 1
+                local leftX,  leftY  = self.hoverX - 1, self.hoverY
+                local rightX, rightY = self.hoverX + 1, self.hoverY
 
                 if enemy == ENEMY.EVOLVED then
-                    if up > 0 then
-                        game:addEnemy(self.hoverX, self.hoverY - 1)
+                    if game:isShipTile(upX, upY) then
+                        game:addEnemy(upX, upY)
                     end
 
-                    if down > 0 then
-                        game:addEnemy(self.hoverX, self.hoverY + 1)
+                    if game:isShipTile(downX, downY) then
+                        game:addEnemy(downX, downY)
                     end
 
-                    if left > 0 then
-                        game:addEnemy(self.hoverX - 1, self.hoverY)
+                    if game:isShipTile(leftX, leftY) then
+                        game:addEnemy(leftX, leftY)
                     end
 
-                    if right > 0 then
-                        game:addEnemy(self.hoverX + 1, self.hoverY)
+                    if game:isShipTile(rightX, rightY) then
+                        game:addEnemy(rightX, rightY)
                     end
                 end
 
@@ -144,12 +146,12 @@ function game:init()
     }
 
     -- Every so often add a new enemy
-    Timer.every(0.1, function()
+    Timer.every(self.tweak.enemySpawnRate, function()
         local ex, ey
         local enemy
         local notAnEmptySpace
         local tries = 0
-        local maxTries = 25
+        local maxTries = self.tweak.enemySpawnMaxTries
         -- Locate empty square
         repeat
             tries = tries + 1
@@ -221,6 +223,14 @@ function game:getGridBoundingBox()
     local x = -w/2 + self.tileWidth/2 - xFudge * 2
     local y = self.tileHeight         - yFudge * 2
     return x, y, w, h
+end
+
+function game:isShipTile(x, y)
+    return self.grid[x] and self.grid[x][y] and self.grid[x][y] > 0
+end
+
+function game:hasEnemy(x, y)
+    return self:isShipTile(x, y) and self.enemies[x] and self.enemies[x][y] > 0
 end
 
 function game:addEnemy(x, y)
