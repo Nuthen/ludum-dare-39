@@ -42,6 +42,8 @@ function Button:keypressed(key, code)
         if self.activated then
             self.activated = false
             self.onClicked()
+        else
+            Signal.emit("Dynamo Incorrect", "button")
         end
     end
 end
@@ -65,9 +67,13 @@ function Button:mousepressed(x, y, mbutton)
         self.isPressed = true
         self.mode = "mouse"
 
-        if self.isPressed and self.activated then
-            self.activated = false
-            self.onClicked()
+        if self.isPressed then
+            if self.activated then
+                self.activated = false
+                self.onClicked()
+            else
+                Signal.emit("Dynamo Incorrect", "button")
+            end
         end
     end
 end

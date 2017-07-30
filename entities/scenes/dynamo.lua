@@ -29,8 +29,7 @@ function Dynamo:initialize(parent, props)
             locked = false,
             keybinds = SETTINGS.dynamoKeybinds.firstButton,
             onClicked = function()
-                self:addPower(.1)
-                self:activateFidget()
+                self:addPower(.1, "button")
             end,
         })
     table.insert(self.entities, firstButton)
@@ -42,8 +41,7 @@ function Dynamo:initialize(parent, props)
             keybinds = SETTINGS.dynamoKeybinds.secondButton,
             locked = false,
             onClicked = function()
-                self:addPower(.1)
-                self:activateFidget()
+                self:addPower(.1, "button")
             end,
         })
     table.insert(self.entities, secondButton)
@@ -54,8 +52,7 @@ function Dynamo:initialize(parent, props)
             pressColor = {255, 202, 66},
             keybinds = SETTINGS.dynamoKeybinds.thirdButton,
             onClicked = function()
-                self:addPower(.1)
-                self:activateFidget()
+                self:addPower(.1, "button")
             end,
         })
     table.insert(self.entities, thirdButton)
@@ -65,8 +62,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function(dirRot) -- "cw", "ccw"
-                self:addPower(.1)
-                self:activateFidget()
+                self:addPower(.1, "wheel")
             end,
         })
     table.insert(self.entities, wheel)
@@ -76,8 +72,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             onClicked = function(dir) -- "up", "down", "left", "right"
-                self:addPower(.1)
-                self:activateFidget()
+                self:addPower(.1, "flick")
             end,
         })
     table.insert(self.entities, flick)
@@ -119,11 +114,12 @@ function Dynamo:initialize(parent, props)
     self.tweenMoveTime = .25
 end
 
-function Dynamo:addPower(amount)
+function Dynamo:addPower(amount, source)
     self.game.power = math.max(0, math.min(1, self.game.power + amount))
 
     if amount > 0 then
-        Signal.emit("Dynamo Correct")
+        self:activateFidget()
+        Signal.emit("Dynamo Correct", source)
     end
 end
 

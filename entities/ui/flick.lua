@@ -143,9 +143,13 @@ function Flick:solvePosition()
             error("Unexpected angle interval on Flick: " .. angleInterval .. " from angle: " .. currentAngle)
         end
 
-        if self.activated and dir == self.activeDirection then
-            self.activated = false
-            self.onClicked(dir)
+        if self.activated then
+            if dir == self.activeDirection then
+                self.activated = false
+                self.onClicked(dir)
+            else
+                Signal.emit("Dynamo Incorrect", "flick")
+            end
         end
     end
 end

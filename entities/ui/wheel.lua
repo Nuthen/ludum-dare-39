@@ -95,15 +95,23 @@ function Wheel:solveAngle(deltaAngle)
     self.rotationAccumulator = self.rotationAccumulator + deltaAngle
     if self.rotationAccumulator >= 2*math.pi then
         self.rotationAccumulator = self.rotationAccumulator - 2*math.pi
-        if self.activated and self.activeRotDirection == "cw" then
-            self.activated = false
-            self.onClicked("cw")
+        if self.activated then
+            if self.activeRotDirection == "cw" then
+                self.activated = false
+                self.onClicked("cw")
+            else
+                Signal.emit("Dynamo Incorrect", "wheel")
+            end
         end
     elseif self.rotationAccumulator <= -2*math.pi then
         self.rotationAccumulator = self.rotationAccumulator + 2*math.pi
-        if self.activated and self.activeRotDirection == "ccw" then
-            self.activated = false
-            self.onClicked("ccw")
+        if self.activated then
+            if self.activeRotDirection == "ccw" then
+                self.activated = false
+                self.onClicked("ccw")
+            else
+                Signal.emit("Dynamo Incorrect", "wheel")
+            end
         end
     end
 
