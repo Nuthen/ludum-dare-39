@@ -116,4 +116,12 @@ function Scene:mousemoved(...)
     end
 end
 
+function Scene:wheelmoved(...)
+    for i=1, #self.entities do
+        if self.entities[i].wheelmoved then
+            self.entities[i].wheelmoved(self.entities[i], ...)
+        end
+    end
+end
+
 return Scene

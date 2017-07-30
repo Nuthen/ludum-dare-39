@@ -7,6 +7,7 @@ function Button:initialize(parent, props)
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
     self.onClicked = function() end
+    self.keybinds = {}
 
     for k, prop in pairs(props) do
         self[k] = prop
@@ -14,6 +15,7 @@ function Button:initialize(parent, props)
 
     self.isPressed = false
     self.activated = false
+    self.mode = "mouse" -- "mouse" or "keyboard"
 end
 
 function Button:activate()
@@ -28,10 +30,32 @@ function Button:update(dt)
 
 end
 
+function Button:keypressed(key, code)
+    if Lume.find(self.keybinds, key) then
+        self.isPressed = true
+        self.mode = "keyboard"
+
+        if self.activated then
+            self.activated = false
+            self.onClicked()
+        end
+    end
+end
+
+function Button:keyreleased(key, code)
+    if self.mode == "keyboard" and Lume.find(self.keybinds, key) then
+        self.isPressed = false
+    end
+end
+
 function Button:mousepressed(x, y, mbutton)
-    self.isPressed = false
+    if self.mode == "mouse" then
+        self.isPressed = false
+    end
+
     if mbutton == 1 and self:getPressed(x, y) then
         self.isPressed = true
+        self.mode = "mouse"
 
         if self.isPressed and self.activated then
             self.activated = false
@@ -41,14 +65,13 @@ function Button:mousepressed(x, y, mbutton)
 end
 
 function Button:mousemoved(x, y, dx, dy, istouch)
-    self.isPressed = false
-    if love.mouse.isDown(1) and self:getPressed(x, y) then
-        self.isPressed = true
+    if love.mouse.isDown(1) and not self:getPressed(x, y) and self.isPressed and self.mode == "mouse" then
+        self.isPressed = false
     end
 end
 
 function Button:mousereleased(x, y, mbutton)
-    if mbutton == 1 then
+    if mbutton == 1 and self.mode == "mouse" then
         self.isPressed = false
     end
 end

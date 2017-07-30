@@ -162,6 +162,11 @@ function game:mousemoved(x, y, dx, dy, istouch)
     self.dynamo:mousemoved(x, y, dx, dy, istouch)
 end
 
+function game:wheelmoved(x, y)
+    self.scene:wheelmoved(x, y)
+    self.dynamo:wheelmoved(x, y)
+end
+
 function game:draw()
     self.scene:draw()
     self.dynamo:draw()

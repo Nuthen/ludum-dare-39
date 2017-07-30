@@ -18,6 +18,8 @@ function Wheel:initialize(parent, props)
     self.rotationAccumulator = 0
     self.startAngle = self.angle
     self.activeRotDirection = "cw"
+
+    self.spinMultiplier = .5
 end
 
 function Wheel:activate()
@@ -62,37 +64,40 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
 
         local prevAngle = Lume.angle(0, 0, extrapOffset.x, extrapOffset.y)
         local deltaAngle = (currentAngle - prevAngle)
+        self:solveAngle(theta)
+    end
+end
 
-        -- idea: be able to treat the skip from 180deg to -180deg as no big deal
-        -- fairly hacky
-        if deltaAngle >= math.pi then
-            deltaAngle = 2*math.pi - deltaAngle
-        elseif deltaAngle <= -math.pi then
-            deltaAngle = -2*math.pi - deltaAngle
+function Wheel:solveAngle(deltaAngle)
+    -- idea: be able to treat the skip from 180deg to -180deg as no big deal
+    -- fairly hacky
+    if deltaAngle >= math.pi then
+        deltaAngle = 2*math.pi - deltaAngle
+    elseif deltaAngle <= -math.pi then
+        deltaAngle = -2*math.pi - deltaAngle
+    end
+
+    self.angle = self.angle + deltaAngle
+
+    self.rotationAccumulator = self.rotationAccumulator + deltaAngle
+    if self.rotationAccumulator >= 2*math.pi then
+        self.rotationAccumulator = self.rotationAccumulator - 2*math.pi
+        if self.activated and self.activeRotDirection == "cw" then
+            self.activated = false
+            self.onClicked("cw")
         end
-
-        self.angle = self.angle + deltaAngle
-
-        self.rotationAccumulator = self.rotationAccumulator + deltaAngle
-        if self.rotationAccumulator >= 2*math.pi then
-            self.rotationAccumulator = self.rotationAccumulator - 2*math.pi
-            if self.activated and self.activeRotDirection == "cw" then
-                self.activated = false
-                self.onClicked("cw")
-            end
-        elseif self.rotationAccumulator <= -2*math.pi then
-            self.rotationAccumulator = self.rotationAccumulator + 2*math.pi
-            if self.activated and self.activeRotDirection == "ccw" then
-                self.activated = false
-                self.onClicked("ccw")
-            end
+    elseif self.rotationAccumulator <= -2*math.pi then
+        self.rotationAccumulator = self.rotationAccumulator + 2*math.pi
+        if self.activated and self.activeRotDirection == "ccw" then
+            self.activated = false
+            self.onClicked("ccw")
         end
+    end
 
-        if self.angle >= 2*math.pi then
-            self.angle = self.angle - 2*math.pi
-        elseif self.angle <= -2*math.pi then
-            self.angle = self.angle + 2*math.pi
-        end
+    if self.angle >= 2*math.pi then
+        self.angle = self.angle - 2*math.pi
+    elseif self.angle <= -2*math.pi then
+        self.angle = self.angle + 2*math.pi
     end
 end
 
@@ -102,6 +107,10 @@ function Wheel:mousereleased(x, y, mbutton)
         self.beganPress = false
         --self.rotationAccumulator = 0
     end
+end
+
+function Wheel:wheelmoved(x, y)
+    self:solveAngle(-y * self.spinMultiplier)
 end
 
 function Wheel:draw()

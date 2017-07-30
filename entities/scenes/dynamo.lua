@@ -26,6 +26,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/4, self.height*3/4),
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
+            keybinds = {'1', 'kp1'},
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -37,6 +38,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/2, self.height*3/4),
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
+            keybinds = {'2', 'kp2'},
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -48,6 +50,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*3/4, self.height*3/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
+            keybinds = {'3', 'kp3'},
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -107,9 +110,9 @@ function Dynamo:initialize(parent, props)
     }
 
     self.active = false
-    self.powerDropMultiplier = 0.01
+    self.powerDropMultiplier = 0.05
 
-    self.tweenMoveTime = .5
+    self.tweenMoveTime = .25
 end
 
 function Dynamo:addPower(amount)
@@ -184,6 +187,12 @@ function Dynamo:mousemoved(x, y, dx, dy, istouch)
 
     x, y = x - self.position.x, y - self.position.y
     Scene.mousemoved(self, x, y, dx, dy, istouch)
+end
+
+function Dynamo:wheelmoved(x, y)
+    --if not self.active then return end
+
+    Scene.wheelmoved(self, x, y)
 end
 
 function Dynamo:draw()
