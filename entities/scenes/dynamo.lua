@@ -26,6 +26,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/4, self.height*3/4),
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
+            locked = false,
             keybinds = {'1', 'kp1'},
             onClicked = function()
                 self:addPower(.1)
@@ -39,6 +40,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
             keybinds = {'2', 'kp2'},
+            locked = false,
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -135,7 +137,21 @@ function Dynamo:activateFidget()
     local keys = {}
 
     for k, fidget in pairs(self.fidgets) do
-        table.insert(keys, k)
+        if k == "flick" then
+            if not fidget.locked.up    or
+               not fidget.locked.down  or
+               not fidget.locked.left  or
+               not fidget.locked.right then
+                table.insert(keys, k)
+            end
+        elseif k == "wheel" then
+            if not fidget.locked.cw  or
+               not fidget.locked.ccw then
+                table.insert(keys, k)
+            end
+        elseif not fidget.locked then
+            table.insert(keys, k)
+        end
     end
 
     local keyIndex = love.math.random(1, #keys)
@@ -155,6 +171,30 @@ end
 function Dynamo:keypressed(key, code)
     if key == 'space' then
         self:toggleScreen()
+    end
+
+    if DEBUG then
+        if key == "4" then
+            self.fidgets.button3.locked = false
+        end
+        if key == "5" then
+            self.fidgets.flick.locked.up = false
+        end
+        if key == "6" then
+            self.fidgets.flick.locked.right = false
+        end
+        if key == "7" then
+            self.fidgets.flick.locked.down = false
+        end
+        if key == "8" then
+            self.fidgets.flick.locked.left = false
+        end
+        if key == "9" then
+            self.fidgets.wheel.locked.cw = false
+        end
+        if key == "0" then
+            self.fidgets.wheel.locked.ccw = false
+        end
     end
 
     if not self.active then return end

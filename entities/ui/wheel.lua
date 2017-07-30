@@ -7,6 +7,7 @@ function Wheel:initialize(parent, props)
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
     self.angle = 0
+    self.locked = {cw = true, ccw = true}
     self.onClicked = function(rotDir) end
 
     for k, prop in pairs(props) do
@@ -25,6 +26,13 @@ end
 
 function Wheel:activate()
     self.activated = true
+
+    local possibles = {}
+    if not self.locked.cw  then table.insert(possibles, 0) end
+    if not self.locked.ccw then table.insert(possibles, 1) end
+
+    local randomDir = possibles[love.math.random(1, #possibles)]
+
     local randDir = love.math.random(0, 1)
     if randDir == 0 then
         self.activeRotDirection = "cw"
@@ -44,6 +52,11 @@ function Wheel:update(dt)
 end
 
 function Wheel:mousepressed(x, y, mbutton)
+    if self.locked.cw    and
+       self.locked.ccw then
+           return
+    end
+
     self.isPressed = false
     if mbutton == 1 and self:getPressed(x, y) then
         self.isPressed = true
@@ -65,6 +78,7 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
 
         local prevAngle = Lume.angle(0, 0, extrapOffset.x, extrapOffset.y)
         local deltaAngle = (currentAngle - prevAngle) * self.mouseSpinMultiplier
+
         self:solveAngle(deltaAngle)
     end
 end
@@ -103,6 +117,11 @@ function Wheel:solveAngle(deltaAngle)
 end
 
 function Wheel:mousereleased(x, y, mbutton)
+    if self.locked.cw    and
+       self.locked.ccw then
+           return
+    end
+
     if mbutton == 1 then
         self.isPressed = false
         self.beganPress = false
@@ -111,10 +130,18 @@ function Wheel:mousereleased(x, y, mbutton)
 end
 
 function Wheel:wheelmoved(x, y)
+    if self.locked.cw  then y = math.min(0, y) end
+    if self.locked.ccw then y = math.max(0, y) end
+
     self:solveAngle(-y * self.bindingSpinMultiplier)
 end
 
 function Wheel:draw()
+    if self.locked.cw    and
+       self.locked.ccw then
+          return
+    end
+
     love.graphics.setColor(self.inactiveColor)
     if self.activated then
         love.graphics.setColor(self.pressColor)

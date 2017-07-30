@@ -7,6 +7,7 @@ function Flick:initialize(parent, props)
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
     self.angle = 0
+    self.locked = {up = true, down = true, right = true, left = true}
     self.onClicked = function(angleInterval) end
 
     for k, prop in pairs(props) do
@@ -32,7 +33,14 @@ end
 
 function Flick:activate()
     self.activated = true
-    local randomDir = love.math.random(0, 3)
+
+    local possibles = {}
+    if not self.locked.right then table.insert(possibles, 0) end
+    if not self.locked.down  then table.insert(possibles, 1) end
+    if not self.locked.left  then table.insert(possibles, 2) end
+    if not self.locked.up    then table.insert(possibles, 3) end
+
+    local randomDir = possibles[love.math.random(1, #possibles)]
     if randomDir == 0 then
         self.activeDirection = "right"
     elseif randomDir == 1 then
@@ -53,15 +61,15 @@ end
 function Flick:update(dt)
     local delta = Vector(0, 0)
 
-    if love.keyboard.isDown(unpack(self.keybinds.up)) then
+    if love.keyboard.isDown(unpack(self.keybinds.up)) and not self.locked.up then
         delta.y = -1
-    elseif love.keyboard.isDown(unpack(self.keybinds.down)) then
+    elseif love.keyboard.isDown(unpack(self.keybinds.down)) and not self.locked.down then
         delta.y = 1
     end
 
-    if love.keyboard.isDown(unpack(self.keybinds.left)) then
+    if love.keyboard.isDown(unpack(self.keybinds.left)) and not self.locked.left then
         delta.x = -1
-    elseif love.keyboard.isDown(unpack(self.keybinds.right)) then
+    elseif love.keyboard.isDown(unpack(self.keybinds.right)) and not self.locked.right then
         delta.x = 1
     end
 
@@ -74,6 +82,13 @@ function Flick:update(dt)
 end
 
 function Flick:keypressed(key, code)
+    if self.locked.up    and
+       self.locked.down  and
+       self.locked.left  and
+       self.locked.right then
+           return
+    end
+
     if Lume.find(self.keybinds.up,    key) or
        Lume.find(self.keybinds.down,  key) or
        Lume.find(self.keybinds.left,  key) or
@@ -86,6 +101,13 @@ function Flick:keypressed(key, code)
 end
 
 function Flick:keyreleased(key, code)
+    if self.locked.up    and
+       self.locked.down  and
+       self.locked.left  and
+       self.locked.right then
+           return
+    end
+
     if Lume.find(self.keybinds.up,    key) or
        Lume.find(self.keybinds.down,  key) or
        Lume.find(self.keybinds.left,  key) or
@@ -129,6 +151,13 @@ function Flick:solvePosition()
 end
 
 function Flick:mousepressed(x, y, mbutton)
+    if self.locked.up    and
+       self.locked.down  and
+       self.locked.left  and
+       self.locked.right then
+           return
+    end
+
     self.isPressed = false
     if mbutton == 1 then
         self.isPressed = self:getPressed(x, y)
@@ -140,12 +169,24 @@ end
 
 function Flick:mousemoved(x, y, dx, dy, istouch)
     if self.isPressed then
+        if self.locked.up    then dy = math.max(0, dy) end
+        if self.locked.down  then dy = math.min(0, dy) end
+        if self.locked.left  then dx = math.max(0, dx) end
+        if self.locked.right then dx = math.min(0, dx) end
+
         self.rawPosition = self.rawPosition + Vector(dx, dy)
         self:solvePosition()
     end
 end
 
 function Flick:mousereleased(x, y, mbutton)
+    if self.locked.up    and
+       self.locked.down  and
+       self.locked.left  and
+       self.locked.right then
+           return
+    end
+
     if mbutton == 1 then
         self.isPressed = false
         self.rawPosition = Vector(0, 0)
@@ -155,12 +196,27 @@ function Flick:mousereleased(x, y, mbutton)
 end
 
 function Flick:draw()
+    if self.locked.up    and
+       self.locked.down  and
+       self.locked.left  and
+       self.locked.right then
+           return
+    end
+
     for i = 0, 3 do
-        love.graphics.setColor(self.inactiveColor)
-        if self.activated and i == self.rawActiveDir then
-            love.graphics.setColor(self.pressColor)
+        local key
+        if     i == 0 then key = "right"
+        elseif i == 1 then key = "down"
+        elseif i == 2 then key = "left"
+        elseif i == 3 then key = "up" end
+
+        if not self.locked[key] then
+            love.graphics.setColor(self.inactiveColor)
+            if self.activated and i == self.rawActiveDir then
+                love.graphics.setColor(self.pressColor)
+            end
+            love.graphics.line(self.position.x, self.position.y, self.position.x + math.cos(i*math.rad(90))*self.radius, self.position.y + math.sin(i*math.rad(90))*self.radius)
         end
-        love.graphics.line(self.position.x, self.position.y, self.position.x + math.cos(i*math.rad(90))*self.radius, self.position.y + math.sin(i*math.rad(90))*self.radius)
     end
 
     love.graphics.setColor(self.inactiveColor)

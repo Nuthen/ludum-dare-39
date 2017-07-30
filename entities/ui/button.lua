@@ -6,6 +6,8 @@ function Button:initialize(parent, props)
     self.inactiveColor = {255, 255, 255}
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
+
+    self.locked = true
     self.onClicked = function() end
     self.keybinds = {}
 
@@ -31,6 +33,8 @@ function Button:update(dt)
 end
 
 function Button:keypressed(key, code)
+    if self.locked then return end
+
     if Lume.find(self.keybinds, key) then
         self.isPressed = true
         self.mode = "keyboard"
@@ -43,12 +47,16 @@ function Button:keypressed(key, code)
 end
 
 function Button:keyreleased(key, code)
+    if self.locked then return end
+
     if self.mode == "keyboard" and Lume.find(self.keybinds, key) then
         self.isPressed = false
     end
 end
 
 function Button:mousepressed(x, y, mbutton)
+    if self.locked then return end
+
     if self.mode == "mouse" then
         self.isPressed = false
     end
@@ -65,24 +73,33 @@ function Button:mousepressed(x, y, mbutton)
 end
 
 function Button:mousemoved(x, y, dx, dy, istouch)
+    if self.locked then return end
+
     if love.mouse.isDown(1) and not self:getPressed(x, y) and self.isPressed and self.mode == "mouse" then
         self.isPressed = false
     end
 end
 
 function Button:mousereleased(x, y, mbutton)
+    if self.locked then return end
+
     if mbutton == 1 and self.mode == "mouse" then
         self.isPressed = false
     end
 end
 
 function Button:draw()
+    if self.locked then return end
+
     love.graphics.setColor(self.inactiveColor)
-    if self.isPressed or self.activated then
+    if self.isPressed then
         love.graphics.setColor(self.pressColor)
     end
     love.graphics.circle('fill', self.position.x, self.position.y, self.radius - 3)
-    love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+    if self.activated then
+        love.graphics.setColor(self.pressColor)
+        love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+    end
 end
 
 return Button
