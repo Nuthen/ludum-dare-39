@@ -19,7 +19,8 @@ function Wheel:initialize(parent, props)
     self.startAngle = self.angle
     self.activeRotDirection = "cw"
 
-    self.spinMultiplier = .5
+    self.bindingSpinMultiplier = .5
+    self.mouseSpinMultiplier = 1
 end
 
 function Wheel:activate()
@@ -63,8 +64,8 @@ function Wheel:mousemoved(x, y, dx, dy, istouch)
         extrapOffset = extrapOffset - Vector(dx, dy)
 
         local prevAngle = Lume.angle(0, 0, extrapOffset.x, extrapOffset.y)
-        local deltaAngle = (currentAngle - prevAngle)
-        self:solveAngle(theta)
+        local deltaAngle = (currentAngle - prevAngle) * self.mouseSpinMultiplier
+        self:solveAngle(deltaAngle)
     end
 end
 
@@ -110,7 +111,7 @@ function Wheel:mousereleased(x, y, mbutton)
 end
 
 function Wheel:wheelmoved(x, y)
-    self:solveAngle(-y * self.spinMultiplier)
+    self:solveAngle(-y * self.bindingSpinMultiplier)
 end
 
 function Wheel:draw()
