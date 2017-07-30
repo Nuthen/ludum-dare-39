@@ -121,6 +121,10 @@ end
 
 function Dynamo:addPower(amount)
     self.game.power = math.max(0, math.min(1, self.game.power + amount))
+
+    if amount > 0 then
+        Signal.emit("Dynamo Correct")
+    end
 end
 
 function Dynamo:toggleScreen()
