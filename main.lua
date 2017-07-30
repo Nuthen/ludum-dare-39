@@ -2,6 +2,8 @@ local loadTimeStart = love.timer.getTime()
 
 require 'globals'
 
+require 'libs.autobatch'
+
 function love.load()
     love.window.setIcon(love.image.newImageData(CONFIG.window.icon))
     love.graphics.setDefaultFilter(CONFIG.graphics.filter.down,
