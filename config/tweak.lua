@@ -4,6 +4,10 @@ return {
     -- How many times to try spawning an enemy before giving up (prevents crash)
     enemySpawnMaxTries = 25,
 
+    power = 1,
+
+    totalRooms = 7,
+
     minimapOnGame = true,
     minimapOnDynamo = false,
 
