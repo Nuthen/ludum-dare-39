@@ -8,4 +8,6 @@ return {
     minimapOnDynamo = false,
 
     powerDropMultiplier = 0.05,
+
+    backgroundColor = {32, 35, 46},
 }

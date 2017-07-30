@@ -249,12 +249,13 @@ function game:wheelmoved(x, y)
 end
 
 function game:draw()
+    love.graphics.setBackgroundColor(TWEAK.backgroundColor)
     local scale = self:getScale()
     local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
     local x, y = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
 
     self.canvas:renderTo(function()
-        love.graphics.clear()
+        love.graphics.clear(love.graphics.getBackgroundColor())
         self.scene:draw()
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
