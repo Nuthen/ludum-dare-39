@@ -44,6 +44,10 @@ function Map:screenToTile(x, y)
        (y >= self.position.y - self.height/2) and
        (y <= self.position.y + self.height/2) then
         local tileX, tileY = math.ceil(x / self.tileWidth), math.ceil(y / self.tileHeight)
+        if tileX <= 0 or tileY <= 0 or tileX >= #self.game.grid or tileY >= #self.game.grid[1] then
+            return nil, nil
+        end
+
         return tileX, tileY
     else
         return nil, nil
