@@ -11,7 +11,7 @@ return {
     minimapOnGame = true,
     minimapOnDynamo = false,
 
-    powerDropMultiplier = 0.05,
+    powerDropMultiplier = 0.01,
 
     backgroundColor = {32, 35, 46},
 
