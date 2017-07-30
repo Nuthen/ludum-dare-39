@@ -111,7 +111,8 @@ States = {
     splash   = require 'states.splash',
     menu     = require 'states.menu',
     game     = require 'states.game',
-    gameover = require 'states.gameover'
+    gameover = require 'states.gameover',
+    victory  = require 'states.victory',
 }
 
 

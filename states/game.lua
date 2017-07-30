@@ -124,6 +124,9 @@ function game:reset()
 
     self.power = 1 -- [0, 1]
 
+    self.totalRooms = 9
+    self.totalPoweredRooms = 0
+
     self.currentRoom = -1
 end
 
@@ -135,6 +138,10 @@ function game:update(dt)
     self.timer:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
+
+    if self.totalPoweredRooms == self.totalRooms then
+        State.switch(States.victory)
+    end
 
     if self.power <= 0 then
         State.switch(States.gameover)
