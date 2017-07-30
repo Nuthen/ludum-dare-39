@@ -9,16 +9,8 @@ end
 function MouseAction:mousemoved(mx, my, dx, dy, istouch)
     local game = self.game
 
-    local scale = game:getScale()
-    local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
-    local displacementX, displacementY = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
+    mx, my = game.camera:worldCoords(mx, my, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
 
-    --mx, my = game:screenToCanvas(mx, my)
-    --mx, my = mx + game.camera.x - CANVAS_WIDTH, my + game.camera.y - CANVAS_HEIGHT
-    mx, my = game.camera:worldCoords(mx, my)
-    mx, my = mx + CANVAS_WIDTH/2, my + CANVAS_HEIGHT/2
-    mx, my = mx + displacementX, my + displacementY
-    --if scale == 1 then error(mx..' '..my) end
     local gx, gy, gw, gh = game:getGridBoundingBox()
     local translatedX = gx - game.gridX + gw/2
     local translatedY = gy - game.gridY + gh/2

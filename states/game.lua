@@ -412,15 +412,6 @@ function game:draw()
         self.camera:detach()
         love.graphics.pop()
 
-        -- translate screen to grid
-        --local mx, my = love.mouse.getPosition()
-        --mx, my = game:screenToCanvas(mx, my)
-        --mx, my = game.camera:worldCoords(mx, my)
-        --mx, my = mx + (self.camera.x-CANVAS_WIDTH/2), my + (self.camera.y-CANVAS_HEIGHT/2)
-        --mx, my = mx + CANVAS_WIDTH/2, my + CANVAS_HEIGHT/2
-        --love.graphics.circle('fill', mx, my, 5)
-
-
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
 
@@ -432,12 +423,6 @@ function game:draw()
 
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.canvas, x, y, 0, scale)
-
-    --[[love.graphics.print('CAMERA: ('..self.camera.x-CANVAS_WIDTH..', '..self.camera.y-CANVAS_HEIGHT..')', 100, 5)
-
-    if roomX then
-        love.graphics.print(roomX..' '..roomY..' '..roomWidth..' '..roomHeight, 200, 20)
-    end]]
 
     if TWEAK.printClickPosition and self.printClickPosition then
         love.graphics.print("Mouse: ("..self.last.x..', '..self.last.y..')', 100, 5)
