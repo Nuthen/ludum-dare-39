@@ -144,7 +144,7 @@ function game:reset()
 
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
-                    if cellValue == 1 then
+                    if cellValue == 1 and (roomNumber == game.currentRoom or TWEAK.drawRoomShadows) then
                         love.graphics.draw(sprite, tx, ty)
                     end
 
@@ -180,8 +180,56 @@ function game:reset()
     if TWEAK.minimapOnGame then
         self.minimap = Map:new(self, {
             game = self,
-            position = Vector(120, 120),
+            position = Vector(60, 60),
         })
+    end
+
+    local rawbgimages = {
+        { -- bottom room, Bridge
+            rgb = {25, 187, 34},
+            imagepath = 'Bridge',
+            offset = Vector(-64, 82)
+        },
+        { -- left room, Crew Quarters
+            rgb = {102, 64, 178},
+            imagepath = 'CrewQuarters',
+            offset = Vector(-16, -38)
+        },
+        { -- top room, Engines
+            rgb = {211, 72, 218},
+            imagepath = 'EnginesRoom',
+            offset = Vector(272, -86)
+        },
+        { -- middle-bottom room, Main Deck
+            rgb = {208, 52, 52},
+            imagepath = 'MainDeck',
+            offset = Vector(48, 26)
+        },
+        { -- middle-top room, Storage
+            rgb = {100, 183, 36},
+            imagepath = 'StorageRoom',
+            offset = Vector(160, -30)
+        },
+        { -- right-bottom room, MedBay
+            rgb = {84, 208, 156},
+            imagepath = 'MedicBay',
+            offset = Vector(176, 90)
+        },
+        { -- right-top room, Engineering
+            rgb = {174, 35, 161},
+            imagepath = 'Engineering',
+            offset = Vector(288, 34)
+        }
+    }
+
+    self.backgroundImages = {}
+
+    for k, bgLookup in pairs(rawbgimages) do
+        local roomType = getColorHash(unpack(bgLookup.rgb))
+        self.backgroundImages[roomType] = {
+            image = love.graphics.newImage('assets/images/Rooms/'..bgLookup.imagepath..'.png'),
+            offset = bgLookup.offset
+        }
     end
 
     self.power = 1 -- [0, 1]
@@ -273,6 +321,8 @@ function game:mousepressed(x, y, mbutton)
     x, y = self:screenToCanvas(x, y)
     self.scene:mousepressed(x, y, mbutton)
     self.dynamo:mousepressed(x, y, mbutton)
+
+    self.lastClickPosition = Vector(x, y)
 end
 
 function game:mousereleased(x, y, mbutton)
@@ -353,6 +403,10 @@ function game:draw()
             love.graphics.circle('line', -translatedX + roomX + roomWidth/2, -translatedY + roomY + roomHeight/2, 10)
             love.graphics.rectangle('line', -translatedX + roomX, -translatedY + roomY, roomWidth, roomHeight)
         end
+        if self.backgroundImages[self.currentRoom] then
+            local bg = self.backgroundImages[self.currentRoom]
+            love.graphics.draw(bg.image, bg.offset.x, bg.offset.y)
+        end
         self.scene:draw()
 
 
@@ -385,6 +439,10 @@ function game:draw()
     if roomX then
         love.graphics.print(roomX..' '..roomY..' '..roomWidth..' '..roomHeight, 200, 20)
     end]]
+
+    if TWEAK.printClickPosition and self.printClickPosition then
+        love.graphics.print("Mouse: ("..self.last.x..', '..self.last.y..')', 100, 5)
+    end
 end
 
 function game:loadAnimations(class, category, dataFile)

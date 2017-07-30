@@ -14,4 +14,8 @@ return {
     drawRoomBoundingBox = false,
     drawCanvasBoundingBox = true,
     drawGridBoundingBox = true,
+
+    drawRoomShadows = false,
+
+    printClickPosition = false
 }
