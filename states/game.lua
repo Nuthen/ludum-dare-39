@@ -120,11 +120,13 @@ function game:reset()
                         love.graphics.setColor(255, 255, 255)
                     end
 
+                    if roomNumber ~= game.currentRoom then
+                        love.graphics.setColor(33, 33, 33, 127)
+                    end
+
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
-                    if cellValue == 1 and
-                       (roomNumber == 0 or
-                        roomNumber == game.currentRoom) then
+                    if cellValue == 1 then
                         love.graphics.draw(sprite, tx, ty)
                     end
 
