@@ -135,6 +135,10 @@ function game:update(dt)
     self.timer:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
+
+    if self.power <= 0 then
+        State.switch(States.gameover)
+    end
 end
 
 function game:keypressed(key, code)
