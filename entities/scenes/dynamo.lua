@@ -10,12 +10,12 @@ local Dynamo = Class('Dynamo', Scene)
 function Dynamo:initialize(parent, props)
     self.parent = parent
 
-    self.width = love.graphics.getWidth()*.8
-    self.height = love.graphics.getHeight()*.6
+    self.width = SETTINGS.CANVAS_WIDTH*.8
+    self.height = SETTINGS.CANVAS_HEIGHT*.6
 
-    self.positionSet = Vector(0, love.graphics.getHeight())
+    self.positionSet = Vector(0, SETTINGS.CANVAS_HEIGHT)
 
-    self.position = Vector(love.graphics.getWidth()/2  - self.width/2,
+    self.position = Vector(SETTINGS.CANVAS_WIDTH/2  - self.width/2,
                            self.positionSet.y)
 
     self.bgColor = {100, 100, 100, 255}

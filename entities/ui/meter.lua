@@ -8,8 +8,8 @@ function Meter:initialize(parent, props)
     self.activeColor = {127, 127, 127}
     self.position = Vector(0, 0)
     self.width = 350
-    self.height = 70
-    self.margin = 12
+    self.height = 30
+    self.margin = 6
     self.onClicked = function() end
 
     for k, prop in pairs(props) do

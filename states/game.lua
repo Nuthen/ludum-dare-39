@@ -21,6 +21,8 @@ function game:init()
 end
 
 function game:reset()
+    self.canvas = love.graphics.newCanvas(SETTINGS.CANVAS_WIDTH, SETTINGS.CANVAS_HEIGHT)
+
     Signal.clear()
 
     self.scene = Scene:new()
@@ -68,8 +70,8 @@ function game:reset()
         end
     end
 
-    self.gridX = love.graphics.getWidth()/2
-    self.gridY = love.graphics.getHeight()/2
+    self.gridX = SETTINGS.CANVAS_WIDTH/2
+    self.gridY = SETTINGS.CANVAS_HEIGHT/2
     self.gridWidth = #self.grid[1] -- tiles
     self.gridHeight = #self.grid -- tiles
     self.tileWidth = self.emptyTile:getWidth() -- pixels
@@ -206,11 +208,13 @@ function game:keyreleased(key, code)
 end
 
 function game:mousepressed(x, y, mbutton)
+    x, y = self:screenToCanvas(x, y)
     self.scene:mousepressed(x, y, mbutton)
     self.dynamo:mousepressed(x, y, mbutton)
 end
 
 function game:mousereleased(x, y, mbutton)
+    x, y = self:screenToCanvas(x, y)
     self.scene:mousereleased(x, y, mbutton)
     self.dynamo:mousereleased(x, y, mbutton)
 
@@ -218,6 +222,9 @@ function game:mousereleased(x, y, mbutton)
 end
 
 function game:mousemoved(x, y, dx, dy, istouch)
+    x, y = self:screenToCanvas(x, y)
+    dx, dy = self:screenToCanvas(dx, dy)
+
     self.scene:mousemoved(x, y, dx, dy, istouch)
     self.dynamo:mousemoved(x, y, dx, dy, istouch)
 
@@ -225,14 +232,41 @@ function game:mousemoved(x, y, dx, dy, istouch)
 end
 
 function game:wheelmoved(x, y)
+    x, y = self:screenToCanvas(x, y)
     self.scene:wheelmoved(x, y)
     self.dynamo:wheelmoved(x, y)
 end
 
 function game:draw()
-    self.scene:draw()
-    if self.minimap then self.minimap:draw() end
-    self.dynamo:draw()
+    local scale = self:getScale()
+    local drawnWidth, drawnHeight = SETTINGS.CANVAS_WIDTH*scale, SETTINGS.CANVAS_HEIGHT*scale
+    local x, y = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
+
+    self.canvas:renderTo(function()
+        love.graphics.clear()
+        self.scene:draw()
+        if self.minimap then self.minimap:draw() end
+        self.dynamo:draw()
+
+        love.graphics.setColor(127, 127, 127)
+        love.graphics.rectangle('line', 0, 0, SETTINGS.CANVAS_WIDTH, SETTINGS.CANVAS_HEIGHT)
+    end)
+
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(self.canvas, x, y, 0, scale)
+end
+
+function game:getScale()
+    return math.min(math.floor(love.graphics.getWidth() /SETTINGS.CANVAS_WIDTH),
+                           math.floor(love.graphics.getHeight()/SETTINGS.CANVAS_HEIGHT))
+end
+
+function game:screenToCanvas(x, y)
+    local scale = self:getScale()
+    local drawnWidth, drawnHeight = SETTINGS.CANVAS_WIDTH*scale, SETTINGS.CANVAS_HEIGHT*scale
+    local displacementX, displacementY = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
+
+    return (x - displacementX) / scale, (y - displacementY) / scale
 end
 
 function game:screenToGrid(sx, sy)

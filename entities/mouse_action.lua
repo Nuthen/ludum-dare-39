@@ -9,6 +9,7 @@ end
 function MouseAction:update(dt)
     local game = self.game
     local mx, my = love.mouse.getPosition()
+    mx, my = game:screenToCanvas(mx, my)
     local gx, gy, gw, gh = game:getGridBoundingBox()
     local translatedX = gx - game.gridX + gw/2
     local translatedY = gy - game.gridY + gh/2

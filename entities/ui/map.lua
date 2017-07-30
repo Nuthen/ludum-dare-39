@@ -6,10 +6,10 @@ function Map:initialize(parent, props)
     self.inactiveColor = {255, 255, 255}
     self.activeColor = {127, 127, 127}
     self.position = Vector(0, 0)
-    self.width = 240
-    self.height = 240
-    self.tileWidth = 8
-    self.tileHeight = 8
+    self.width = 90
+    self.height = 90
+    self.tileWidth = 3
+    self.tileHeight = 3
     self.mapWidth = 0
     self.mapHeight = 0
     self.onClicked = function() end
@@ -23,7 +23,6 @@ function Map:initialize(parent, props)
     if self.game.grid then
         self.mapWidth  = #self.game.grid * self.tileWidth
         self.mapHeight = #self.game.grid[1] * self.tileHeight
-        --error(self.mapWidth..' '..self.mapHeight)
     end
 
     self.isPressed = false
@@ -31,18 +30,14 @@ function Map:initialize(parent, props)
     self.hoveredRoom = -1
 end
 
-function Map:getPressed(x, y)
-    return (x >= self.position.x - self.width/2 ) and
-           (x <= self.position.x + self.width/2 ) and
-           (y >= self.position.y - self.height/2) and
-           (y <= self.position.y + self.height/2)
-end
-
 function Map:screenToTile(x, y)
     if (x >= self.position.x - self.width/2 ) and
        (x <= self.position.x + self.width/2 ) and
        (y >= self.position.y - self.height/2) and
        (y <= self.position.y + self.height/2) then
+
+        x = x - (self.position.x - self.width /2)
+        y = y - (self.position.y - self.height/2)
         local tileX, tileY = math.ceil(x / self.tileWidth), math.ceil(y / self.tileHeight)
         if tileX <= 0 or tileY <= 0 or tileX >= #self.game.grid or tileY >= #self.game.grid[1] then
             return nil, nil
@@ -84,8 +79,6 @@ function Map:mousereleased(x, y, mbutton)
 end
 
 function Map:draw()
-    local power = self.parent.power
-
     love.graphics.setColor(self.inactiveColor)
 
     local margin = self.margin
@@ -138,6 +131,13 @@ function Map:draw()
         local m = 2
 
         love.graphics.rectangle('line', minScreenX-m, minScreenY-m, width+m*2, height+m*2)
+    end
+
+    if self.last then
+        love.graphics.setColor(255, 0, 0)
+        local ix, iy = self.last:unpack()
+        local screenX, screenY = x - self.mapWidth + (ix-1) * self.tileWidth, y - self.mapHeight + (iy-1) * self.tileHeight
+        love.graphics.circle('fill', screenX, screenY, 5)
     end
 end
 

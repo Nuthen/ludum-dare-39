@@ -2,7 +2,7 @@ local Wheel = Class('Wheel')
 
 function Wheel:initialize(parent, props)
     self.parent = parent
-    self.radius = 90
+    self.radius = 40
     self.inactiveColor = {255, 255, 255}
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
@@ -32,11 +32,9 @@ function Wheel:activate()
     if not self.locked.ccw then table.insert(possibles, 1) end
 
     local randomDir = possibles[love.math.random(1, #possibles)]
-
-    local randDir = love.math.random(0, 1)
-    if randDir == 0 then
+    if randomDir == 0 then
         self.activeRotDirection = "cw"
-    elseif randDir == 1 then
+    elseif randomDir == 1 then
         self.activeRotDirection = "ccw"
     else
         error("Unexpected var for randDir: " .. randDir)
@@ -130,8 +128,8 @@ function Wheel:mousereleased(x, y, mbutton)
 end
 
 function Wheel:wheelmoved(x, y)
-    if self.locked.cw  then y = math.min(0, y) end
-    if self.locked.ccw then y = math.max(0, y) end
+    if self.locked.cw  then y = math.max(0, y) end
+    if self.locked.ccw then y = math.min(0, y) end
 
     self:solveAngle(-y * self.bindingSpinMultiplier)
 end

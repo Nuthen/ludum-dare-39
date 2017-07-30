@@ -2,7 +2,7 @@ local Flick = Class('Flick')
 
 function Flick:initialize(parent, props)
     self.parent = parent
-    self.radius = 80
+    self.radius = 40
     self.inactiveColor = {255, 255, 255}
     self.pressColor = {127, 127, 127}
     self.position = Vector(0, 0)
