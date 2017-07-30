@@ -27,9 +27,21 @@ function game:reset()
         return Bit.bor(Bit.lshift(r, 32), Bit.lshift(g, 16), b)
     end
 
+    -- All possible tiles on the ship
     self.grid = {}
+
+    -- All available (not empty space) tiles on the ship
+    self.tiles = {}
+
+    -- Same as grid, but contains room hash instead
     self.rooms = {}
+
+    -- Hash table of all room hashes
+    self.roomHashes = {}
+
+    -- Enemy entities indexed by x, y
     self.enemies = {}
+
     for x = 1, self.shipBitmask:getWidth() do
         self.grid[x] = {}
         self.rooms[x] = {}
@@ -42,6 +54,8 @@ function game:reset()
             if not (r == 0 and g == 0 and b == 0 and a == 0) then
                 self.grid[x][y] = 1
                 self.rooms[x][y] = getColorHash(r, g, b)
+                table.insert(self.tiles, {x=x, y=y})
+                self.roomHashes[getColorHash(r, g, b)] = true
             end
         end
     end
@@ -143,7 +157,22 @@ function game:update(dt)
         State.switch(States.victory)
     end
 
-    if self.power <= 0 then
+    -- Check all rooms for occupying enemies
+    local occupiedRooms = 0
+    for hash in pairs(self.roomHashes) do
+        local roomTiles = self:getRoomTiles(hash)
+        local occupiedTiles = 0
+        for i, tile in ipairs(roomTiles) do
+            if self:getEnemy(tile.x, tile.y) then
+                occupiedTiles = occupiedTiles + 1
+            end
+        end
+        if occupiedTiles >= #roomTiles then
+            occupiedRooms = occupiedRooms + 1
+        end
+    end
+
+    if self.power <= 0 or occupiedRooms >= 1 then
         State.switch(States.gameover)
     end
 end
@@ -211,6 +240,22 @@ end
 
 function game:hasEnemy(x, y)
     return self:isShipTile(x, y) and self.enemies[x] and self.enemies[x][y] ~= nil
+end
+
+function game:getRoom(x, y)
+    return self.rooms[x] and self.rooms[x][y] or nil
+end
+
+function game:getRoomTiles(hash)
+    local tiles = {}
+
+    for i, tile in ipairs(self.tiles) do
+        if self:getRoom(tile.x, tile.y) == hash then
+            table.insert(tiles, tile)
+        end
+    end
+
+    return tiles
 end
 
 function game:getEnemy(x, y)
