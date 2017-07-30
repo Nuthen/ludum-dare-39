@@ -47,6 +47,8 @@ function MouseAction:mousepressed(mx, my)
         end
 
         game.enemies[self.hoverX][self.hoverY] = nil
+
+        Signal.emit('enemyDeath')
     end
 end
 

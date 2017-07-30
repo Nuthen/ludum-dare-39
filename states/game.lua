@@ -4,6 +4,7 @@ local Sprite = require 'entities.sprite'
 local Enemy = require 'entities.enemy'
 local MouseAction = require 'entities.mouse_action'
 local Map = require 'entities.ui.map'
+local SoundManager = require 'entities.sound_manager'
 
 local Bit = require 'bit'
 
@@ -13,12 +14,18 @@ function game:init()
     self.tweak = require 'config.tweak'
 
     self.catalogs = {
-        art = require 'catalogs.art',
+        art   = require 'catalogs.art',
+        sound = require 'catalogs.sound',
+        music = require 'catalogs.music',
     }
 end
 
 function game:reset()
+    Signal.clear()
+
     self.scene = Scene:new()
+
+    self.soundManager = SoundManager:new(self.catalogs.sound, self.catalogs.music)
 
     self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
@@ -150,6 +157,8 @@ function game:reset()
     self.totalPoweredRooms = 0
 
     self.currentRoom = -1
+
+    Signal.emit('gameStart')
 end
 
 function game:enter()
@@ -160,6 +169,7 @@ function game:update(dt)
     self.timer:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
+    self.soundManager:update(dt)
 
     if self.totalPoweredRooms == self.totalRooms then
         State.switch(States.victory)
