@@ -6,4 +6,6 @@ return {
 
     minimapOnGame = true,
     minimapOnDynamo = false,
+
+    powerDropMultiplier = 0.05,
 }

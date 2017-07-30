@@ -27,7 +27,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {31, 117, 60},
             pressColor = {80, 164, 242},
             locked = false,
-            keybinds = {'1', 'kp1'},
+            keybinds = SETTINGS.dynamoKeybinds.firstButton,
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -39,7 +39,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width/2, self.height*3/4),
             inactiveColor = {89, 10, 74},
             pressColor = {222, 81, 144},
-            keybinds = {'2', 'kp2'},
+            keybinds = SETTINGS.dynamoKeybinds.secondButton,
             locked = false,
             onClicked = function()
                 self:addPower(.1)
@@ -52,7 +52,7 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*3/4, self.height*3/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            keybinds = {'3', 'kp3'},
+            keybinds = SETTINGS.dynamoKeybinds.thirdButton,
             onClicked = function()
                 self:addPower(.1)
                 self:activateFidget()
@@ -98,7 +98,7 @@ function Dynamo:initialize(parent, props)
 
     table.insert(self.entities, meter)
 
-    if self.parent.tweak.minimapOnDynamo then
+    if TWEAK.minimapOnDynamo then
         table.insert(self.entities, Map:new(self, {
             game = self.parent,
             position = Vector(120, 120),
@@ -114,7 +114,7 @@ function Dynamo:initialize(parent, props)
     }
 
     self.active = false
-    self.powerDropMultiplier = 0.05
+    self.powerDropMultiplier = TWEAK.powerDropMultiplier
 
     self.tweenMoveTime = .25
 end

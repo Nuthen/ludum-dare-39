@@ -67,6 +67,7 @@ CONFIG = {
 }
 
 SETTINGS = require 'config.settings'
+TWEAK = require 'config.tweak'
 
 CANVAS_WIDTH = 640
 CANVAS_HEIGHT = 360

@@ -24,10 +24,10 @@ function Flick:initialize(parent, props)
     self.handleSpeed = 200
 
     self.keybinds = {
-        up    = {'up'   , 'w'},
-        down  = {'down' , 's'},
-        left  = {'left' , 'a'},
-        right = {'right', 'd'},
+        up    = SETTINGS.dynamoKeybinds.flick.up,
+        down  = SETTINGS.dynamoKeybinds.flick.down,
+        left  = SETTINGS.dynamoKeybinds.flick.left,
+        right = SETTINGS.dynamoKeybinds.flick.right,
     }
 end
 

@@ -11,8 +11,6 @@ local Bit = require 'bit'
 local game = {}
 
 function game:init()
-    self.tweak = require 'config.tweak'
-
     self.catalogs = {
         art   = require 'catalogs.art',
         sound = require 'catalogs.sound',
@@ -82,12 +80,12 @@ function game:reset()
 
     -- Every so often add a new enemy
     self.timer = Timer.new()
-    self.timer:every(self.tweak.enemySpawnRate, function()
+    self.timer:every(TWEAK.enemySpawnRate, function()
         local ex, ey
         local enemy
         local notAnEmptySpace
         local tries = 0
-        local maxTries = self.tweak.enemySpawnMaxTries
+        local maxTries = TWEAK.enemySpawnMaxTries
         -- Locate empty square
         repeat
             tries = tries + 1
@@ -146,7 +144,7 @@ function game:reset()
         game = self,
     })
 
-    if self.tweak.minimapOnGame then
+    if TWEAK.minimapOnGame then
         self.minimap = Map:new(self, {
             game = self,
             position = Vector(120, 120),
