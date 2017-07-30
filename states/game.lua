@@ -1,11 +1,13 @@
 local Scene = require 'entities.scene'
 local Dynamo = require 'entities.scenes.dynamo'
 local Sprite = require 'entities.sprite'
-local Enemy = require 'entities.enemy'
-local Turret = require 'entities.turret'
 local MouseAction = require 'entities.mouse_action'
 local Map = require 'entities.ui.map'
 local SoundManager = require 'entities.sound_manager'
+
+local Enemy = require 'entities.enemy'
+local Turret = require 'entities.turret'
+local PowerGrid = require 'entities.powergrid'
 
 local Bit = require 'bit'
 
@@ -19,8 +21,9 @@ function game:init()
         animation = require 'catalogs.animation',
     }
 
-    self:loadAlienAnimations()
-    self:loadTurretAnimations()
+    self:loadAnimations(Enemy, 'alien', 'data.alien_animations')
+    self:loadAnimations(Turret, 'turret', 'data.turret_animations')
+    self:loadAnimations(PowerGrid, 'powergrid', 'data.powergrid_animations')
 end
 
 function game:reset()
@@ -58,17 +61,22 @@ function game:reset()
     -- Turret entities indexed by x, y
     self.turrets = {}
 
+    -- Power grid entities indexed by x, y
+    self.powerGrids = {}
+
     for x = 1, self.shipBitmask:getWidth() do
         self.grid[x] = {}
         self.rooms[x] = {}
         self.enemies[x] = {}
         self.turrets[x] = {}
+        self.powerGrids[x] = {}
         for y = 1, self.shipBitmask:getHeight() do
             local r, g, b, a = self.shipBitmask:getPixel(x - 1, y - 1)
             self.grid[x][y] = 0
             self.rooms[x][y] = 0
             self.enemies[x][y] = nil
             self.turrets[x][y] = nil
+            self.powerGrids[x][y] = nil
             if not (r == 0 and g == 0 and b == 0 and a == 0) then
                 self.grid[x][y] = 1
                 self.rooms[x][y] = getColorHash(r, g, b)
@@ -79,6 +87,7 @@ function game:reset()
     end
 
     self.turrets[13][10] = Turret:new(self, 13, 10)
+    self.powerGrids[16][13] = PowerGrid:new(self, 16, 13)
 
     self.gridX = CANVAS_WIDTH/2
     self.gridY = CANVAS_HEIGHT/2
@@ -149,6 +158,11 @@ function game:reset()
                     local turret = game:getTurret(x, y)
                     if turret and roomIsVisible then
                         turret:draw()
+                    end
+
+                    local powerGrid = game:getPowerGrid(x, y)
+                    if powerGrid and roomIsVisible then
+                        powerGrid:draw()
                     end
                 end
             end
@@ -373,19 +387,19 @@ function game:draw()
     end]]
 end
 
-function game:loadAlienAnimations()
+function game:loadAnimations(class, category, dataFile)
     -- Load animations for alien enemies
-    local animationData = require 'data.alien_animations'
-    Enemy.static.images = {}
-    Enemy.static.animations = {}
-    Enemy.static.animationOffsets = {}
+    local animationData = require(dataFile)
+    class.static.images = {}
+    class.static.animations = {}
+    class.static.animationOffsets = {}
 
-    for animationName, file in pairs(self.catalogs.animation.alien) do
+    for animationName, file in pairs(self.catalogs.animation[category]) do
         local data = animationData[animationName]
 
         if data ~= nil then
             local img = love.graphics.newImage(file)
-            Enemy.static.images[animationName] = img
+            class.static.images[animationName] = img
             if not data.frameWidth then
                 error('No frame width found for animation name: "' .. animationName .. '"')
             end
@@ -407,56 +421,11 @@ function game:loadAlienAnimations()
             end
 
             local anim = Anim8.newAnimation(grid(unpack(data.frames)), data.durations)
-            Enemy.static.animations[animationName] = anim
+            class.static.animations[animationName] = anim
             if not data.offsets then
                 error('No animation offsets found for animation name: "' .. animationName .. '"')
             end
-            Enemy.static.animationOffsets[animationName] = data.offsets
-        else
-            error('No animation data found for animation name: "' .. animationName .. '"')
-        end
-    end
-end
-
-function game:loadTurretAnimations()
-    -- Load animations for alien enemies
-    local animationData = require 'data.turret_animations'
-    Turret.static.images = {}
-    Turret.static.animations = {}
-    Turret.static.animationOffsets = {}
-
-    for animationName, file in pairs(self.catalogs.animation.turret) do
-        local data = animationData[animationName]
-
-        if data ~= nil then
-            local img = love.graphics.newImage(file)
-            Turret.static.images[animationName] = img
-            if not data.frameWidth then
-                error('No frame width found for animation name: "' .. animationName .. '"')
-            end
-            if not data.frameHeight then
-                error('No frame height found for animation name: "' .. animationName .. '"')
-            end
-
-            local grid = Anim8.newGrid(data.frameWidth, data.frameHeight, img:getWidth(), img:getHeight(), data.left, data.top, data.border)
-
-            if not data.frames then
-                error('No animation frames found for animation name: "' .. animationName .. '"')
-            elseif #data.frames == 0 then
-                error('Empty animation frames for animation name: "' .. animationName .. '"')
-            end
-            if not data.durations then
-                error('No animation durations found for animation name: "' .. animationName .. '"')
-            elseif type(data.durations) == "table" and #data.durations == 0 then
-                error('Empty animation durations for animation name: "' .. animationName .. '"')
-            end
-
-            local anim = Anim8.newAnimation(grid(unpack(data.frames)), data.durations)
-            Turret.static.animations[animationName] = anim
-            if not data.offsets then
-                error('No animation offsets found for animation name: "' .. animationName .. '"')
-            end
-            Turret.static.animationOffsets[animationName] = data.offsets
+            class.static.animationOffsets[animationName] = data.offsets
         else
             error('No animation data found for animation name: "' .. animationName .. '"')
         end
@@ -541,6 +510,14 @@ end
 
 function game:getTurret(x, y)
     return self:hasTurret(x, y) and self.turrets[x][y] or nil
+end
+
+function game:hasPowerGrid(x, y)
+    return self:isShipTile(x, y) and self.powerGrids[x] and self.powerGrids[x][y] ~= nil
+end
+
+function game:getPowerGrid(x, y)
+    return self:hasPowerGrid(x, y) and self.powerGrids[x][y] or nil
 end
 
 return game
