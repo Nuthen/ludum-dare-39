@@ -29,7 +29,7 @@ function MouseAction:mousepressed(mx, my)
         local leftX,  leftY  = self.hoverX - 1, self.hoverY
         local rightX, rightY = self.hoverX + 1, self.hoverY
 
-        if enemy.stage == enemy.stages.EVOLVED then
+        if enemy.stage == enemy.stages.LARGE then
             if game:isShipTile(upX, upY) then
                 game:addEnemy(upX, upY)
             end

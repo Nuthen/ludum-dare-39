@@ -110,6 +110,7 @@ Signal  = require 'libs.signal'
 Inspect = require 'libs.inspect'
 Camera  = require 'libs.camera'
 Timer   = require 'libs.timer'
+Anim8   = require 'libs.anim8'
 
 States = {
     splash   = require 'states.splash',

@@ -12,10 +12,13 @@ local game = {}
 
 function game:init()
     self.catalogs = {
-        art   = require 'catalogs.art',
-        sound = require 'catalogs.sound',
-        music = require 'catalogs.music',
+        art       = require 'catalogs.art',
+        sound     = require 'catalogs.sound',
+        music     = require 'catalogs.music',
+        animation = require 'catalogs.animation',
     }
+
+    self:loadAlienAnimations()
 end
 
 function game:reset()
@@ -112,7 +115,7 @@ function game:reset()
                     local sprite = game.emptyTile
 
                     if x == game.mouseAction.hoverX and y == game.mouseAction.hoverY then
-                        love.graphics.setColor(255, 0, 0)
+                        love.graphics.setColor(400, 400, 400)
                     else
                         love.graphics.setColor(255, 255, 255)
                     end
@@ -166,6 +169,17 @@ end
 
 function game:update(dt)
     self.timer:update(dt)
+
+    -- Update all enemies
+    for x = 1, self.gridWidth do
+        for y = 1, self.gridHeight do
+            local enemy = self:getEnemy(x, y)
+            if enemy then
+                enemy:update(dt)
+            end
+        end
+    end
+
     self.scene:update(dt)
     self.dynamo:update(dt)
     self.soundManager:update(dt)
@@ -251,6 +265,51 @@ function game:draw()
 
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.canvas, x, y, 0, scale)
+end
+
+function game:loadAlienAnimations()
+    -- Load animations for alien enemies
+    local animationData = require 'data.alien_animations'
+    Enemy.static.images = {}
+    Enemy.static.animations = {}
+    Enemy.static.animationOffsets = {}
+
+    for animationName, file in pairs(self.catalogs.animation) do
+        local data = animationData[animationName]
+
+        if data ~= nil then
+            local img = love.graphics.newImage(file)
+            Enemy.static.images[animationName] = img
+            if not data.frameWidth then
+                error('No frame width found for animation name: "' .. animationName .. '"')
+            end
+            if not data.frameHeight then
+                error('No frame height found for animation name: "' .. animationName .. '"')
+            end
+
+            local grid = Anim8.newGrid(data.frameWidth, data.frameHeight, img:getWidth(), img:getHeight(), data.left, data.top, data.border)
+
+            if not data.frames then
+                error('No animation frames found for animation name: "' .. animationName .. '"')
+            elseif #data.frames == 0 then
+                error('Empty animation frames for animation name: "' .. animationName .. '"')
+            end
+            if not data.durations then
+                error('No animation durations found for animation name: "' .. animationName .. '"')
+            elseif type(data.durations) == "table" and #data.durations == 0 then
+                error('Empty animation durations for animation name: "' .. animationName .. '"')
+            end
+
+            local anim = Anim8.newAnimation(grid(unpack(data.frames)), data.durations)
+            Enemy.static.animations[animationName] = anim
+            if not data.offsets then
+                error('No animation offsets found for animation name: "' .. animationName .. '"')
+            end
+            Enemy.static.animationOffsets[animationName] = data.offsets
+        else
+            error('No animation data found for animation name: "' .. animationName .. '"')
+        end
+    end
 end
 
 function game:getScale()
