@@ -4,5 +4,6 @@ return {
     -- How many times to try spawning an enemy before giving up (prevents crash)
     enemySpawnMaxTries = 25,
 
-    drawMinimapOnGame = true,
+    minimapOnGame = true,
+    minimapOnDynamo = false,
 }

@@ -98,10 +98,12 @@ function Dynamo:initialize(parent, props)
 
     table.insert(self.entities, meter)
 
-    table.insert(self.entities, Map:new(self, {
-        game = self.parent,
-        position = Vector(120, 120),
-    }))
+    if self.parent.tweak.minimapOnDynamo then
+        table.insert(self.entities, Map:new(self, {
+            game = self.parent,
+            position = Vector(120, 120),
+        }))
+    end
 
     self.fidgets = {
         button1 = firstButton,

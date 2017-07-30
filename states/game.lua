@@ -137,10 +137,12 @@ function game:reset()
         game = self,
     })
 
-    self.minimap = Map:new(self, {
-        game = self,
-        position = Vector(120, 120),
-    })
+    if self.tweak.minimapOnGame then
+        self.minimap = Map:new(self, {
+            game = self,
+            position = Vector(120, 120),
+        })
+    end
 
     self.power = 1 -- [0, 1]
 
@@ -201,11 +203,15 @@ end
 function game:mousereleased(x, y, mbutton)
     self.scene:mousereleased(x, y, mbutton)
     self.dynamo:mousereleased(x, y, mbutton)
+
+    if self.minimap then self.minimap:mousereleased(x, y, mbutton) end
 end
 
 function game:mousemoved(x, y, dx, dy, istouch)
     self.scene:mousemoved(x, y, dx, dy, istouch)
     self.dynamo:mousemoved(x, y, dx, dy, istouch)
+
+    if self.minimap then self.minimap:mousemoved(x, y, dx, dy, istouch) end
 end
 
 function game:wheelmoved(x, y)
@@ -215,9 +221,7 @@ end
 
 function game:draw()
     self.scene:draw()
-    if self.tweak.drawMinimapOnGame then
-        self.minimap:draw()
-    end
+    if self.minimap then self.minimap:draw() end
     self.dynamo:draw()
 end
 
