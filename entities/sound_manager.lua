@@ -14,10 +14,22 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     self.defaultMusicVolume = SETTINGS.musicVolume
 
     for name, music in pairs(musicCatalog) do
-        local source = love.audio.newSource(sound)
+        local source = love.audio.newSource(music)
         source:setVolume(self.defaultMusicVolume)
         self.music[name] = source
     end
+
+    Signal.register('gameStart', function()
+        local sound = self.sounds.background_engine_hum
+        sound:setVolume(sound:getVolume() * 0.25)
+        sound:setLooping(true)
+        sound:play()
+
+        local music = self.music.buzzy
+        music:setVolume(music:getVolume() * 0.3)
+        music:setLooping(true)
+        music:play()
+    end)
 
     Signal.register('enemyDeath', function()
         self:play('enemy_death', 0.66, 1, 0.1, 1, 4)
@@ -66,6 +78,7 @@ function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart,
     end
     source:setVolume(volume * source:getVolume())
     source:play()
+    return source
 end
 
 return SoundManager
