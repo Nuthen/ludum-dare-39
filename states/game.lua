@@ -3,6 +3,7 @@ local Dynamo = require 'entities.scenes.dynamo'
 local Sprite = require 'entities.sprite'
 local Enemy = require 'entities.enemy'
 local MouseAction = require 'entities.mouse_action'
+local Map = require 'entities.ui.map'
 
 local Bit = require 'bit'
 
@@ -136,6 +137,11 @@ function game:reset()
         game = self,
     })
 
+    self.minimap = Map:new(self, {
+        game = self,
+        position = Vector(120, 120),
+    })
+
     self.power = 1 -- [0, 1]
 
     self.totalRooms = 9
@@ -209,6 +215,9 @@ end
 
 function game:draw()
     self.scene:draw()
+    if self.tweak.drawMinimapOnGame then
+        self.minimap:draw()
+    end
     self.dynamo:draw()
 end
 
