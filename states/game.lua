@@ -137,9 +137,10 @@ function game:reset()
                 end
             end
 
-            -- Grid bounding box
-            love.graphics.rectangle('line',  gx, gy, gw, gh)
-            love.graphics.pop()
+            if TWEAK.drawGridBoundingBox then
+                love.graphics.rectangle('line', gx, gy, gw, gh)
+                love.graphics.pop()
+            end
         end,
     }
     self.dynamo = Dynamo:new(self, {
@@ -159,6 +160,25 @@ function game:reset()
     self.totalPoweredRooms = 0
 
     self.currentRoom = -1
+
+    local gx, gy, gw, gh = game:getGridBoundingBox()
+    self.camera = Camera(0, 0)
+    --self.camera.smoother = Camera.smooth.linear(1)
+    self.camera.smoother = Camera.smooth.damped(5)
+    self.cameraGoal = Vector(0, 0)
+
+    Signal.register("Enter Room", function()
+        local roomX, roomY, roomWidth, roomHeight = self:getActiveRoomBoundingBox()
+        if roomX then
+            -- camera centered on room
+            local gx, gy, gw, gh = game:getGridBoundingBox()
+            local translatedX = gx - game.gridX + gw/2
+            local translatedY = gy - game.gridY + gh/2
+
+            self.cameraGoal.x = -translatedX + roomX + roomWidth/2
+            self.cameraGoal.y = -translatedY + roomY + roomHeight/2
+        end
+    end)
 
     Signal.emit('gameStart')
 end
@@ -183,6 +203,7 @@ function game:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
     self.soundManager:update(dt)
+    self.camera:lockPosition(self.cameraGoal:unpack())
 
     if self.totalPoweredRooms == self.totalRooms then
         State.switch(States.victory)
@@ -248,24 +269,92 @@ function game:wheelmoved(x, y)
     self.dynamo:wheelmoved(x, y)
 end
 
+function game:getActiveRoomBoundingBox()
+    if self.currentRoom == -1 then
+        return nil, nil, nil, nil
+    end
+
+    local activeMinX, activeMinY, activeMaxX, activeMaxY = math.huge, math.huge, -math.huge, -math.huge
+    local maxXLog, maxYLog
+
+    for ix = 1, #self.grid do
+        for iy = 1, #self.grid[ix] do
+            local cellNumber = self.grid[ix][iy]
+            local roomType = self.rooms[ix][iy]
+
+            local screenX, screenY = self:gridToScreen(ix-1, iy-1)
+            -- move screenX and screenY to the center of the tile face
+            screenX = screenX + self.emptyTile:getWidth()/2
+            screenY = screenY + self.emptyTile:getHeight()*3/2
+
+            if roomType == self.currentRoom then
+                if screenX < activeMinX then activeMinX = screenX end
+                if screenY < activeMinY then activeMinY = screenY end
+                if screenX > activeMaxX then activeMaxX = screenX end
+                if screenY > activeMaxY then activeMaxY = screenY end
+            end
+        end
+    end
+
+    local width, height = activeMaxX - activeMinX, activeMaxY - activeMinY
+
+    return activeMinX, activeMinY, width, height
+end
+
 function game:draw()
     love.graphics.setBackgroundColor(TWEAK.backgroundColor)
     local scale = self:getScale()
     local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
     local x, y = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
 
+    local roomX, roomY, roomWidth, roomHeight = self:getActiveRoomBoundingBox()
+
     self.canvas:renderTo(function()
         love.graphics.clear(love.graphics.getBackgroundColor())
+
+        local gx, gy, gw, gh = game:getGridBoundingBox()
+        local translatedX = gx - game.gridX + gw/2
+        local translatedY = gy - game.gridY + gh/2
+
+        love.graphics.push()
+        self.camera:attach(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+        if TWEAK.drawRoomBoundingBox and roomX then
+            love.graphics.setColor(255, 0, 0)
+            love.graphics.circle('line', -translatedX + roomX + roomWidth/2, -translatedY + roomY + roomHeight/2, 10)
+            love.graphics.rectangle('line', -translatedX + roomX, -translatedY + roomY, roomWidth, roomHeight)
+        end
         self.scene:draw()
+
+
+        self.camera:detach()
+        love.graphics.pop()
+
+        -- translate screen to grid
+        --local mx, my = love.mouse.getPosition()
+        --mx, my = game:screenToCanvas(mx, my)
+        --mx, my = game.camera:worldCoords(mx, my)
+        --mx, my = mx + (self.camera.x-CANVAS_WIDTH/2), my + (self.camera.y-CANVAS_HEIGHT/2)
+        --mx, my = mx + CANVAS_WIDTH/2, my + CANVAS_HEIGHT/2
+        --love.graphics.circle('fill', mx, my, 5)
+
+
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
 
-        love.graphics.setColor(127, 127, 127)
-        love.graphics.rectangle('line', 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+        if TWEAK.drawCanvasBoundingBox then
+            love.graphics.setColor(127, 127, 127)
+            love.graphics.rectangle('line', 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+        end
     end)
 
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.canvas, x, y, 0, scale)
+
+    --[[love.graphics.print('CAMERA: ('..self.camera.x-CANVAS_WIDTH..', '..self.camera.y-CANVAS_HEIGHT..')', 100, 5)
+
+    if roomX then
+        love.graphics.print(roomX..' '..roomY..' '..roomWidth..' '..roomHeight, 200, 20)
+    end]]
 end
 
 function game:loadAlienAnimations()

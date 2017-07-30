@@ -74,6 +74,7 @@ function Map:mousereleased(x, y, mbutton)
         if roomType ~= 0 then
             self.hoveredRoom = roomType
             self.game.currentRoom = roomType
+            Signal.emit("Enter Room")
         end
     end
 end

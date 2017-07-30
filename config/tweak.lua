@@ -10,4 +10,8 @@ return {
     powerDropMultiplier = 0.05,
 
     backgroundColor = {32, 35, 46},
+
+    drawRoomBoundingBox = false,
+    drawCanvasBoundingBox = true,
+    drawGridBoundingBox = true,
 }
