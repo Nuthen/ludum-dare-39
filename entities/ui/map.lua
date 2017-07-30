@@ -114,6 +114,9 @@ function Map:draw()
             if roomType == self.hoveredRoom then
                 love.graphics.setColor(102, 43, 170)
             end
+            if self.game:hasEnemy(ix, iy) then
+                love.graphics.setColor(42, 214, 54)
+            end
             local screenX, screenY = x + (ix-1) * self.tileWidth, y + (iy-1) * self.tileHeight
             if cellNumber == 1 then
                 love.graphics.rectangle('fill', screenX, screenY, self.tileWidth, self.tileHeight)
