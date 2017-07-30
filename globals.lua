@@ -68,6 +68,9 @@ CONFIG = {
 
 SETTINGS = require 'config.settings'
 
+CANVAS_WIDTH = 640
+CANVAS_HEIGHT = 360
+
 local function makeFont(path)
     return setmetatable({}, {
         __index = function(t, size)

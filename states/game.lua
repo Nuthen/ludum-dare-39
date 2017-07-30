@@ -21,7 +21,7 @@ function game:init()
 end
 
 function game:reset()
-    self.canvas = love.graphics.newCanvas(SETTINGS.CANVAS_WIDTH, SETTINGS.CANVAS_HEIGHT)
+    self.canvas = love.graphics.newCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
     Signal.clear()
 
@@ -70,8 +70,8 @@ function game:reset()
         end
     end
 
-    self.gridX = SETTINGS.CANVAS_WIDTH/2
-    self.gridY = SETTINGS.CANVAS_HEIGHT/2
+    self.gridX = CANVAS_WIDTH/2
+    self.gridY = CANVAS_HEIGHT/2
     self.gridWidth = #self.grid[1] -- tiles
     self.gridHeight = #self.grid -- tiles
     self.tileWidth = self.emptyTile:getWidth() -- pixels
@@ -239,7 +239,7 @@ end
 
 function game:draw()
     local scale = self:getScale()
-    local drawnWidth, drawnHeight = SETTINGS.CANVAS_WIDTH*scale, SETTINGS.CANVAS_HEIGHT*scale
+    local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
     local x, y = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
 
     self.canvas:renderTo(function()
@@ -249,7 +249,7 @@ function game:draw()
         self.dynamo:draw()
 
         love.graphics.setColor(127, 127, 127)
-        love.graphics.rectangle('line', 0, 0, SETTINGS.CANVAS_WIDTH, SETTINGS.CANVAS_HEIGHT)
+        love.graphics.rectangle('line', 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
     end)
 
     love.graphics.setColor(255, 255, 255)
@@ -257,13 +257,13 @@ function game:draw()
 end
 
 function game:getScale()
-    return math.min(math.floor(love.graphics.getWidth() /SETTINGS.CANVAS_WIDTH),
-                           math.floor(love.graphics.getHeight()/SETTINGS.CANVAS_HEIGHT))
+    return math.min(math.floor(love.graphics.getWidth() /CANVAS_WIDTH),
+                           math.floor(love.graphics.getHeight()/CANVAS_HEIGHT))
 end
 
 function game:screenToCanvas(x, y)
     local scale = self:getScale()
-    local drawnWidth, drawnHeight = SETTINGS.CANVAS_WIDTH*scale, SETTINGS.CANVAS_HEIGHT*scale
+    local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
     local displacementX, displacementY = math.floor(love.graphics.getWidth()/2 - drawnWidth/2), math.floor(love.graphics.getHeight()/2 - drawnHeight/2)
 
     return (x - displacementX) / scale, (y - displacementY) / scale
