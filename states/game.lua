@@ -184,9 +184,9 @@ function game:reset()
         })
     end
 
-    self.power = 1 -- [0, 1]
+    self.power = TWEAK.power
 
-    self.totalRooms = 9
+    self.totalRooms = TWEAK.totalRooms
     self.totalPoweredRooms = 0
 
     self.currentRoom = -1
@@ -235,7 +235,7 @@ function game:update(dt)
     self.soundManager:update(dt)
     self.camera:lockPosition(self.cameraGoal:unpack())
 
-    if self.totalPoweredRooms == self.totalRooms then
+    if self.totalPoweredRooms >= self.totalRooms then
         State.switch(States.victory)
     end
 

@@ -31,8 +31,10 @@ end
 
 function MouseAction:mousepressed(mx, my)
     local game = self.game
+
+    -- Clicking on enemy
     if game:hasEnemy(self.hoverX, self.hoverY) then
-        local enemy = game.enemies[self.hoverX][self.hoverY]
+        local enemy = game:getEnemy(self.hoverX, self.hoverY)
         local upX,    upY    = self.hoverX,     self.hoverY + 1
         local downX,  downY  = self.hoverX,     self.hoverY - 1
         local leftX,  leftY  = self.hoverX - 1, self.hoverY
@@ -59,6 +61,18 @@ function MouseAction:mousepressed(mx, my)
         game.enemies[self.hoverX][self.hoverY] = nil
 
         Signal.emit('enemyDeath')
+
+    elseif game:hasPowerGrid(self.hoverX, self.hoverY) then
+        local powerGrid = game:getPowerGrid(self.hoverX, self.hoverY)
+
+        powerGrid:activate()
+
+        Signal.emit('powerGridActivate')
+
+    elseif game:hasTurret(self.hoverX, self.hoverY) then
+        local turret = game:getTurret(self.hoverX, self.hoverY)
+
+        -- @TODO
     end
 end
 

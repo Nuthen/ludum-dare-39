@@ -8,6 +8,16 @@ function PowerGrid:initialize(game, x, y)
     self.animationName = 'idle'
     self.image = PowerGrid.images.idle
     self.animation = PowerGrid.animations.idle:clone()
+
+    self.activated = false
+end
+
+function PowerGrid:activate()
+    local game = self.game
+    if not self.activated then
+        game.totalPoweredRooms = game.totalPoweredRooms + 10
+        self.activated = true
+    end
 end
 
 function PowerGrid:update(dt)
