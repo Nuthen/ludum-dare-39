@@ -16,7 +16,7 @@ function MouseAction:update(dt)
     mx = -translatedX - mx
     my = -translatedY - my
     mx = mx + game.tileWidth / 2
-    my = my + game.tileHeight
+    my = my + game.tileHeight * (3/2)
     self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
 end
 

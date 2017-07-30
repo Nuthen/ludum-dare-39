@@ -74,7 +74,6 @@ function game:reset()
     self.gridHeight = #self.grid -- tiles
     self.tileWidth = self.emptyTile:getWidth() -- pixels
     self.tileHeight = self.emptyTile:getHeight() -- pixels
-    self.tileDepth = self.tileHeight / 2
 
     self.mouseAction = self.scene:add(MouseAction:new(self))
 
@@ -268,14 +267,14 @@ function game:screenToCanvas(x, y)
 end
 
 function game:screenToGrid(sx, sy)
-    local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileDepth / 2))) / 2 + 1
-    local gy = ((sy / (self.tileDepth / 2)) - (sx / (self.tileWidth / 2))) / 2 + 1
+    local gx = ((sx / (self.tileWidth / 2)) + (sy / (self.tileHeight / 2))) / 2 + 1
+    local gy = ((sy / (self.tileHeight / 2)) - (sx / (self.tileWidth / 2))) / 2 + 1
     return Lume.round(gx), Lume.round(gy)
 end
 
 function game:gridToScreen(gx, gy)
     local x = (gx - gy) * game.tileWidth / 2
-    local y = (gx + gy) * game.tileDepth / 2
+    local y = (gx + gy) * game.tileHeight / 2
     return x, y
 end
 
@@ -283,7 +282,7 @@ function game:getGridBoundingBox()
     local xFudge = 0
     local yFudge = 4
     local w = self.gridWidth  * self.tileWidth + xFudge
-    local h = self.gridHeight * self.tileDepth + yFudge
+    local h = self.gridHeight * self.tileHeight + yFudge
     local x = -w/2 + self.tileWidth/2 - xFudge * 2
     local y = self.tileHeight         - yFudge * 2
     return x, y, w, h
