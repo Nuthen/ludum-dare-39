@@ -21,12 +21,12 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
 
     Signal.register('gameStart', function()
         local sound = self.sounds.background_engine_hum
-        sound:setVolume(sound:getVolume() * 0.25)
+        sound:setVolume(sound:getVolume() * 0.3)
         sound:setLooping(true)
         sound:play()
 
         local music = self.music.buzzy
-        music:setVolume(music:getVolume() * 0.3)
+        music:setVolume(music:getVolume() * 0.5)
         music:setLooping(true)
         music:play()
     end)
