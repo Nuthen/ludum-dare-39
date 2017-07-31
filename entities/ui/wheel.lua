@@ -42,6 +42,9 @@ function Wheel:activate()
     else
         error("Unexpected var for randDir: " .. randDir)
     end
+
+    self.startAngle = self.angle
+    self.rotationAccumulator = 0
 end
 
 function Wheel:getPressed(x, y)
