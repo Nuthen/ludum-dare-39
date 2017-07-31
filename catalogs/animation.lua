@@ -6,6 +6,7 @@ return {
     },
     turret = {
         idle = 'assets/images/Turret.png',
+        fire = 'assets/images/Turret.png',
     },
     powergrid = {
         offline = 'assets/images/PowerGrid.png',

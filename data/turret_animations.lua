@@ -1,15 +1,28 @@
 return {
     idle = {
-        frameWidth = 48,
-        frameHeight = 48,
+        frameWidth = 96,
+        frameHeight = 96,
 
         frames = {1, 1},
 
         durations = 1,
 
         offsets = {
-            x = 0,
-            y = -16,
+            x = -24,
+            y = 12,
         }
-    }
+    },
+    fire = {
+        frameWidth = 96,
+        frameHeight = 96,
+
+        frames = {'1-5', 1},
+
+        durations = 0.08,
+
+        offsets = {
+            x = -24,
+            y = 12,
+        }
+    },
 }

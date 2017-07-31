@@ -6,10 +6,10 @@ function Turret:initialize(game, x, y, roomHash)
     self.y = y
     self.screenX = 0
     self.screenY = 0
-    self.hitboxX = 0
-    self.hitboxY = 0
-    self.hitboxWidth = 32
-    self.hitboxHeight = 32
+    self.hitboxX = 24
+    self.hitboxY = 24
+    self.hitboxWidth = 36
+    self.hitboxHeight = 36
 
     self.animationName = 'idle'
     self.image = Turret.images.idle
@@ -23,6 +23,12 @@ function Turret:initialize(game, x, y, roomHash)
     self.reloadTime = TWEAK.turretReloadTime
 
     self.timer = Timer.new()
+end
+
+function Turret:switchAnimation(name)
+    self.animationName = name
+    self.image = Turret.images[name]
+    self.animation = Turret.animations[name]:clone()
 end
 
 function Turret:activate()
@@ -61,6 +67,10 @@ function Turret:update(dt)
             game.mouseAction:clickEnemy(target.x, target.y)
 
             self.canShoot = false
+            self:switchAnimation('fire')
+            self.animation.onLoop = function()
+                self:switchAnimation('idle')
+            end
             self.timer:after(self.reloadTime, function()
                 self.canShoot = true
             end)
