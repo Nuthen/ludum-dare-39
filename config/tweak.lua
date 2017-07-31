@@ -23,5 +23,5 @@ return {
 
     printClickPosition = false,
 
-    drawObjectHitboxes = false,
+    drawObjectHitboxes = true,
 }

@@ -266,8 +266,6 @@ function game:reset()
                 end
             end
 
-            love.graphics.circle('fill', game.mouseAction.canvasX, game.mouseAction.canvasY, 5)
-
             if TWEAK.drawGridBoundingBox then
                 love.graphics.rectangle('line', gx, gy, gw, gh)
             end

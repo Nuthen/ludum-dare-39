@@ -62,7 +62,7 @@ function MouseAction:mousepressed(mx, my)
         for y = 1, game.gridHeight do
             local powerGrid = game:getPowerGrid(x, y)
             if powerGrid then
-                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, 32, 32)
+                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, powerGrid.hitboxWidth, powerGrid.hitboxHeight)
                 if isHovered then
                     if powerGrid.roomHash == game.currentRoom then
                         powerGrid:activate()
@@ -72,7 +72,7 @@ function MouseAction:mousepressed(mx, my)
 
             local turret = game:getTurret(x, y)
             if turret then
-                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, 32, 32)
+                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, turret.hitboxWidth, turret.hitboxHeight)
                 if isHovered then
                     if turret.roomHash == game.currentRoom then
                         -- @TODO
