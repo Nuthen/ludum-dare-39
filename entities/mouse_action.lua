@@ -24,14 +24,8 @@ end
 function MouseAction:mousepressed(mx, my)
     local game = self.game
 
-    if game.currentRoom ~= game:getRoom(self.hoverX, self.hoverY)
-        and not game:hasPowerGrid(self.hoverX, self.hoverY)
-        and not game:hasTurret(self.hoverX, self.hoverY) then
-        return
-    end
-
     -- Clicking on enemy
-    if game:hasEnemy(self.hoverX, self.hoverY) then
+    if game:hasEnemy(self.hoverX, self.hoverY) and game.currentRoom == game:getRoom(self.hoverX, self.hoverY) then
         local enemy = game:getEnemy(self.hoverX, self.hoverY)
         local upX,    upY    = self.hoverX,     self.hoverY + 1
         local downX,  downY  = self.hoverX,     self.hoverY - 1
