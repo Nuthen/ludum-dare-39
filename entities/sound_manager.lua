@@ -51,9 +51,10 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         elseif kind == "wheel" then
             self:play('widget_wheel', 1, 1, 0.1)
         elseif kind == "flick" then
-            self:play('widget_flick_spring', 1, 1.1)
-            self:play('widget_flick_spring', 1, 1.1)
-            self:playDelayed(0.05, 'widget_flick_spring_pop')
+            self:play('widget_flick_spring', 1, 0.8)
+            self:play('widget_flick_spring', 1, 1)
+            self:play('widget_flick_spring', 1, 1)
+            -- self:playDelayed(0.05, 'widget_flick_spring_pop')
         end
         self:play('powergrid_zap', 0.66, 1, 0.05, 1, 4)
     end)
