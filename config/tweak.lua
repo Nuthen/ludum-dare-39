@@ -14,6 +14,8 @@ return {
     powerDropIncreaseForPowerGridActivate = 0.005,
     powerDropIncreaseForTurretActivate = 0.0025,
 
+    turretReloadTime = 1.5,
+
     backgroundColor = {32, 35, 46},
 
     drawRoomBoundingBox = false,

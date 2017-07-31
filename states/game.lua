@@ -152,11 +152,7 @@ function game:reset()
     local function placeTurret(x, y, rx, ry)
         local roomType = self.rooms[rx][ry]
         local turret = Turret:new(self, x, y, roomType)
-        -- This actually works
         self.turrets[x][y] = turret
-        self.turrets[x-1][y] = turret
-        self.turrets[x][y-1] = turret
-        self.turrets[x-1][y-1] = turret
     end
 
     placeTurret(12, 13, 13, 10)

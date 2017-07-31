@@ -18,6 +18,11 @@ function Turret:initialize(game, x, y, roomHash)
     self.roomHash = roomHash or 0
 
     self.activated = false
+
+    self.canShoot = true
+    self.reloadTime = TWEAK.turretReloadTime
+
+    self.timer = Timer.new()
 end
 
 function Turret:activate()
@@ -28,8 +33,39 @@ function Turret:activate()
 end
 
 function Turret:update(dt)
+    local game = self.game
     self.alreadyDrawn = false
     self.animation:update(dt)
+
+    self.timer:update(dt)
+
+    if self.activated then
+        local biggestEvolution = 0
+        local targetCandidates = {}
+        local tiles = game:getRoomTiles(self.roomHash)
+        for i, tile in ipairs(tiles) do
+            local enemy = game:getEnemy(tile.x, tile.y)
+            if enemy then
+                if enemy.stage > biggestEvolution then
+                    targetCandidates = {enemy}
+                    biggestEvolution = enemy.stage
+                else
+                    table.insert(targetCandidates, enemy)
+                end
+            end
+        end
+
+        local target = Lume.randomchoice(targetCandidates)
+        if target and self.canShoot then
+            -- @Hack
+            game.mouseAction:clickEnemy(target.x, target.y)
+
+            self.canShoot = false
+            self.timer:after(self.reloadTime, function()
+                self.canShoot = true
+            end)
+        end
+    end
 end
 
 function Turret:draw()

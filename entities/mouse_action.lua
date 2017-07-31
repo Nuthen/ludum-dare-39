@@ -24,44 +24,52 @@ function MouseAction:mousemoved(mx, my, dx, dy, istouch)
     self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
 end
 
+-- @Cleanup This shouldn't be in here, send help
+function MouseAction:clickEnemy(x, y)
+    local game = self.game
+    local enemy = game:getEnemy(x, y)
+    local upX,    upY    = x,     y + 1
+    local downX,  downY  = x,     y - 1
+    local leftX,  leftY  = x - 1, y
+    local rightX, rightY = x + 1, y
+
+    local isDead = enemy:hurt()
+
+    if isDead then
+        if enemy.stage == enemy.stages.LARGE then
+            if game:isShipTile(upX, upY) then
+                game:addEnemy(upX, upY)
+            end
+
+            if game:isShipTile(downX, downY) then
+                game:addEnemy(downX, downY)
+            end
+
+            if game:isShipTile(leftX, leftY) then
+                game:addEnemy(leftX, leftY)
+            end
+
+            if game:isShipTile(rightX, rightY) then
+                game:addEnemy(rightX, rightY)
+            end
+        end
+
+        game.enemies[x][y] = nil
+
+        local ex, ey = game:gridToScreen(x, y)
+        local cx, cy = game.camera:cameraCoords(ex, ey)
+        Signal.emit('enemyDeath', enemy.stage, Vector(cx, cy))
+    else
+        Signal.emit("Enemy Hurt")
+    end
+end
+
 function MouseAction:mousepressed(mx, my)
     local game = self.game
 
     -- Clicking on enemy
     if game:hasEnemy(self.hoverX, self.hoverY) and game.currentRoom == game:getRoom(self.hoverX, self.hoverY) then
-        local enemy = game:getEnemy(self.hoverX, self.hoverY)
-        local upX,    upY    = self.hoverX,     self.hoverY + 1
-        local downX,  downY  = self.hoverX,     self.hoverY - 1
-        local leftX,  leftY  = self.hoverX - 1, self.hoverY
-        local rightX, rightY = self.hoverX + 1, self.hoverY
-
-        local isDead = enemy:hurt()
-
-        if isDead then
-            if enemy.stage == enemy.stages.LARGE then
-                if game:isShipTile(upX, upY) then
-                    game:addEnemy(upX, upY)
-                end
-
-                if game:isShipTile(downX, downY) then
-                    game:addEnemy(downX, downY)
-                end
-
-                if game:isShipTile(leftX, leftY) then
-                    game:addEnemy(leftX, leftY)
-                end
-
-                if game:isShipTile(rightX, rightY) then
-                    game:addEnemy(rightX, rightY)
-                end
-            end
-
-            game.enemies[self.hoverX][self.hoverY] = nil
-            Signal.emit('enemyDeath', enemy.stage, Vector(mx, my))
-        else
-            Signal.emit("Enemy Hurt")
-        end
-        
+        self:clickEnemy(self.hoverX, self.hoverY)
     end
 
     for x = 1, game.gridWidth do
