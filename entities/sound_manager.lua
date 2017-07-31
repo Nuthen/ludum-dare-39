@@ -61,6 +61,24 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
     end)
 
+    Signal.register('powerGridPowered', function()
+        self:play('powergrid_powered', 0.8)
+    end)
+
+    Signal.register('turretActivate', function()
+        self:play('powergrid_activate', 0.5)
+        self:play('powergrid_activate_layer', 0.75)
+        self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
+
+    Signal.register('turretCharge', function()
+        self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
+
+    Signal.register('turretPowered', function()
+        self:play('turret_powered', 0.8)
+    end)
+
     self.lowPowerSound = self:getSound('low_power_siren', 0.66)
     self.lowPowerSound:setLooping(true)
     Signal.register('Low Power Warning Toggle On', function()
