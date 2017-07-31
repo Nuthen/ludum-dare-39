@@ -1,6 +1,8 @@
 local SoundManager = Class('SoundManager')
 
 function SoundManager:initialize(soundCatalog, musicCatalog)
+    love.audio.stop()
+
     self.sounds = {}
     self.defaultSoundVolume = SETTINGS.soundVolume * 0.5
 
@@ -11,6 +13,7 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     end
 
     self.music = {}
+    self.currentMusic = nil
     self.defaultMusicVolume = SETTINGS.musicVolume
 
     for name, music in pairs(musicCatalog) do
@@ -20,15 +23,8 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     end
 
     Signal.register('gameStart', function()
-        local sound = self.sounds.background_engine_hum
-        sound:setVolume(sound:getVolume() * 0.3)
-        sound:setLooping(true)
-        sound:play()
-
-        local music = self.music.buzzy
-        music:setVolume(music:getVolume() * 0.5)
-        music:setLooping(true)
-        music:play()
+        self:playLooping('background_engine_hum', 0.4)
+        self:playMusic('buzzy', 0.6)
     end)
 
     Signal.register('enemyDeath', function()
@@ -38,15 +34,35 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
 
     self.maxSoundsPlaying = SETTINGS.maxSoundsPlaying
     self.soundsPlaying = {}
+
+    self.timer = Timer.new()
 end
 
 function SoundManager:update(dt)
     for i=#self.soundsPlaying, 1, -1 do
-        local source = self.soundsPlaying[i]
-        if not source:isPlaying() then
+        local sound = self.soundsPlaying[i]
+        if not sound.source:isPlaying() then
             table.remove(self.soundsPlaying, i)
         end
     end
+
+    self.timer:update(dt)
+end
+
+function SoundManager:playMusic(name, volume, looping)
+    if self.currentMusic then
+        self.currentMusic:stop()
+    end
+
+    if looping == nil then
+        looping = true
+    end
+
+    local music = self.music[name]
+    self.currentMusic = music
+    music:setVolume(music:getVolume() * volume)
+    music:setLooping(looping)
+    music:play()
 end
 
 function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
@@ -63,10 +79,13 @@ function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart,
     if pitchVariation == nil then
         pitchVariation = 0
     end
-    table.insert(self.soundsPlaying, source)
+    table.insert(self.soundsPlaying, {
+        name = name,
+        source = source,
+    })
     if #self.soundsPlaying > self.maxSoundsPlaying then
-        local source = table.remove(self.soundsPlaying, 1)
-        source:stop()
+        local sound = table.remove(self.soundsPlaying, 1)
+        sound.source:stop()
     end
     if pitchVariation > 0 then
         local min = (pitch * 100) - pitchVariation * 100
@@ -78,6 +97,12 @@ function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart,
     end
     source:setVolume(volume * source:getVolume())
     source:play()
+    return source
+end
+
+function SoundManager:playLooping(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    local source = self:play(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    source:setLooping(true)
     return source
 end
 
