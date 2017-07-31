@@ -26,8 +26,7 @@ return {
 
     printClickPosition = false,
 
-    drawObjectHitboxes = true,
-    printClickPosition = false,
+    drawObjectHitboxes = false,
 
     -- keep these to ints
     enemyStage1MinEvolveTime = 5,

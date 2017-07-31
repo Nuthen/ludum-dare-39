@@ -8,6 +8,7 @@ return {
         idle = 'assets/images/Turret.png',
     },
     powergrid = {
-        idle = 'assets/images/PowerGrid.png',
+        offline = 'assets/images/PowerGrid.png',
+        online = 'assets/images/PowerGrid_online.png',
     }
 }

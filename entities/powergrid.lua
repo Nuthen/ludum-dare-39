@@ -11,9 +11,9 @@ function PowerGrid:initialize(game, x, y, roomHash)
     self.hitboxWidth = 64
     self.hitboxHeight = 48
 
-    self.animationName = 'idle'
-    self.image = PowerGrid.images.idle
-    self.animation = PowerGrid.animations.idle:clone()
+    self.animationName = 'offline'
+    self.image = PowerGrid.images.offline
+    self.animation = PowerGrid.animations.offline:clone()
 
     self.glowImage = love.graphics.newImage('assets/images/Glow.png')
 
@@ -28,6 +28,11 @@ function PowerGrid:activate()
     if not self.activated then
         game.totalPoweredRooms = game.totalPoweredRooms + 1
         self.activated = true
+
+        self.animationName = 'online'
+        self.image = PowerGrid.images.online
+        self.animation = PowerGrid.animations.online:clone()
+
         Signal.emit('powerGridActivate')
     end
 end
