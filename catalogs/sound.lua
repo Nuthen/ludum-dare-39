@@ -1,4 +1,5 @@
 return {
+    turret_shoot             = 'assets/sounds/turrets/sci-fi_weapon_rifle_bolt_shot_01.wav',
     enemy_death1             = 'assets/sounds/enemies/bone_break_neck_snap_crack_01.wav',
     enemy_death2             = 'assets/sounds/enemies/bone_break_neck_snap_crack_02.wav',
     enemy_death3             = 'assets/sounds/enemies/bone_break_neck_snap_crack_03.wav',
