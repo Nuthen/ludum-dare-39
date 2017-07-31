@@ -36,6 +36,22 @@ function MouseAction:clickEnemy(x, y)
     local isDead = enemy:hurt()
     local roomType = game.rooms[x][y]
 
+    -- do transformations from room bounding box function
+    -- then subtract camera position, and add half canvas size
+    local screenX, screenY = game:gridToScreen(x-1, y-1)
+    -- move screenX and screenY to the center of the tile face
+    screenX = screenX + game.emptyTile:getWidth()/2
+    screenY = screenY + game.emptyTile:getHeight()*3/2
+
+    --local ex, ey = game:gridToScreen(x, y)
+    --local cx, cy = game.camera:cameraCoords(ex, ey)
+    screenX = screenX - game.camera.x + CANVAS_WIDTH/2
+    screenY = screenY - game.camera.y + CANVAS_HEIGHT/2
+
+    -- fudge
+    screenX = screenX + CANVAS_WIDTH/2 - 15
+    screenY = screenY - 65
+
     if isDead then
         if enemy.stage == enemy.stages.LARGE then
             if game:isShipTile(upX, upY) then
@@ -57,25 +73,9 @@ function MouseAction:clickEnemy(x, y)
 
         game.enemies[x][y] = nil
 
-        -- do transformations from room bounding box function
-        -- then subtract camera position, and add half canvas size
-        local screenX, screenY = game:gridToScreen(x-1, y-1)
-        -- move screenX and screenY to the center of the tile face
-        screenX = screenX + game.emptyTile:getWidth()/2
-        screenY = screenY + game.emptyTile:getHeight()*3/2
-
-        --local ex, ey = game:gridToScreen(x, y)
-        --local cx, cy = game.camera:cameraCoords(ex, ey)
-        screenX = screenX - game.camera.x + CANVAS_WIDTH/2
-        screenY = screenY - game.camera.y + CANVAS_HEIGHT/2
-
-        -- fudge
-        screenX = screenX + CANVAS_WIDTH/2 - 15
-        screenY = screenY - 65
-
         Signal.emit('enemyDeath', roomType == game.currentRoom, enemy.stage, Vector(screenX, screenY))
     else
-        Signal.emit("Enemy Hurt", roomType == game.currentRoom)
+        Signal.emit("Enemy Hurt", roomType == game.currentRoom, enemy.stage, Vector(screenX, screenY))
     end
 end
 

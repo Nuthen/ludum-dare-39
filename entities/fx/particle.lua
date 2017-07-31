@@ -34,12 +34,6 @@ function ParticleSystem:initialize()
     self.systems.sparks:setRelativeRotation(true)
 
     self.systems.gibs = self.systems.default:clone()
-    self.systems.gibs:setColors(
-        255, 255, 255, 255,
-        255, 255, 0, 255,
-        255, 215, 0, 255,
-        255, 127, 0, 255
-    )
     self.systems.gibs:setTexture(self.gibImage)
     self.systems.gibs:setSizes(2, 1, 0.5, 0.25)
     self.systems.gibs:setSizeVariation(1)
@@ -92,12 +86,26 @@ function ParticleSystem:initialize()
         s:setEmitterLifetime(.1)
     end)
 
+    Signal.register('Enemy Hurt', function(isCurrentRoom, stage, position)
+        if isCurrentRoom then
+            local s = createSystem("gibs")
+            s:setSizes(1, 0.5, 0.25)
+            s:setSpeed(50, 150)
+            s:setPosition(position:unpack())
+            s:start()
+            s:emit(10)
+            s:setEmitterLifetime(.1)
+        end
+    end)
+
     Signal.register('enemyDeath', function(isCurrentRoom, stage, position)
         if isCurrentRoom then
             local s = createSystem("gibs")
+            s:setSizes(2, 1, 0.5, 0.25)
+            s:setSpeed(100, 300)
             s:setPosition(position:unpack())
             s:start()
-            s:emit(20)
+            s:emit(20 * stage)
             s:setEmitterLifetime(.1)
         end
     end)
@@ -119,11 +127,13 @@ function ParticleSystem:draw()
     love.graphics.setColor(255, 255, 255)
 
     for _, system in ipairs(self.usedSystems) do
+        love.graphics.setColor(255, 255, 255)
         love.graphics.draw(system)
     end
 
     for _, kind in pairs(self.pool) do
         for _, system in ipairs(kind) do
+            love.graphics.setColor(255, 255, 255)
             love.graphics.draw(system)
         end
     end
