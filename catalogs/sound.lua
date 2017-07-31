@@ -1,8 +1,5 @@
 return {
     turret_shoot             = 'assets/sounds/turrets/sci-fi_weapon_rifle_bolt_shot_01.wav',
-    turret_loop              = 'assets/sounds/turrets/sci-fi_weapon_auto_turret_loop.wav',
-    turret_release1          = 'assets/sounds/turrets/sci-fi_weapon_auto_turret_release_01.wav',
-    turret_release2          = 'assets/sounds/turrets/sci-fi_weapon_auto_turret_release_02.wav',
     enemy_death1             = 'assets/sounds/enemies/bone_break_neck_snap_crack_01.wav',
     enemy_death2             = 'assets/sounds/enemies/bone_break_neck_snap_crack_02.wav',
     enemy_death3             = 'assets/sounds/enemies/bone_break_neck_snap_crack_03.wav',
