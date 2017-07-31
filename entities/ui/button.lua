@@ -41,7 +41,7 @@ function Button:keypressed(key, code)
 
         if self.activated then
             self.activated = false
-            self.onClicked()
+            self.onClicked(self.position)
         else
             Signal.emit("Dynamo Incorrect", "button")
         end
@@ -70,7 +70,7 @@ function Button:mousepressed(x, y, mbutton)
         if self.isPressed then
             if self.activated then
                 self.activated = false
-                self.onClicked()
+                self.onClicked(self.position)
             else
                 Signal.emit("Dynamo Incorrect", "button")
             end

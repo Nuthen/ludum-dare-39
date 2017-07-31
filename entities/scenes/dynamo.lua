@@ -28,8 +28,8 @@ function Dynamo:initialize(parent, props)
             pressColor = {80, 164, 242},
             locked = false,
             keybinds = SETTINGS.dynamoKeybinds.firstButton,
-            onClicked = function()
-                self:addPower(.1, "button")
+            onClicked = function(position)
+                self:addPower(.1, "button", position)
             end,
         })
     table.insert(self.entities, firstButton)
@@ -40,8 +40,8 @@ function Dynamo:initialize(parent, props)
             pressColor = {222, 81, 144},
             keybinds = SETTINGS.dynamoKeybinds.secondButton,
             locked = false,
-            onClicked = function()
-                self:addPower(.1, "button")
+            onClicked = function(position)
+                self:addPower(.1, "button", position)
             end,
         })
     table.insert(self.entities, secondButton)
@@ -51,8 +51,8 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             keybinds = SETTINGS.dynamoKeybinds.thirdButton,
-            onClicked = function()
-                self:addPower(.1, "button")
+            onClicked = function(position)
+                self:addPower(.1, "button", position)
             end,
         })
     table.insert(self.entities, thirdButton)
@@ -61,8 +61,8 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*2/5, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            onClicked = function(dirRot) -- "cw", "ccw"
-                self:addPower(.1, "wheel")
+            onClicked = function(position, dirRot) -- "cw", "ccw"
+                self:addPower(.1, "wheel", position)
             end,
         })
     table.insert(self.entities, wheel)
@@ -71,8 +71,8 @@ function Dynamo:initialize(parent, props)
             position = Vector(self.width*3/4, self.height*1/4),
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
-            onClicked = function(dir) -- "up", "down", "left", "right"
-                self:addPower(.1, "flick")
+            onClicked = function(position, dir) -- "up", "down", "left", "right"
+                self:addPower(.1, "flick", position)
             end,
         })
     table.insert(self.entities, flick)
@@ -114,12 +114,13 @@ function Dynamo:initialize(parent, props)
     self.tweenMoveTime = .25
 end
 
-function Dynamo:addPower(amount, source)
+function Dynamo:addPower(amount, sourceType, position)
     self.game.power = math.max(0, math.min(1, self.game.power + amount))
 
     if amount > 0 then
         self:activateFidget()
-        Signal.emit("Dynamo Correct", source)
+        position = position + self.position
+        Signal.emit("Dynamo Correct", sourceType, position)
     end
 end
 

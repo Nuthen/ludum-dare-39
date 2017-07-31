@@ -146,7 +146,7 @@ function Flick:solvePosition()
         if self.activated then
             if dir == self.activeDirection then
                 self.activated = false
-                self.onClicked(dir)
+                self.onClicked(self.position, dir)
             else
                 Signal.emit("Dynamo Incorrect", "flick")
             end

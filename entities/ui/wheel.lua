@@ -98,7 +98,7 @@ function Wheel:solveAngle(deltaAngle)
         if self.activated then
             if self.activeRotDirection == "cw" then
                 self.activated = false
-                self.onClicked("cw")
+                self.onClicked(self.position, "cw")
             else
                 Signal.emit("Dynamo Incorrect", "wheel")
             end
@@ -108,7 +108,7 @@ function Wheel:solveAngle(deltaAngle)
         if self.activated then
             if self.activeRotDirection == "ccw" then
                 self.activated = false
-                self.onClicked("ccw")
+                self.onClicked(self.position, "ccw")
             else
                 Signal.emit("Dynamo Incorrect", "wheel")
             end

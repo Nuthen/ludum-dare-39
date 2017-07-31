@@ -4,6 +4,7 @@ local Sprite = require 'entities.sprite'
 local MouseAction = require 'entities.mouse_action'
 local Map = require 'entities.ui.map'
 local SoundManager = require 'entities.sound_manager'
+local ParticleSystem = require 'entities.fx.particle'
 
 local Enemy = require 'entities.enemy'
 local Turret = require 'entities.turret'
@@ -226,6 +227,11 @@ function game:reset()
             end
         end,
     }
+
+    if not self.particleSystem then
+        self.particleSystem = ParticleSystem:new()
+    end
+
     self.dynamo = Dynamo:new(self, {
         game = self,
     })
@@ -309,6 +315,7 @@ end
 
 function game:update(dt)
     self.timer:update(dt)
+    self.particleSystem:update(dt)
 
     self.roundTime = self.roundTime + dt
 
@@ -469,6 +476,8 @@ function game:draw()
 
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
+
+        self.particleSystem:draw()
 
         if TWEAK.drawCanvasBoundingBox then
             love.graphics.setColor(127, 127, 127)
