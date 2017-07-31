@@ -154,7 +154,7 @@ function game:reset()
     -- x, y is the frontmost square from the camera's perspective
     --            |x, y     |room that it is "in"
     placePowerGrid(15, 9,   13, 10)
-    placePowerGrid(15, 2,   13, 3)
+    placePowerGrid(12, 4,  13, 3)
     placePowerGrid(16, 16,  13, 17)
     placePowerGrid(16, 22,  13, 24)
     placePowerGrid(7, 14,   8, 10)
@@ -168,7 +168,7 @@ function game:reset()
     end
 
     placeTurret(12, 13, 13, 10)
-    placeTurret(12, 6, 13, 3)
+    placeTurret(11, 8, 13, 3)
     placeTurret(13, 15, 13, 17)
     placeTurret(11, 28, 13, 24)
     placeTurret(6, 18, 8, 10)

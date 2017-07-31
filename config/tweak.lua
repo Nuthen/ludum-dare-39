@@ -31,7 +31,7 @@ return {
 
     drawRoomShadows = false,
 
-    drawTilePositions = false,
+    drawTilePositions = true,
 
     printClickPosition = false,
 
