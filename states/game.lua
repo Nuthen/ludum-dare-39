@@ -544,7 +544,9 @@ function game:draw()
         end
 
         local percentage = Lume.round((charge / maxCharge) * 100, 1)
-        love.graphics.print("SHIP CHARGE: " .. percentage..'%', 10, 10)
+        love.graphics.setFont(Fonts.pixelSmall[48])
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print("SHIP CHARGE: " .. percentage..'%', 5, -5)
 
         self.particleSystem:draw()
 
