@@ -4,7 +4,7 @@ function Flick:initialize(parent, props)
     self.parent = parent
     self.radius = 40
     self.inactiveColor = {255, 255, 255}
-    self.pressColor = {127, 127, 127}
+    self.pressColor = {400, 400, 400}
     self.position = Vector(0, 0)
     self.angle = 0
     self.locked = {up = true, down = true, right = true, left = true}
@@ -22,6 +22,12 @@ function Flick:initialize(parent, props)
     self.activeDirection = "up"
     self.rawActiveDir = 0
     self.handleSpeed = 200
+
+    self.position.y = self.position.y - 1
+
+    self.handleImage = love.graphics.newImage('assets/images/Dynamo/dynamo_smallbutton.png')
+    self.horizLight  = love.graphics.newImage('assets/images/Dynamo/dynamo_direction_horizontal.png')
+    self.vertLight   = love.graphics.newImage('assets/images/Dynamo/dynamo_direction_vertical.png')
 
     self.keybinds = {
         up    = SETTINGS.dynamoKeybinds.flick.up,
@@ -207,6 +213,7 @@ function Flick:draw()
            return
     end
 
+    --[[
     for i = 0, 3 do
         local key
         if     i == 0 then key = "right"
@@ -222,12 +229,39 @@ function Flick:draw()
             love.graphics.line(self.position.x, self.position.y, self.position.x + math.cos(i*math.rad(90))*self.radius, self.position.y + math.sin(i*math.rad(90))*self.radius)
         end
     end
+    ]]
+
+    -- upper light
+    if self.activated and self.activeDirection == "up" then
+        local x, y = self.position.x, self.position.y - self.radius/2
+        x, y = x - self.vertLight:getWidth()/2, y - self.vertLight:getHeight()/2
+        y = y + 1
+        love.graphics.draw(self.vertLight, math.floor(x), math.floor(y))
+    -- lower light
+    elseif self.activated and self.activeDirection == "down" then
+        local x, y = self.position.x, self.position.y + self.radius/2
+        x, y = x - self.vertLight:getWidth()/2, y - self.vertLight:getHeight()/2
+        y = y + 2
+        love.graphics.draw(self.vertLight, math.floor(x), math.floor(y))
+    -- left light
+    elseif self.activated and self.activeDirection == "left" then
+        local x, y = self.position.x - self.radius/2, self.position.y
+        x, y = x - self.horizLight:getWidth()/2, y - self.horizLight:getHeight()/2
+        love.graphics.draw(self.horizLight, math.floor(x), math.floor(y))
+    -- right light
+    elseif self.activated and self.activeDirection == "right" then
+        local x, y = self.position.x + self.radius/2, self.position.y
+        x, y = x - self.horizLight:getWidth()/2, y - self.horizLight:getHeight()/2
+        x = x + 1
+        love.graphics.draw(self.horizLight, math.floor(x), math.floor(y))
+    end
 
     love.graphics.setColor(self.inactiveColor)
     if self.isPressed then
         love.graphics.setColor(self.pressColor)
     end
-    love.graphics.circle('fill', self.position.x + math.cos(self.angle)*self.dist, self.position.y + math.sin(self.angle)*self.dist, 6)
+    local handleX, handleY = self.position.x + math.cos(self.angle)*self.dist, self.position.y + math.sin(self.angle)*self.dist
+    love.graphics.draw(self.handleImage, math.floor(handleX), math.floor(handleY), 0, 1, 1, self.handleImage:getWidth()/2, self.handleImage:getHeight()/2)
 end
 
 return Flick

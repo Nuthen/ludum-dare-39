@@ -4,9 +4,9 @@ function Button:initialize(parent, props)
     self.parent = parent
     self.radius = 20
     self.inactiveColor = {255, 255, 255}
-    self.pressColor = {127, 127, 127}
+    self.pressColor = {0, 0, 0}
     self.position = Vector(0, 0)
-
+    self.image = nil
     self.locked = true
     self.onClicked = function() end
     self.keybinds = {}
@@ -18,6 +18,7 @@ function Button:initialize(parent, props)
     self.isPressed = false
     self.activated = false
     self.mode = "mouse" -- "mouse" or "keyboard"
+    self.lightImage = love.graphics.newImage('assets/images/Dynamo/dynamo_light_horizontal.png')
 end
 
 function Button:activate()
@@ -97,14 +98,26 @@ end
 function Button:draw()
     if self.locked then return end
 
-    love.graphics.setColor(self.inactiveColor)
+    --love.graphics.setColor(self.inactiveColor)
+    --love.graphics.circle('fill', self.position.x, self.position.y, self.radius - 3)
+
+    local x, y = math.floor(self.position.x), math.floor(self.position.y)-1
+
+    love.graphics.setColor(255, 255, 255)
     if self.isPressed then
         love.graphics.setColor(self.pressColor)
     end
-    love.graphics.circle('fill', self.position.x, self.position.y, self.radius - 3)
+    love.graphics.draw(self.image, x, y, 0, 1, 1, self.image:getWidth()/2, self.image:getHeight()/2)
+
+    love.graphics.setColor(255, 255, 255)
     if self.activated then
-        love.graphics.setColor(self.pressColor)
-        love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+        --love.graphics.setColor(self.pressColor)
+        --love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+        x = x - self.lightImage:getWidth()/2
+        y = y - self.image:getHeight()/2
+        y = y - self.lightImage:getHeight()/2
+        y = y - 15
+        love.graphics.draw(self.lightImage, math.floor(x), math.floor(y))
     end
 end
 

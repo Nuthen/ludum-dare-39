@@ -548,8 +548,8 @@ function game:draw()
 
     self.eventManager:drawNative()
 
-    if TWEAK.printClickPosition and self.printClickPosition then
-        love.graphics.print("Mouse: ("..self.last.x..', '..self.last.y..')', 100, 5)
+    if TWEAK.printClickPosition and self.lastClickPosition then
+        love.graphics.print("Mouse: ("..self.lastClickPosition.x..', '..self.lastClickPosition.y..')', 100, 5)
     end
 end
 

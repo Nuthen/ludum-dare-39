@@ -4,7 +4,7 @@ function Wheel:initialize(parent, props)
     self.parent = parent
     self.radius = 40
     self.inactiveColor = {255, 255, 255}
-    self.pressColor = {127, 127, 127}
+    self.pressColor = {400, 400, 400}
     self.position = Vector(0, 0)
     self.angle = 0
     self.locked = {cw = true, ccw = true}
@@ -25,6 +25,11 @@ function Wheel:initialize(parent, props)
 
     self.beingMoved = false
     self.lastBeingMoved = false
+
+    self.position.y = self.position.y - 1
+
+    self.handleImage = love.graphics.newImage('assets/images/Dynamo/dynamo_smallbutton.png')
+    self.arrowImage  = love.graphics.newImage('assets/images/Dynamo/dynamo_arrow_right.png')
 end
 
 function Wheel:activate()
@@ -175,26 +180,31 @@ function Wheel:draw()
 
     local angle1Raw, angle2Raw = self.startAngle, self.startAngle + self.rotationAccumulator
     local angle1, angle2 = math.min(angle1Raw, angle2Raw), math.max(angle1Raw, angle2Raw)
-    love.graphics.arc('line', self.position.x, self.position.y, self.radius + 5, angle1, angle2)
+    --love.graphics.arc('line', self.position.x, self.position.y, self.radius + 5, angle1, angle2)
 
-    love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+    --love.graphics.circle('line', self.position.x, self.position.y, self.radius)
+    local radius = self.radius - 2
+    local handleX, handleY = self.position.x + math.cos(self.angle)*radius, self.position.y + math.sin(self.angle)*radius
+    love.graphics.draw(self.handleImage, math.floor(handleX), math.floor(handleY), 0, 1, 1, self.handleImage:getWidth()/2, self.handleImage:getHeight()/2)
+    --love.graphics.circle('fill', handleX, handleY , 6)
 
-    love.graphics.setColor(self.inactiveColor)
-    if self.isPressed then
-        love.graphics.setColor(self.pressColor)
-    end
-    local handleX, handleY = self.position.x + math.cos(self.angle)*self.radius, self.position.y + math.sin(self.angle)*self.radius
-
-    love.graphics.circle('fill', handleX, handleY , 6)
-
+    love.graphics.setColor(255, 255, 255)
     if self.activated then
         local deltaRad
         if self.activeRotDirection == "cw" then
+            local x, y = self.position.x, self.position.y
+            x = x + 19
+            y = y - 1
+            love.graphics.draw(self.arrowImage, math.floor(x), math.floor(y), 0, -1, -1)
             deltaRad = math.pi/4
         elseif self.activeRotDirection == "ccw" then
+            local x, y = self.position.x, self.position.y
+            x = x - 17
+            y = y + 4
+            love.graphics.draw(self.arrowImage, math.floor(x), math.floor(y))
             deltaRad = -math.pi/4
         end
-        love.graphics.line(handleX, handleY, handleX + math.cos(self.angle+deltaRad)*20, handleY + math.sin(self.angle+deltaRad)*20)
+    --    love.graphics.line(handleX, handleY, handleX + math.cos(self.angle+deltaRad)*20, handleY + math.sin(self.angle+deltaRad)*20)
     end
 
 

@@ -20,6 +20,8 @@ function Dynamo:initialize(parent, props)
 
     self.bgColor = {100, 100, 100, 255}
 
+    self.bgImage = love.graphics.newImage('assets/images/Dynamo/dynamo_bg.png')
+
     Scene.initialize(self, props)
 
     local firstButton = Button:new(self, {
@@ -28,6 +30,7 @@ function Dynamo:initialize(parent, props)
             pressColor = {80, 164, 242},
             locked = false,
             keybinds = SETTINGS.dynamoKeybinds.firstButton,
+            image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_green.png'),
             onClicked = function(position)
                 self:addPower(.1, "button", position)
             end,
@@ -40,6 +43,7 @@ function Dynamo:initialize(parent, props)
             pressColor = {222, 81, 144},
             keybinds = SETTINGS.dynamoKeybinds.secondButton,
             locked = false,
+            image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_pink.png'),
             onClicked = function(position)
                 self:addPower(.1, "button", position)
             end,
@@ -51,6 +55,7 @@ function Dynamo:initialize(parent, props)
             inactiveColor = {147, 162, 77},
             pressColor = {255, 202, 66},
             keybinds = SETTINGS.dynamoKeybinds.thirdButton,
+            image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_blue.png'),
             onClicked = function(position)
                 self:addPower(.1, "button", position)
             end,
@@ -59,8 +64,8 @@ function Dynamo:initialize(parent, props)
 
     local wheel = Wheel:new(self, {
             position = Vector(self.width*2/5, self.height*1/4),
-            inactiveColor = {147, 162, 77},
-            pressColor = {255, 202, 66},
+            --inactiveColor = {147, 162, 77},
+            --pressColor = {255, 202, 66},
             onClicked = function(position, dirRot) -- "cw", "ccw"
                 self:addPower(.1, "wheel", position)
             end,
@@ -69,8 +74,8 @@ function Dynamo:initialize(parent, props)
 
     local flick = Flick:new(self, {
             position = Vector(self.width*3/4, self.height*1/4),
-            inactiveColor = {147, 162, 77},
-            pressColor = {255, 202, 66},
+            --inactiveColor = {147, 162, 77},
+            --pressColor = {255, 202, 66},
             onClicked = function(position, dir) -- "up", "down", "left", "right"
                 self:addPower(.1, "flick", position)
             end,
@@ -275,9 +280,14 @@ function Dynamo:draw()
     --if not self.active then return end
 
     love.graphics.push()
+    love.graphics.translate(0, math.floor(self.position.y-30))
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(self.bgImage, 0, 0)
+    love.graphics.pop()
+    love.graphics.push()
     love.graphics.translate(self.position:unpack())
-    love.graphics.setColor(self.bgColor)
-    love.graphics.rectangle('fill', 0, 0, self.width, self.height)
+    --love.graphics.setColor(self.bgColor)
+    --love.graphics.rectangle('fill', 0, 0, self.width, self.height)
     Scene.draw(self)
     love.graphics.pop()
 end
