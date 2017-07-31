@@ -95,6 +95,9 @@ Fonts = {
     thinItalic      = makeFont 'assets/fonts/Roboto-Italic.ttf',
 
     monospace       = makeFont 'assets/fonts/RobotoMono-Regular.ttf',
+
+    pixel           = makeFont 'assets/fonts/m5x7.ttf',
+    pixelSmall      = makeFont 'assets/fonts/m3x6.ttf',
 }
 Fonts.default = Fonts.regular
 
