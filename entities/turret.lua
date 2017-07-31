@@ -1,6 +1,6 @@
 local Turret = Class('Turret')
 
-function Turret:initialize(game, x, y, roomHash)
+function Turret:initialize(game, x, y, roomHash, offset, flip)
     self.game = game
     self.x = x
     self.y = y
@@ -10,6 +10,8 @@ function Turret:initialize(game, x, y, roomHash)
     self.hitboxY = 24
     self.hitboxWidth = 36
     self.hitboxHeight = 36
+    self.offset = offset or Vector(0, 0)
+    self.flip = flip or false
 
     self.animationName = 'idle'
     self.image = Turret.images.idle
@@ -86,9 +88,19 @@ function Turret:draw()
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
+        x = x + self.offset.x
+        y = y + self.offset.y
+
         self.screenX = x
         self.screenY = y
-        self.animation:draw(self.image, x, y)
+        if self.flip then
+            love.graphics.push()
+            love.graphics.scale(-1, 1)
+            self.animation:draw(self.image, x, y)
+            love.graphics.pop()
+        else
+            self.animation:draw(self.image, x, y)
+        end
         self.alreadyDrawn = true
     end
 end

@@ -156,26 +156,26 @@ function game:reset()
     -- x, y is the frontmost square from the camera's perspective
     --            |x, y     |room that it is "in"
     placePowerGrid(15, 9,   13, 10)
-    placePowerGrid(12, 4,  13, 3)
+    placePowerGrid(12, 4,   13, 3)
     placePowerGrid(16, 16,  13, 17)
     placePowerGrid(16, 22,  13, 24)
-    placePowerGrid(7, 14,   8, 10)
+    placePowerGrid(7,  14,  8, 10)
     placePowerGrid(20, 10,  21, 10)
     placePowerGrid(24, 16,  21, 17)
 
-    local function placeTurret(x, y, rx, ry)
+    local function placeTurret(x, y, rx, ry, offset, flip)
         local roomType = self.rooms[rx][ry]
-        local turret = Turret:new(self, x, y, roomType)
+        local turret = Turret:new(self, x, y, roomType, offset, flip)
         self.turrets[x][y] = turret
     end
 
-    placeTurret(12, 13, 13, 10)
-    placeTurret(11, 8, 13, 3)
-    placeTurret(13, 15, 13, 17)
-    placeTurret(11, 28, 13, 24)
-    placeTurret(6, 18, 8, 10)
-    placeTurret(19, 15, 21, 10)
-    placeTurret(20, 15, 21, 17)
+    placeTurret(12, 13, 13, 10, Vector(-2, -7))
+    placeTurret(11, 8, 13, 3, Vector(-1, 1))
+    placeTurret(13, 15, 13, 17, Vector(31, 1), true)
+    placeTurret(11, 28, 13, 24, Vector(-1, 9))
+    placeTurret(6, 18, 8, 10, Vector(-1, 1))
+    placeTurret(19, 15, 21, 10, Vector(-1, 9))
+    placeTurret(20, 15, 21, 17, Vector(-193, 1), true)
 
     self.gridX = CANVAS_WIDTH/2
     self.gridY = CANVAS_HEIGHT/2
@@ -524,7 +524,7 @@ function game:draw()
             local bg = self.backgroundImages[self.currentRoom]
             love.graphics.setColor(255, 255, 255)
 
-            if not powerGrid.activated then
+            if powerGrid and not powerGrid.activated then
                 love.graphics.setColor(50, 50, 50)
             end
 
@@ -565,7 +565,7 @@ function game:spawnEnemy()
             local roomType = self:getRoom(ix, iy)
             local cellValue = self.grid[ix][iy]
             local powerGrid = self.powerGridRooms[roomType]
-            if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid.activated then
+            if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid and powerGrid.activated then
                 table.insert(possibleTiles, {x=ix, y=iy})
             end
         end
