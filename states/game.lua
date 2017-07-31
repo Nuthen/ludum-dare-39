@@ -107,7 +107,6 @@ function game:reset()
     local function placePowerGrid(x, y, rx, ry)
         local roomType = self.rooms[rx][ry]
         local grid = PowerGrid:new(self, x, y, roomType)
-        self.powerGridRooms[roomType] = grid
         -- This actually works
         self.powerGrids[x][y] = grid
         self.powerGrids[x-1][y] = grid
@@ -120,7 +119,6 @@ function game:reset()
         self.powerGrids[x-1][y-2] = grid
     end
 
-
     -- x, y is the frontmost square from the camera's perspective
     --            |x, y     |room that it is "in"
     placePowerGrid(15, 9,   13, 10)
@@ -130,6 +128,24 @@ function game:reset()
     placePowerGrid(7, 14,   8, 10)
     placePowerGrid(20, 10,  21, 10)
     placePowerGrid(24, 16,  21, 17)
+
+    local function placeTurret(x, y, rx, ry)
+        local roomType = self.rooms[rx][ry]
+        local turret = Turret:new(self, x, y, roomType)
+        -- This actually works
+        self.turrets[x][y] = turret
+        self.turrets[x-1][y] = turret
+        self.turrets[x][y-1] = turret
+        self.turrets[x-1][y-1] = turret
+    end
+
+    placeTurret(12, 13, 13, 10)
+    placeTurret(12, 6, 13, 3)
+    placeTurret(13, 15, 13, 17)
+    placeTurret(11, 28, 13, 24)
+    placeTurret(6, 18, 8, 10)
+    placeTurret(19, 15, 21, 10)
+    placeTurret(20, 15, 21, 17)
 
     self.gridX = CANVAS_WIDTH/2
     self.gridY = CANVAS_HEIGHT/2
@@ -194,7 +210,12 @@ function game:reset()
                     end
 
                     local turret = game:getTurret(x, y)
-                    if turret and roomIsVisible then
+                    if turret and turret.roomHash == game.currentRoom then
+                        if game:hasTurret(game.mouseAction.hoverX, game.mouseAction.hoverY) then
+                            love.graphics.setColor(400, 400, 400)
+                        else
+                            love.graphics.setColor(255, 255, 255)
+                        end
                         turret:draw()
                     end
 
@@ -602,7 +623,7 @@ function game:addEnemy(x, y)
 end
 
 function game:hasTurret(x, y)
-    return self:isShipTile(x, y) and self.turrets[x] and self.turrets[x][y] ~= nil
+    return self.turrets[x] and self.turrets[x][y] ~= nil
 end
 
 function game:getTurret(x, y)
