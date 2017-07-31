@@ -57,6 +57,10 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         self:playDelayed(0.33, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
     end)
 
+    Signal.register('powerGridCharge', function()
+        self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
+
     self.lowPowerSound = self:getSound('low_power_siren', 0.66)
     self.lowPowerSound:setLooping(true)
     Signal.register('Low Power Warning Toggle On', function()
