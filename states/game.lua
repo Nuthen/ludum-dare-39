@@ -51,7 +51,9 @@ function game:reset()
 
     self.scene = Scene:new()
 
-    self.soundManager = SoundManager:new(self.catalogs.sound, self.catalogs.music)
+    if not self.soundManager then
+        self.soundManager = SoundManager:new(self.catalogs.sound, self.catalogs.music)
+    end
 
     self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
     self.shipBitmask = love.image.newImageData(self.catalogs.art.ship_bitmask)
