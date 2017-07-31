@@ -5,6 +5,7 @@ local MouseAction = require 'entities.mouse_action'
 local Map = require 'entities.ui.map'
 local SoundManager = require 'entities.sound_manager'
 local ParticleSystem = require 'entities.fx.particle'
+local EventScene = require 'entities.event'
 
 local Enemy = require 'entities.enemy'
 local Turret = require 'entities.turret'
@@ -57,6 +58,12 @@ function game:reset()
 
     if not self.soundManager then
         self.soundManager = SoundManager:new(self.catalogs.sound, self.catalogs.music)
+    end
+
+    if not self.eventManager then
+        self.eventManager = EventScene:new()
+    else
+        self.eventManager:reset()
     end
 
     self.emptyTile = love.graphics.newImage(self.catalogs.art.empty)
@@ -330,7 +337,7 @@ function game:reset()
     self.totalRooms = TWEAK.totalRooms
     self.totalPoweredRooms = 0
 
-    self.currentRoom = -1
+    self.currentRoom = getColorHash(25, 187, 34)
 
     local gx, gy, gw, gh = game:getGridBoundingBox()
     self.camera = Camera(0, 0)
@@ -342,6 +349,7 @@ function game:reset()
     self.enemyKills = 0
 
     Signal.emit('gameStart')
+    Signal.emit("Enter Room")
 end
 
 function game:enter()
@@ -377,6 +385,7 @@ function game:update(dt)
     self.scene:update(dt)
     self.dynamo:update(dt)
     self.soundManager:update(dt)
+    self.eventManager:update()
     self.camera:lockPosition(self.cameraGoal:unpack())
 
     if self.totalPoweredRooms >= self.totalRooms then
@@ -406,6 +415,7 @@ end
 function game:keypressed(key, code)
     self.scene:keypressed(key, code)
     self.dynamo:keypressed(key, code)
+    self.eventManager:keypressed(key, code)
 end
 
 function game:keyreleased(key, code)
@@ -414,6 +424,8 @@ function game:keyreleased(key, code)
 end
 
 function game:mousepressed(x, y, mbutton)
+    self.eventManager:mousepressed(x, y, mbutton)
+
     x, y = self:screenToCanvas(x, y)
     self.scene:mousepressed(x, y, mbutton)
     self.dynamo:mousepressed(x, y, mbutton)
@@ -440,9 +452,15 @@ function game:mousemoved(x, y, dx, dy, istouch)
 end
 
 function game:wheelmoved(x, y)
+    self.eventManager:wheelmoved(x, y)
+
     x, y = self:screenToCanvas(x, y)
     self.scene:wheelmoved(x, y)
     self.dynamo:wheelmoved(x, y)
+end
+
+function game:resize(w, h)
+    self.eventManager:resize(w, h)
 end
 
 function game:getActiveRoomBoundingBox()
@@ -529,6 +547,8 @@ function game:draw()
 
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.canvas, x, y, 0, scale)
+
+    self.eventManager:drawNative()
 
     if TWEAK.printClickPosition and self.printClickPosition then
         love.graphics.print("Mouse: ("..self.last.x..', '..self.last.y..')', 100, 5)
