@@ -46,11 +46,23 @@ function game:init()
 
     Signal.register("powerGridActivate", function()
         self.dynamo:powerGridActivated(self.totalPoweredRooms)
-        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.powerDropIncreaseForPowerGridActivate
+        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.power_drop_increase_for_power_grid_activate
+
+        self.timer:cancel(self.enemyTimer)
+        self.enemySpawnRate = self.enemySpawnRate + TWEAK.enemy_spawn_rate_increase_per_power_grid
+        self.enemyTimer = self.timer:every(self.enemySpawnRate, function()
+            self:spawnEnemy()
+        end)
     end)
 
     Signal.register("turretActivate", function()
-        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.powerDropIncreaseForTurretActivate
+        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.power_drop_increase_for_turret_activate
+
+        self.timer:cancel(self.enemyTimer)
+        self.enemySpawnRate = self.enemySpawnRate + TWEAK.enemy_spawn_rate_increase_per_turret
+        self.enemyTimer = self.timer:every(self.enemySpawnRate, function()
+            self:spawnEnemy()
+        end)
     end)
 end
 
@@ -174,27 +186,9 @@ function game:reset()
 
     -- Every so often add a new enemy
     self.timer = Timer.new()
-    self.timer:every(TWEAK.enemySpawnRate, function()
-        local possibleTiles = {}
-
-        for ix = 1, #self.grid do
-            for iy = 1, #self.grid[1] do
-                local roomType = self:getRoom(ix, iy)
-                local cellValue = self.grid[ix][iy]
-                local powerGrid = self.powerGridRooms[roomType]
-                if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid.activated then
-                    table.insert(possibleTiles, {x=ix, y=iy})
-                end
-            end
-        end
-
-        if #possibleTiles > 0 then
-            local randomTileIndex = love.math.random(1, #possibleTiles)
-            local chosenTile = possibleTiles[randomTileIndex]
-            self:addEnemy(chosenTile.x, chosenTile.y)
-        else
-            --error("No possible enemy location found.")
-        end
+    self.enemySpawnRate = TWEAK.enemySpawnRate
+    self.enemyTimer = self.timer:every(TWEAK.enemySpawnRate, function()
+        self:spawnEnemy()
     end)
 
     -- Grid drawing code
@@ -556,6 +550,29 @@ function game:draw()
 
     if TWEAK.printClickPosition and self.printClickPosition then
         love.graphics.print("Mouse: ("..self.last.x..', '..self.last.y..')', 100, 5)
+    end
+end
+
+function game:spawnEnemy()
+    local possibleTiles = {}
+
+    for ix = 1, #self.grid do
+        for iy = 1, #self.grid[1] do
+            local roomType = self:getRoom(ix, iy)
+            local cellValue = self.grid[ix][iy]
+            local powerGrid = self.powerGridRooms[roomType]
+            if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid.activated then
+                table.insert(possibleTiles, {x=ix, y=iy})
+            end
+        end
+    end
+
+    if #possibleTiles > 0 then
+        local randomTileIndex = love.math.random(1, #possibleTiles)
+        local chosenTile = possibleTiles[randomTileIndex]
+        self:addEnemy(chosenTile.x, chosenTile.y)
+    else
+        --error("No possible enemy location found.")
     end
 end
 

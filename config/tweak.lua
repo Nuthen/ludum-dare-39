@@ -1,5 +1,8 @@
+-- Using underscores in places where camelCase becomes cumbersome - cmchenry
 return {
     enemySpawnRate = 1, -- seconds
+    enemy_spawn_rate_increase_per_power_grid = 0.1, -- seconds
+    enemy_spawn_rate_increase_per_turret = 0.1, -- seconds
 
     power = 1,
     powerWarningThreshold = 0.3,
@@ -11,8 +14,8 @@ return {
 
     powerDropMultiplier = 0,
 
-    powerDropIncreaseForPowerGridActivate = 0.005,
-    powerDropIncreaseForTurretActivate = 0.0025,
+    power_drop_increase_for_power_grid_activate = 0.01,
+    power_drop_increase_for_turret_activate = 0.005,
 
     turretReloadTime = 1.5,
 
