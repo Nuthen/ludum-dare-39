@@ -108,6 +108,7 @@ function game:reset()
     local function placePowerGrid(x, y, rx, ry)
         local roomType = self.rooms[rx][ry]
         local grid = PowerGrid:new(self, x, y, roomType)
+        self.powerGridRooms[roomType] = grid
         -- This actually works
         self.powerGrids[x][y] = grid
         self.powerGrids[x-1][y] = grid
