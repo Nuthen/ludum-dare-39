@@ -11,6 +11,8 @@ return {
 
     powerDropMultiplier = 0.01,
 
+    powerDropIncreaseForPowerGridActivate = 0.005,
+
     backgroundColor = {32, 35, 46},
 
     drawRoomBoundingBox = false,
