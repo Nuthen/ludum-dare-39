@@ -90,11 +90,12 @@ function Turret:draw()
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
+        self.screenX = x
+        self.screenY = y
+
         x = x + self.offset.x
         y = y + self.offset.y
 
-        self.screenX = x
-        self.screenY = y
         if self.flip then
             love.graphics.push()
             love.graphics.scale(-1, 1)
