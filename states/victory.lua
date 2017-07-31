@@ -45,7 +45,7 @@ function victory:draw()
     -- SCORE
     local scoreText = ""
     if self.prevState.roundTime then
-        scoreText = scoreText .. string.format("Completed in %.3f seconds!\n", self.prevState.roundTime)
+        scoreText = scoreText .. string.format("Completed in %.3f space seconds!\n", self.prevState.roundTime)
     end
     if self.prevState.enemyKills then
         scoreText = scoreText .. string.format("You killed " .. self.prevState.enemyKills .. " space squids!\n")

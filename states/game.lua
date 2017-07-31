@@ -80,6 +80,7 @@ function game:reset()
 
     -- Power grid entities indexed by x, y
     self.powerGrids = {}
+    self.powerGridRooms = {}
 
     for x = 1, self.shipBitmask:getWidth() do
         self.grid[x] = {}
@@ -104,7 +105,9 @@ function game:reset()
     end
 
     local function placePowerGrid(x, y, rx, ry)
-        local grid = PowerGrid:new(self, x, y, self.rooms[rx][ry])
+        local roomType = self.rooms[rx][ry]
+        local grid = PowerGrid:new(self, x, y, roomType)
+        self.powerGridRooms[roomType] = grid
         -- This actually works
         self.powerGrids[x][y] = grid
         self.powerGrids[x-1][y] = grid

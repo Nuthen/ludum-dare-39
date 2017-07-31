@@ -6,6 +6,8 @@ function Map:initialize(parent, props)
     self.inactiveColor = {255, 255, 255}
     self.activeColor = {127, 127, 127}
     self.borderColor = {255, 255, 255}
+    self.unpoweredColor = {255, 0, 0}
+    self.poweredColor = {255, 255, 255}
     self.position = Vector(0, 0)
     self.width = 90
     self.height = 90
@@ -108,9 +110,14 @@ function Map:draw()
         for iy = 1, #self.game.grid[ix] do
             local cellNumber = self.game.grid[ix][iy]
             --love.graphics.setColor(255, 255, 255)
-            local r, g, b = unpack(self.pixelColors[ix][iy])
-            local a = 127
+            local r, g, b = unpack(self.unpoweredColor)
+            local a = 200
             local roomType = self.game.rooms[ix][iy]
+
+            local powerGrid = self.game.powerGridRooms[roomType]
+            if powerGrid and powerGrid.activated then
+                r, g, b = unpack(self.poweredColor)
+            end
 
             if roomType == self.hoveredRoom then
                 a = 255
@@ -141,13 +148,6 @@ function Map:draw()
 
         love.graphics.setColor(self.borderColor)
         love.graphics.rectangle('line', minScreenX-m, minScreenY-m, width+m*2, height+m*2)
-    end
-
-    if self.last then
-        love.graphics.setColor(255, 0, 0)
-        local ix, iy = self.last:unpack()
-        local screenX, screenY = x - self.mapWidth + (ix-1) * self.tileWidth, y - self.mapHeight + (iy-1) * self.tileHeight
-        love.graphics.circle('fill', screenX, screenY, 5)
     end
 end
 
