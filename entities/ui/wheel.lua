@@ -53,7 +53,8 @@ function Wheel:activate()
 end
 
 function Wheel:getPressed(x, y)
-    return Lume.distance(self.position.x, self.position.y, x, y) <= self.radius
+    -- some extra leeway
+    return Lume.distance(self.position.x, self.position.y, x, y) <= self.radius + 5
 end
 
 function Wheel:update(dt)
@@ -193,9 +194,10 @@ function Wheel:draw()
         local deltaRad
         if self.activeRotDirection == "cw" then
             local x, y = self.position.x, self.position.y
-            x = x + 19
+            --x = x + 19
+            x = x - self.arrowImage:getWidth()/2 + 1
             y = y - 1
-            love.graphics.draw(self.arrowImage, math.floor(x), math.floor(y), 0, -1, -1)
+            love.graphics.draw(self.arrowImage, math.floor(x), math.floor(y), 0, 1, -1)
             deltaRad = math.pi/4
         elseif self.activeRotDirection == "ccw" then
             local x, y = self.position.x, self.position.y
