@@ -6,20 +6,34 @@ local EventScene = Class("EventScene", Scene)
 function EventScene:initialize(parent)
     self.parent = parent
 
+    local continueText = "\n(Click here or press space to continue)"
+
     self.eventList = {
         prologue1 = function()
             self.eventBox:addEntry("Your fellow crew have all died. You are the last hope to get your derelict spaceship through dangerous territory.")
             local onClick = function()
                 self.active = false
             end
-            self.eventBox:addEntry("\n(Click or press space to continue)", nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+        end,
+
+        grid1 = function()
+            self.eventBox:addEntry("Congrats on powering your first grid!")
+            local onClick = function()
+                self.active = false
+            end
+            self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
     }
 
-    self:setPrologue()
-
     self.drawIndex = 100
-    self.active = true
+
+    Signal.register('powerGridActivate', function()
+        if self.firstPowerGrid then
+            self.firstPowerGrid = false
+            self:setEvent("grid1")
+        end
+    end)
 
     self:reset()
 end
@@ -31,6 +45,12 @@ function EventScene:reset()
     .. etc
 
     ]]
+
+    self.firstPowerGrid = true
+
+    self:setEvent("prologue1")
+
+    self.active = true
 end
 
 function EventScene:setPrologue()
@@ -42,9 +62,15 @@ function EventScene:setPrologue()
 end
 
 function EventScene:setEvent(label)
+    local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
+    local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
+
+    self.eventBox = TextBox:new(x, y, w, h, true)
+
     self.eventList[label]()
 
     self.eventBox:setToMaxScroll()
+    self.active = true
 end
 
 function EventScene:resize(screenWidth, screenHeight)

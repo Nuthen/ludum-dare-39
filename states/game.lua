@@ -348,35 +348,39 @@ function game:enter()
 end
 
 function game:update(dt)
-    self.timer:update(dt)
-    self.particleSystem:update(dt)
+    self.eventManager:update(dt)
 
-    self.roundTime = self.roundTime + dt
+    if not self.eventManager.active then
+        self.timer:update(dt)
+        self.particleSystem:update(dt)
 
-    -- Update all entities
-    for x = 1, self.gridWidth do
-        for y = 1, self.gridHeight do
-            local enemy = self:getEnemy(x, y)
-            if enemy then
-                enemy:update(dt)
-            end
+        self.roundTime = self.roundTime + dt
 
-            local turret = game:getTurret(x, y)
-            if turret then
-                turret:update(dt)
-            end
+        -- Update all entities
+        for x = 1, self.gridWidth do
+            for y = 1, self.gridHeight do
+                local enemy = self:getEnemy(x, y)
+                if enemy then
+                    enemy:update(dt)
+                end
 
-            local powerGrid = game:getPowerGrid(x, y)
-            if powerGrid then
-                powerGrid:update(dt)
+                local turret = game:getTurret(x, y)
+                if turret then
+                    turret:update(dt)
+                end
+
+                local powerGrid = game:getPowerGrid(x, y)
+                if powerGrid then
+                    powerGrid:update(dt)
+                end
             end
         end
+
+        self.scene:update(dt)
+        self.dynamo:update(dt)
     end
 
-    self.scene:update(dt)
-    self.dynamo:update(dt)
     self.soundManager:update(dt)
-    self.eventManager:update()
     self.camera:lockPosition(self.cameraGoal:unpack())
 
     self.totalPoweredRooms = 0
@@ -410,18 +414,24 @@ function game:update(dt)
 end
 
 function game:keypressed(key, code)
+    local wasActive = self.eventManager.active
+    self.eventManager:keypressed(key, code)
+    if wasActive then return end
+
     self.scene:keypressed(key, code)
     self.dynamo:keypressed(key, code)
-    self.eventManager:keypressed(key, code)
 end
 
 function game:keyreleased(key, code)
+    if self.eventManager.active then return end
+
     self.scene:keyreleased(key, code)
     self.dynamo:keyreleased(key, code)
 end
 
 function game:mousepressed(x, y, mbutton)
     self.eventManager:mousepressed(x, y, mbutton)
+    if self.eventManager.active then return end
 
     x, y = self:screenToCanvas(x, y)
     self.scene:mousepressed(x, y, mbutton)
@@ -431,6 +441,8 @@ function game:mousepressed(x, y, mbutton)
 end
 
 function game:mousereleased(x, y, mbutton)
+    if self.eventManager.active then return end
+
     x, y = self:screenToCanvas(x, y)
     self.scene:mousereleased(x, y, mbutton)
     self.dynamo:mousereleased(x, y, mbutton)
@@ -439,6 +451,8 @@ function game:mousereleased(x, y, mbutton)
 end
 
 function game:mousemoved(x, y, dx, dy, istouch)
+    if self.eventManager.active then return end
+
     x, y = self:screenToCanvas(x, y)
     dx, dy = self:screenToCanvas(dx, dy)
 
@@ -450,6 +464,7 @@ end
 
 function game:wheelmoved(x, y)
     self.eventManager:wheelmoved(x, y)
+    if self.eventManager.active then return end
 
     x, y = self:screenToCanvas(x, y)
     self.scene:wheelmoved(x, y)
