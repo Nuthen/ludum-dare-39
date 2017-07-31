@@ -76,6 +76,8 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
             self:play('widget_button_press', 1, 1, 0.1)
         elseif kind == "wheel" then
             self:play('widget_wheel', 1, 1, 0.1)
+            self:play('widget_flick_spring', 1, 0.8)
+            self:play('widget_flick_spring', 1, 0.8)
         elseif kind == "flick" then
             self:play('widget_flick_spring', 1, 0.8)
             self:play('widget_flick_spring', 1, 1)
@@ -86,6 +88,16 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
 
     Signal.register('Dynamo Incorrect', function(kind)
 
+    end)
+
+    self.wheelTurn = self:getSound('widget_wheel_turn')
+    self.wheelTurn:setLooping(true)
+    Signal.register('Wheel Spin Start', function()
+        self.wheelTurn:play()
+    end)
+
+    Signal.register('Wheel Spin Stop', function()
+        self.wheelTurn:stop()
     end)
 end
 
