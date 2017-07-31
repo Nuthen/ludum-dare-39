@@ -16,8 +16,9 @@ end
 function PowerGrid:activate()
     local game = self.game
     if not self.activated then
-        game.totalPoweredRooms = game.totalPoweredRooms + 10
+        game.totalPoweredRooms = game.totalPoweredRooms + 1
         self.activated = true
+        Signal.emit('powerGridActivate')
     end
 end
 

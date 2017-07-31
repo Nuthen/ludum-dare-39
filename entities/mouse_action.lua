@@ -65,8 +65,6 @@ function MouseAction:mousepressed(mx, my)
 
         if powerGrid.roomHash == game.currentRoom then
             powerGrid:activate()
-
-            Signal.emit('powerGridActivate')
         end
 
     elseif game:hasTurret(self.hoverX, self.hoverY) then
