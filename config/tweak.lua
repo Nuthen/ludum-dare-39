@@ -21,7 +21,7 @@ return {
     power_charged_for_flick  = .2,
     power_charged_for_spin   = .4,
 
-    powergrid_charge_per_second = 1,
+    powergrid_charge_per_click = 1,
     powergrid_charge_required = 30,
 
     powergrid_cost_to_activate = 0.5, -- percent of power
