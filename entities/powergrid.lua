@@ -26,7 +26,7 @@ function PowerGrid:initialize(game, x, y, roomHash)
     self.timer = Timer.new()
 
     self.charge = 0
-    self.chargePerSecond = TWEAK.powergrid_charge_per_second
+    self.chargePerClick = TWEAK.powergrid_charge_per_click
     self.maxCharge = TWEAK.powergrid_charge_required
 end
 
@@ -35,30 +35,32 @@ function PowerGrid:activate()
     if not self.activated then
         self.activated = true
 
-        self.timer:every(1, function()
-            self.charge = self.charge + self.chargePerSecond
-        end)
+        game.power = game.power * (1 - TWEAK.powergrid_cost_to_activate)
 
         self.animationName = 'online'
         self.image = PowerGrid.images.online
         self.animation = PowerGrid.animations.online:clone()
 
         Signal.emit('powerGridActivate')
+    else
+        self.charge = self.charge + self.chargePerClick
+
+        Signal.emit('powerGridCharge')
+
+        if self.charge >= self.maxCharge then
+            self.charge = self.maxCharge
+
+            if not self.powered then
+                self.powered = true
+                Signal.emit('powerGridPowered')
+            end
+        end
     end
 end
 
 function PowerGrid:update(dt)
     self.animation:update(dt)
     self.timer:update(dt)
-
-    if self.charge >= self.maxCharge then
-        self.charge = self.maxCharge
-
-        if not self.powered then
-            self.powered = true
-            Signal.emit('powerGridPowered')
-        end
-    end
 
     self.flashTimer = self.flashTimer + dt
 end
@@ -78,6 +80,10 @@ function PowerGrid:draw(isHovered)
         colorIncrease = colorIncrease + (math.sin(self.flashTimer/2)+1)/2 * 100
         if isHovered then
             colorIncrease = colorIncrease + 100
+        end
+    else
+        if isHovered then
+            colorIncrease = 200
         end
     end
 
