@@ -24,6 +24,12 @@ end
 function MouseAction:mousepressed(mx, my)
     local game = self.game
 
+    if game.currentRoom ~= game:getRoom(self.hoverX, self.hoverY)
+        and not game:hasPowerGrid(self.hoverX, self.hoverY)
+        and not game:hasTurret(self.hoverX, self.hoverY) then
+        return
+    end
+
     -- Clicking on enemy
     if game:hasEnemy(self.hoverX, self.hoverY) then
         local enemy = game:getEnemy(self.hoverX, self.hoverY)
@@ -57,9 +63,11 @@ function MouseAction:mousepressed(mx, my)
     elseif game:hasPowerGrid(self.hoverX, self.hoverY) then
         local powerGrid = game:getPowerGrid(self.hoverX, self.hoverY)
 
-        powerGrid:activate()
+        if powerGrid.roomHash == game.currentRoom then
+            powerGrid:activate()
 
-        Signal.emit('powerGridActivate')
+            Signal.emit('powerGridActivate')
+        end
 
     elseif game:hasTurret(self.hoverX, self.hoverY) then
         local turret = game:getTurret(self.hoverX, self.hoverY)

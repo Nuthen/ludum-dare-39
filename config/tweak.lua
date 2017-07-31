@@ -21,5 +21,7 @@ return {
 
     drawRoomShadows = false,
 
+    drawTilePositions = false,
+
     printClickPosition = false
 }

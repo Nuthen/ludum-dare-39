@@ -9,7 +9,7 @@ return {
 
         offsets = {
             x = -16,
-            y = 15,
+            y = 8,
         }
     }
 }

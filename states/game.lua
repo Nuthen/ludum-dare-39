@@ -103,8 +103,30 @@ function game:reset()
         end
     end
 
-    self.turrets[13][10] = Turret:new(self, 13, 10)
-    self.powerGrids[16][13] = PowerGrid:new(self, 16, 13)
+    local function placePowerGrid(x, y, rx, ry)
+        local grid = PowerGrid:new(self, x, y, self.rooms[rx][ry])
+        -- This actually works
+        self.powerGrids[x][y] = grid
+        self.powerGrids[x-1][y] = grid
+        self.powerGrids[x-2][y] = grid
+        self.powerGrids[x][y-1] = grid
+        self.powerGrids[x][y-2] = grid
+        self.powerGrids[x-1][y-1] = grid
+        self.powerGrids[x-2][y-2] = grid
+        self.powerGrids[x-2][y-1] = grid
+        self.powerGrids[x-1][y-2] = grid
+    end
+
+
+    -- x, y is the frontmost square from the camera's perspective
+    --            |x, y     |room that it is "in"
+    placePowerGrid(15, 9,   13, 10)
+    placePowerGrid(15, 2,   13, 3)
+    placePowerGrid(16, 16,  13, 17)
+    placePowerGrid(15, 22,  13, 24)
+    placePowerGrid(7, 14,   8, 10)
+    placePowerGrid(20, 10,  21, 10)
+    placePowerGrid(24, 16,  21, 17)
 
     self.gridX = CANVAS_WIDTH/2
     self.gridY = CANVAS_HEIGHT/2
@@ -145,7 +167,7 @@ function game:reset()
 
             for x = 1, game.gridWidth do
                 for y = 1, game.gridHeight do
-                    local roomNumber = game.rooms[x][y]
+                    local roomNumber = game:getRoom(x, y)
 
                     local sprite = game.emptyTile
 
@@ -155,17 +177,13 @@ function game:reset()
                         love.graphics.setColor(255, 255, 255)
                     end
 
-                    if roomNumber ~= game.currentRoom then
-                        love.graphics.setColor(33, 33, 33, 127)
-                    end
-
                     tx, ty = game:gridToScreen(x, y)
                     local cellValue = game.grid[x][y]
                     if cellValue == 1 and (roomNumber == game.currentRoom or TWEAK.drawRoomShadows) then
                         love.graphics.draw(sprite, tx, ty)
                     end
 
-                    local roomIsVisible = roomNumber == 0 or roomNumber == game.currentRoom
+                    local roomIsVisible = roomNumber == game.currentRoom
 
                     local enemy = game:getEnemy(x, y)
                     if enemy and roomIsVisible then
@@ -178,8 +196,23 @@ function game:reset()
                     end
 
                     local powerGrid = game:getPowerGrid(x, y)
-                    if powerGrid and roomIsVisible then
+                    if powerGrid and powerGrid.roomHash == game.currentRoom then
+                        if game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY) then
+                            love.graphics.setColor(400, 400, 400)
+                        else
+                            love.graphics.setColor(255, 255, 255)
+                        end
                         powerGrid:draw()
+                    end
+
+                    if TWEAK.drawTilePositions then
+                        if x == game.mouseAction.hoverX and y == game.mouseAction.hoverY then
+                            love.graphics.setColor(255, 255, 255)
+                        else
+                            love.graphics.setColor(255, 255, 255, 127)
+                        end
+                        love.graphics.setFont(Fonts.monospace[7])
+                        love.graphics.print(x..','..y, tx, ty)
                     end
                 end
             end
@@ -276,12 +309,22 @@ function game:update(dt)
 
     self.roundTime = self.roundTime + dt
 
-    -- Update all enemies
+    -- Update all entities
     for x = 1, self.gridWidth do
         for y = 1, self.gridHeight do
             local enemy = self:getEnemy(x, y)
             if enemy then
                 enemy:update(dt)
+            end
+
+            local turret = game:getTurret(x, y)
+            if turret then
+                turret:update(dt)
+            end
+
+            local powerGrid = game:getPowerGrid(x, y)
+            if powerGrid then
+                powerGrid:update(dt)
             end
         end
     end
@@ -564,7 +607,7 @@ function game:getTurret(x, y)
 end
 
 function game:hasPowerGrid(x, y)
-    return self:isShipTile(x, y) and self.powerGrids[x] and self.powerGrids[x][y] ~= nil
+    return self.powerGrids[x] and self.powerGrids[x][y] ~= nil
 end
 
 function game:getPowerGrid(x, y)

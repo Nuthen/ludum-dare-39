@@ -47,7 +47,7 @@ function love.draw()
     local drawTime = drawTimeEnd - drawTimeStart
 
     if DEBUG then
-        love.graphics.push()
+        love.graphics.push('all')
         local x, y = CONFIG.debug.stats.position.x, CONFIG.debug.stats.position.y
         local dy = CONFIG.debug.stats.lineHeight
         local stats = love.graphics.getStats()
