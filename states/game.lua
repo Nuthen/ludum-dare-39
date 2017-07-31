@@ -42,6 +42,10 @@ function game:init()
     Signal.register("enemyDeath", function()
         self.enemyKills = self.enemyKills + 1
     end)
+
+    Signal.register("powerGridActivate", function()
+        self.dynamo:powerGridActivated(self.totalPoweredRooms)
+    end)
 end
 
 function game:reset()

@@ -108,10 +108,28 @@ function Dynamo:initialize(parent, props)
         flick = flick,
     }
 
+    self.unlockTable = {}
+    self.unlockTable[1] = function() self.fidgets.button3.locked     = false end
+    self.unlockTable[2] = function() self.fidgets.flick.locked.up    = false end
+    self.unlockTable[3] = function() self.fidgets.flick.locked.right = false end
+    self.unlockTable[4] = function() self.fidgets.flick.locked.down  = false end
+    self.unlockTable[5] = function() self.fidgets.flick.locked.left  = false end
+    self.unlockTable[6] = function() self.fidgets.wheel.locked.cw    = false end
+    self.unlockTable[7] = function() self.fidgets.wheel.locked.ccw   = false end
+
     self.active = false
     self.powerDropMultiplier = TWEAK.powerDropMultiplier
 
     self.tweenMoveTime = .25
+
+    self.unlockSignalWaiting = false
+end
+
+function Dynamo:powerGridActivated(gridsPowered)
+    if self.unlockTable[gridsPowered] then
+        self.unlockTable[gridsPowered]()
+        self.unlockSignalWaiting = true
+    end
 end
 
 function Dynamo:addPower(amount, sourceType, position)
@@ -175,6 +193,11 @@ function Dynamo:update(dt)
     Scene.update(self, dt)
 
     self:addPower(-dt*self.powerDropMultiplier)
+
+    if self.unlockSignalWaiting and self.active then
+        Signal.emit("Dynamo Fidget Unlocked")
+        self.unlockSignalWaiting = false
+    end
 end
 
 function Dynamo:keypressed(key, code)
