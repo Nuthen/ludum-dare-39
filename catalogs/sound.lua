@@ -16,4 +16,5 @@ return {
     widget_wheel             = 'assets/sounds/widgets/wheel/lever_turn_push_crank_handle_small_13.wav',
     widget_flick_spring      = 'assets/sounds/widgets/flick/spring.ogg',
     widget_flick_spring_pop  = 'assets/sounds/widgets/flick/spring_pop.ogg',
+    low_power_siren          = 'assets/sounds/ship/alarm_siren_loop_11.wav',
 }
