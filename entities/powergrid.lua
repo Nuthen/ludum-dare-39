@@ -41,9 +41,13 @@ function PowerGrid:draw(isHovered)
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
-        local colorIncrease = (math.sin(self.timer)+1)/2 * 100
-        if isHovered then
-            colorIncrease = colorIncrease + 100
+        local colorIncrease = 0
+
+        if not self.activated then
+            colorIncrease = colorIncrease + (math.sin(self.timer)+1)/2 * 100
+            if isHovered then
+                colorIncrease = colorIncrease + 100
+            end
         end
 
         love.graphics.setColor(255+colorIncrease, 255+colorIncrease, 255+colorIncrease)
