@@ -669,6 +669,7 @@ end
 function game:addEnemy(x, y)
     local enemy = self:getEnemy(x, y)
     if enemy then
+        -- will only occur when an evolved enemy dies and spreads
         enemy:evolve()
     else
         self.enemies[x][y] = Enemy:new(self, x, y)

@@ -35,27 +35,33 @@ function MouseAction:mousepressed(mx, my)
         local leftX,  leftY  = self.hoverX - 1, self.hoverY
         local rightX, rightY = self.hoverX + 1, self.hoverY
 
-        if enemy.stage == enemy.stages.LARGE then
-            if game:isShipTile(upX, upY) then
-                game:addEnemy(upX, upY)
+        local isDead = enemy:hurt()
+
+        if isDead then
+            if enemy.stage == enemy.stages.LARGE then
+                if game:isShipTile(upX, upY) then
+                    game:addEnemy(upX, upY)
+                end
+
+                if game:isShipTile(downX, downY) then
+                    game:addEnemy(downX, downY)
+                end
+
+                if game:isShipTile(leftX, leftY) then
+                    game:addEnemy(leftX, leftY)
+                end
+
+                if game:isShipTile(rightX, rightY) then
+                    game:addEnemy(rightX, rightY)
+                end
             end
 
-            if game:isShipTile(downX, downY) then
-                game:addEnemy(downX, downY)
-            end
-
-            if game:isShipTile(leftX, leftY) then
-                game:addEnemy(leftX, leftY)
-            end
-
-            if game:isShipTile(rightX, rightY) then
-                game:addEnemy(rightX, rightY)
-            end
+            game.enemies[self.hoverX][self.hoverY] = nil
+            Signal.emit('enemyDeath', enemy.stage, Vector(mx, my))
+        else
+            Signal.emit("Enemy Hurt")
         end
-
-        game.enemies[self.hoverX][self.hoverY] = nil
-
-        Signal.emit('enemyDeath', enemy.stage, Vector(mx, my))
+        
     end
 
     for x = 1, game.gridWidth do

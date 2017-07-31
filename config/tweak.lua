@@ -26,4 +26,15 @@ return {
     printClickPosition = false,
 
     drawObjectHitboxes = true,
+    printClickPosition = false,
+
+    -- keep these to ints
+    enemyStage1MinEvolveTime = 5,
+    enemyStage1MaxEvolveTime = 10,
+    enemyStage2MinEvolveTime = 10,
+    enemyStage2MaxEvolveTime = 20,
+
+    enemyStage1Health = 1,
+    enemyStage2Health = 3,
+    enemyStage3Health = 5,
 }
