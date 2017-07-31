@@ -21,6 +21,9 @@ return {
     power_charged_for_flick  = .2,
     power_charged_for_spin   = .4,
 
+    powergrid_charge_per_second = 1,
+    powergrid_charge_required = 30,
+
     turretReloadTime = 1.5,
 
     backgroundColor = {32, 35, 46},
