@@ -64,6 +64,8 @@ function game:init()
             self:spawnEnemy()
         end)
     end)
+
+    self.backgroundImage = love.graphics.newImage('assets/images/SpaceBG.png')
 end
 
 function game:reset()
@@ -503,6 +505,8 @@ function game:draw()
 
     self.canvas:renderTo(function()
         love.graphics.clear(love.graphics.getBackgroundColor())
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(self.backgroundImage)
 
         local gx, gy, gw, gh = game:getGridBoundingBox()
         local translatedX = gx - game.gridX + gw/2
