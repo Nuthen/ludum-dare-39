@@ -8,8 +8,8 @@ return {
         durations = 1,
 
         offsets = {
-            x = -2,
-            y = 4,
+            x = 0,
+            y = -16,
         }
     }
 }
