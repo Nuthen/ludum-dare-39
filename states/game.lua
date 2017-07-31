@@ -499,7 +499,14 @@ function game:draw()
             love.graphics.rectangle('line', -translatedX + roomX, -translatedY + roomY, roomWidth, roomHeight)
         end
         if self.backgroundImages[self.currentRoom] then
+            local powerGrid = self.powerGridRooms[self.currentRoom]
             local bg = self.backgroundImages[self.currentRoom]
+            love.graphics.setColor(255, 255, 255)
+
+            if not powerGrid.activated then
+                love.graphics.setColor(50, 50, 50)
+            end
+
             love.graphics.draw(bg.image, bg.offset.x, bg.offset.y)
         end
         self.scene:draw()
