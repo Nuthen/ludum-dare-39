@@ -20,11 +20,16 @@ function Turret:initialize(game, x, y, roomHash, offset, flip)
     self.roomHash = roomHash or 0
 
     self.activated = false
+    self.powered = false
 
     self.canShoot = true
     self.reloadTime = TWEAK.turretReloadTime
 
     self.timer = Timer.new()
+
+    self.charge = 0
+    self.chargePerClick = TWEAK.turret_charge_per_click
+    self.maxCharge = TWEAK.turret_charge_required
 end
 
 function Turret:switchAnimation(name)
@@ -37,17 +42,29 @@ function Turret:activate()
     if not self.activated then
         self.activated = true
         Signal.emit('turretActivate')
+    else
+        self.charge = self.charge + self.chargePerClick
+
+        if self.charge >= self.maxCharge then
+            self.charge = self.maxCharge
+
+            if not self.powered then
+                self.powered = true
+                Signal.emit('turretPowered')
+            end
+        else
+            Signal.emit('turretCharge')
+        end
     end
 end
 
 function Turret:update(dt)
     local game = self.game
-    self.alreadyDrawn = false
     self.animation:update(dt)
 
     self.timer:update(dt)
 
-    if self.activated then
+    if self.powered then
         local biggestEvolution = 0
         local targetCandidates = {}
         local tiles = game:getRoomTiles(self.roomHash)
@@ -84,28 +101,35 @@ end
 
 function Turret:draw()
     local game = self.game
-    if not self.alreadyDrawn then
-        local x, y = game:gridToScreen(self.x, self.y)
-        local offset = Turret.animationOffsets[self.animationName]
-        x = x + offset.x
-        y = y - self.image:getHeight() + offset.y
+    local x, y = game:gridToScreen(self.x, self.y)
+    local offset = Turret.animationOffsets[self.animationName]
+    x = x + offset.x
+    y = y - self.image:getHeight() + offset.y
 
-        self.screenX = x
-        self.screenY = y
+    self.screenX = x
+    self.screenY = y
 
-        x = x + self.offset.x
-        y = y + self.offset.y
+    x = x + self.offset.x
+    y = y + self.offset.y
 
-        if self.flip then
-            love.graphics.push()
-            love.graphics.scale(-1, 1)
-            self.animation:draw(self.image, x, y)
-            love.graphics.pop()
-        else
-            self.animation:draw(self.image, x, y)
-        end
-        self.alreadyDrawn = true
+    if self.flip then
+        love.graphics.push()
+        love.graphics.scale(-1, 1)
+        self.animation:draw(self.image, x, y)
+        love.graphics.pop()
+    else
+        self.animation:draw(self.image, x, y)
     end
+
+    local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
+    local font = Fonts.pixel[16]
+    local text = charge..'%'
+    local tx, ty = x + 32, y + 16
+    love.graphics.setFont(font)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.print(text, tx+2, ty+2)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.print(text, tx, ty)
 end
 
 return Turret
