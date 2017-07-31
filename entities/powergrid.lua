@@ -45,8 +45,6 @@ function PowerGrid:activate()
     else
         self.charge = self.charge + self.chargePerClick
 
-        Signal.emit('powerGridCharge')
-
         if self.charge >= self.maxCharge then
             self.charge = self.maxCharge
 
@@ -54,6 +52,8 @@ function PowerGrid:activate()
                 self.powered = true
                 Signal.emit('powerGridPowered')
             end
+        else
+            Signal.emit('powerGridCharge')
         end
     end
 end

@@ -33,11 +33,20 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     end)
 
     Signal.register('enemyDeath', function(isCurrentRoom)
-        if isCurrentRoom then
-            self:play('turret_shoot', 0.5, 1, 0.1)
-            self:play('enemy_death', 1, 1, 0.1, 1, 4)
-            self:play('enemy_death_impact', 0.6, 1, 0.1)
-        end
+        if not isCurrentRoom then return end
+        self:play('enemy_death', 1, 1, 0.1, 1, 4)
+        self:play('enemy_death_impact', 0.6, 1, 0.1)
+    end)
+
+    Signal.register('Enemy Hurt', function(isCurrentRoom)
+        if not isCurrentRoom then return end
+        self:play('enemy_death_impact', 0.6, 1, 0.1)
+        self:play('enemy_death', 0.1, 1, 0.1, 1, 4)
+    end)
+
+    Signal.register('turretFire', function(isCurrentRoom)
+        if not isCurrentRoom then return end
+        self:play('turret_shoot', 0.5, 1, 0.1)
     end)
 
     Signal.register('powerGridActivate', function()
@@ -48,11 +57,27 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         self:playDelayed(0.33, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
     end)
 
+    Signal.register('powerGridCharge', function()
+        self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
+
+    self.lowPowerSound = self:getSound('low_power_siren', 0.66)
+    self.lowPowerSound:setLooping(true)
+    Signal.register('Low Power Warning Toggle On', function()
+        self.lowPowerSound:play()
+    end)
+
+    Signal.register('Low Power Warning Toggle Off', function()
+        self.lowPowerSound:stop()
+    end)
+
     Signal.register('Dynamo Correct', function(kind)
         if kind == "button" then
             self:play('widget_button_press', 1, 1, 0.1)
         elseif kind == "wheel" then
             self:play('widget_wheel', 1, 1, 0.1)
+            self:play('widget_flick_spring', 1, 0.8)
+            self:play('widget_flick_spring', 1, 0.8)
         elseif kind == "flick" then
             self:play('widget_flick_spring', 1, 0.8)
             self:play('widget_flick_spring', 1, 1)
@@ -63,6 +88,16 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
 
     Signal.register('Dynamo Incorrect', function(kind)
 
+    end)
+
+    self.wheelTurn = self:getSound('widget_wheel_turn')
+    self.wheelTurn:setLooping(true)
+    Signal.register('Wheel Spin Start', function()
+        self.wheelTurn:play()
+    end)
+
+    Signal.register('Wheel Spin Stop', function()
+        self.wheelTurn:stop()
     end)
 end
 
@@ -124,7 +159,6 @@ function SoundManager:getSound(name, volume, pitch, pitchVariation, soundRangeSt
         source:setPitch(pitch)
     end
     source:setVolume(volume * source:getVolume())
-    source:play()
     return source
 end
 
