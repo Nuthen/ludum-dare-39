@@ -17,6 +17,20 @@ function Meter:initialize(parent, props)
     end
 
     self.isPressed = false
+    self.previouslyBelowThreshold = false
+end
+
+function Meter:update()
+    local power = self.parent.game.power
+    local belowThreshold = power <= TWEAK.powerWarningThreshold
+
+    if belowThreshold and not self.previouslyBelowThreshold then
+        Signal.emit("Low Power Warning Toggle On")
+    elseif not belowThreshold and self.previouslyBelowThreshold then
+        Signal.emit("Low Power Warning Toggle Off")
+    end
+
+    self.previouslyBelowThreshold = belowThreshold
 end
 
 function Meter:getPressed(x, y)

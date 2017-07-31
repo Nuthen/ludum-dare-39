@@ -2,6 +2,7 @@ return {
     enemySpawnRate = 1, -- seconds
 
     power = 1,
+    powerWarningThreshold = 0.3,
 
     totalRooms = 7,
 
