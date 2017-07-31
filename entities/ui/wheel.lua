@@ -22,6 +22,9 @@ function Wheel:initialize(parent, props)
 
     self.bindingSpinMultiplier = .5
     self.mouseSpinMultiplier = 1
+
+    self.beingMoved = false
+    self.lastBeingMoved = false
 end
 
 function Wheel:activate()
@@ -46,7 +49,13 @@ function Wheel:getPressed(x, y)
 end
 
 function Wheel:update(dt)
+    if self.beingMoved and not self.lastBeingMoved then
+        Signal.emit("Wheel Spin Start")
+    elseif not self.beingMoved and self.lastBeingMoved then
+        Signal.emit("Wheel Spin Stop")
+    end
 
+    self.lastBeingMoved = self.beingMoved
 end
 
 function Wheel:mousepressed(x, y, mbutton)
@@ -56,7 +65,9 @@ function Wheel:mousepressed(x, y, mbutton)
     end
 
     self.isPressed = false
+    self.beingMoved = false
     if mbutton == 1 and self:getPressed(x, y) then
+        self.beingMoved = true
         self.isPressed = true
         self.beganPress = true
         --self.rotationAccumulator = 0
@@ -128,7 +139,8 @@ function Wheel:mousereleased(x, y, mbutton)
            return
     end
 
-    if mbutton == 1 then
+    if mbutton == 1 and self.isPressed then
+        self.beingMoved = false
         self.isPressed = false
         self.beganPress = false
         --self.rotationAccumulator = 0
@@ -138,6 +150,11 @@ end
 function Wheel:wheelmoved(x, y)
     if self.locked.cw  then y = math.max(0, y) end
     if self.locked.ccw then y = math.min(0, y) end
+
+    self.beingMoved = false
+    if y <= 0 then
+        self.beingMoved = true
+    end
 
     self:solveAngle(-y * self.bindingSpinMultiplier)
 end
