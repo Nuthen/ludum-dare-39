@@ -4,6 +4,12 @@ function PowerGrid:initialize(game, x, y, roomHash)
     self.game = game
     self.x = x
     self.y = y
+    self.screenX = 0
+    self.screenY = 0
+    self.hitboxX = 0
+    self.hitboxY = 32
+    self.hitboxWidth = 64
+    self.hitboxHeight = 48
 
     self.animationName = 'idle'
     self.image = PowerGrid.images.idle
@@ -41,10 +47,12 @@ function PowerGrid:draw(isHovered)
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
+        self.screenX, self.screenY = x, y
+
         local colorIncrease = 0
 
         if not self.activated then
-            colorIncrease = colorIncrease + (math.sin(self.timer)+1)/2 * 100
+            colorIncrease = colorIncrease + (math.sin(self.timer/2)+1)/2 * 100
             if isHovered then
                 colorIncrease = colorIncrease + 100
             end

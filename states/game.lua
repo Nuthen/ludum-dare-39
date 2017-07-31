@@ -232,7 +232,11 @@ function game:reset()
 
                     local turret = game:getTurret(x, y)
                     if turret and turret.roomHash == game.currentRoom then
-                        if game:hasTurret(game.mouseAction.hoverX, game.mouseAction.hoverY) then
+                        local isHovered = game:pointInsideRect(game.mouseAction.canvasX, game.mouseAction.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, turret.hitboxWidth, turret.hitboxHeight)
+                        if TWEAK.drawObjectHitboxes then
+                            love.graphics.rectangle('line', turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, turret.hitboxWidth, turret.hitboxHeight)
+                        end
+                        if isHovered then
                             love.graphics.setColor(400, 400, 400)
                         else
                             love.graphics.setColor(255, 255, 255)
@@ -242,12 +246,11 @@ function game:reset()
 
                     local powerGrid = game:getPowerGrid(x, y)
                     if powerGrid and powerGrid.roomHash == game.currentRoom then
-                        local isHovered = game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY)
-                        --if game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY) then
-                            --love.graphics.setColor(400, 400, 400)
-                        --else
-                            love.graphics.setColor(255, 255, 255)
-                        --end
+                        local isHovered = game:pointInsideRect(game.mouseAction.canvasX, game.mouseAction.canvasY, powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, powerGrid.hitboxWidth, powerGrid.hitboxHeight)
+                        if TWEAK.drawObjectHitboxes then
+                            love.graphics.rectangle('line', powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, powerGrid.hitboxWidth, powerGrid.hitboxHeight)
+                        end
+                        love.graphics.setColor(255, 255, 255)
                         powerGrid:draw(isHovered)
                     end
 
@@ -262,6 +265,8 @@ function game:reset()
                     end
                 end
             end
+
+            love.graphics.circle('fill', game.mouseAction.canvasX, game.mouseAction.canvasY, 5)
 
             if TWEAK.drawGridBoundingBox then
                 love.graphics.rectangle('line', gx, gy, gw, gh)
@@ -686,6 +691,11 @@ end
 
 function game:getPowerGrid(x, y)
     return self:hasPowerGrid(x, y) and self.powerGrids[x][y] or nil
+end
+
+function game:pointInsideRect(x, y, rx, ry, rw, rh)
+    return (x >= rx) and (x <= rx + rw)
+       and (y >= ry) and (y <= ry + rh)
 end
 
 return game

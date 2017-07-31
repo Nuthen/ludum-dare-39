@@ -21,5 +21,7 @@ return {
 
     drawTilePositions = false,
 
-    printClickPosition = false
+    printClickPosition = false,
+
+    drawObjectHitboxes = false,
 }

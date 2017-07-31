@@ -3,6 +3,8 @@ local MouseAction = Class('MouseAction')
 function MouseAction:initialize(game)
     self.hoverX = 0
     self.hoverY = 0
+    self.canvasX = 0
+    self.canvasY = 0
     self.game = game
 end
 
@@ -16,6 +18,7 @@ function MouseAction:mousemoved(mx, my, dx, dy, istouch)
     local translatedY = gy - game.gridY + gh/2
     mx = -translatedX - mx
     my = -translatedY - my
+    self.canvasX, self.canvasY = -mx, -my
     mx = mx + game.tileWidth / 2
     my = my + game.tileHeight * (3/2)
     self.hoverX, self.hoverY = game:screenToGrid(-mx, -my)
@@ -53,18 +56,30 @@ function MouseAction:mousepressed(mx, my)
         game.enemies[self.hoverX][self.hoverY] = nil
 
         Signal.emit('enemyDeath', enemy.stage, Vector(mx, my))
+    end
 
-    elseif game:hasPowerGrid(self.hoverX, self.hoverY) then
-        local powerGrid = game:getPowerGrid(self.hoverX, self.hoverY)
+    for x = 1, game.gridWidth do
+        for y = 1, game.gridHeight do
+            local powerGrid = game:getPowerGrid(x, y)
+            if powerGrid then
+                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, 32, 32)
+                if isHovered then
+                    if powerGrid.roomHash == game.currentRoom then
+                        powerGrid:activate()
+                    end
+                end
+            end
 
-        if powerGrid.roomHash == game.currentRoom then
-            powerGrid:activate()
+            local turret = game:getTurret(x, y)
+            if turret then
+                local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, 32, 32)
+                if isHovered then
+                    if turret.roomHash == game.currentRoom then
+                        -- @TODO
+                    end
+                end
+            end
         end
-
-    elseif game:hasTurret(self.hoverX, self.hoverY) then
-        local turret = game:getTurret(self.hoverX, self.hoverY)
-
-        -- @TODO
     end
 end
 

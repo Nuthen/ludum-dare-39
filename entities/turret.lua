@@ -4,6 +4,12 @@ function Turret:initialize(game, x, y, roomHash)
     self.game = game
     self.x = x
     self.y = y
+    self.screenX = 0
+    self.screenY = 0
+    self.hitboxX = 0
+    self.hitboxY = 0
+    self.hitboxWidth = 32
+    self.hitboxHeight = 32
 
     self.animationName = 'idle'
     self.image = Turret.images.idle
@@ -25,6 +31,8 @@ function Turret:draw()
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
+        self.screenX = x
+        self.screenY = y
         self.animation:draw(self.image, x, y)
         self.alreadyDrawn = true
     end
