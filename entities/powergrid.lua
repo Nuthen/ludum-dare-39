@@ -35,6 +35,8 @@ function PowerGrid:activate()
     if not self.activated then
         self.activated = true
 
+        game.power = game.power * (1 - TWEAK.powergrid_cost_to_activate)
+
         self.timer:every(1, function()
             self.charge = self.charge + self.chargePerSecond
         end)
