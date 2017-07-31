@@ -9,9 +9,10 @@ return {
     minimapOnGame = true,
     minimapOnDynamo = false,
 
-    powerDropMultiplier = 0.01,
+    powerDropMultiplier = 0,
 
     powerDropIncreaseForPowerGridActivate = 0.005,
+    powerDropIncreaseForTurretActivate = 0.0025,
 
     backgroundColor = {32, 35, 46},
 
