@@ -4,7 +4,7 @@ return {
 
     soundVolume = 1.0,
     musicVolume = 0.3,
-    maxSoundsPlaying = 5,
+    maxSoundsPlaying = 10,
 
     dynamoKeybinds = {
         firstButton  = {'1', 'kp1'},

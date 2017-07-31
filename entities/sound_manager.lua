@@ -22,20 +22,28 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         self.music[name] = source
     end
 
+    self.maxSoundsPlaying = SETTINGS.maxSoundsPlaying
+    self.soundsPlaying = {}
+
+    self.timer = Timer.new()
+
     Signal.register('gameStart', function()
         self:playLooping('background_engine_hum', 0.4)
         self:playMusic('buzzy', 0.6)
     end)
 
     Signal.register('enemyDeath', function()
-        self:play('enemy_death', 0.66, 1, 0.1, 1, 4)
-        self:play('enemy_death_impact', 0.33, 1, 0.1)
+        self:play('enemy_death', 0.8, 1, 0.1, 1, 4)
+        self:play('enemy_death_impact', 0.5, 1, 0.1)
     end)
 
-    self.maxSoundsPlaying = SETTINGS.maxSoundsPlaying
-    self.soundsPlaying = {}
-
-    self.timer = Timer.new()
+    Signal.register('powerGridActivate', function()
+        self:playDelayed('powergrid_activate', 0.75)
+        self:play('powergrid_activate_layer', 0.75)
+        self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
+        self:playDelayed(0.2, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
+        self:playDelayed(0.33, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
 end
 
 function SoundManager:update(dt)
@@ -65,7 +73,7 @@ function SoundManager:playMusic(name, volume, looping)
     music:play()
 end
 
-function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+function SoundManager:getSound(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd, doPlay)
     if soundRangeStart and soundRangeEnd then
         name = name .. love.math.random(soundRangeStart, soundRangeEnd)
     end
@@ -100,9 +108,24 @@ function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart,
     return source
 end
 
+function SoundManager:play(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    local source = self:getSound(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    source:play()
+    return source
+end
+
 function SoundManager:playLooping(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
-    local source = self:play(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    local source = self:getSound(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
     source:setLooping(true)
+    source:play()
+    return source
+end
+
+function SoundManager:playDelayed(delay, name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    local source = self:getSound(name, volume, pitch, pitchVariation, soundRangeStart, soundRangeEnd)
+    self.timer:after(delay, function()
+        source:play()
+    end)
     return source
 end
 
