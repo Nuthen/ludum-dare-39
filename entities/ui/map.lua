@@ -2,9 +2,10 @@ local Map = Class('Map')
 
 function Map:initialize(parent, props)
     self.parent = parent
-    self.bgColor = {127, 127, 127}
+    self.bgColor = {0, 0, 0}
     self.inactiveColor = {255, 255, 255}
     self.activeColor = {127, 127, 127}
+    self.borderColor = {255, 255, 255}
     self.position = Vector(0, 0)
     self.width = 90
     self.height = 90
@@ -28,6 +29,15 @@ function Map:initialize(parent, props)
     self.isPressed = false
 
     self.hoveredRoom = -1
+
+    self.pixelColors = {}
+    for x = 1, self.game.shipBitmask:getWidth() do
+        self.pixelColors[x] = {}
+        for y = 1, self.game.shipBitmask:getHeight() do
+            local r, g, b, a = self.game.shipBitmask:getPixel(x - 1, y - 1)
+            self.pixelColors[x][y] = {r, g, b, a}
+        end
+    end
 end
 
 function Map:screenToTile(x, y)
@@ -89,25 +99,23 @@ function Map:draw()
     love.graphics.setColor(self.bgColor)
     love.graphics.rectangle('fill', x, y, w, h)
     love.graphics.setColor(self.inactiveColor)
-
-    --x, y, w, h = x + margin, y + margin, w - margin*2, h - margin*2
     love.graphics.rectangle('line', x, y, w, h)
 
     -- draw map tiles
-    --love.graphics.push()
-    --love.graphics.translate(w/2, h/2)
-    --love.graphics.translate(-self.mapWidth/2, -self.mapHeight/2)
-
     local activeMinX, activeMinY, activeMaxX, activeMaxY = math.huge, math.huge, -1, -1
 
     for ix = 1, #self.game.grid do
         for iy = 1, #self.game.grid[ix] do
             local cellNumber = self.game.grid[ix][iy]
-            love.graphics.setColor(255, 255, 255)
+            --love.graphics.setColor(255, 255, 255)
+            local r, g, b = unpack(self.pixelColors[ix][iy])
+            local a = 127
             local roomType = self.game.rooms[ix][iy]
+
             if roomType == self.hoveredRoom then
-                love.graphics.setColor(102, 43, 170)
+                a = 255
             end
+            love.graphics.setColor(r, g, b, a)
             if self.game:hasEnemy(ix, iy) then
                 love.graphics.setColor(42, 214, 54)
             end
@@ -131,6 +139,7 @@ function Map:draw()
         local width, height = maxScreenX - minScreenX, maxScreenY - minScreenY
         local m = 2
 
+        love.graphics.setColor(self.borderColor)
         love.graphics.rectangle('line', minScreenX-m, minScreenY-m, width+m*2, height+m*2)
     end
 

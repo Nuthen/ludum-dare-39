@@ -24,6 +24,23 @@ function game:init()
     self:loadAnimations(Enemy, 'alien', 'data.alien_animations')
     self:loadAnimations(Turret, 'turret', 'data.turret_animations')
     self:loadAnimations(PowerGrid, 'powergrid', 'data.powergrid_animations')
+
+    Signal.register("Enter Room", function()
+        local roomX, roomY, roomWidth, roomHeight = self:getActiveRoomBoundingBox()
+        if roomX then
+            -- camera centered on room
+            local gx, gy, gw, gh = game:getGridBoundingBox()
+            local translatedX = gx - game.gridX + gw/2
+            local translatedY = gy - game.gridY + gh/2
+
+            self.cameraGoal.x = -translatedX + roomX + roomWidth/2
+            self.cameraGoal.y = -translatedY + roomY + roomHeight/2
+        end
+    end)
+
+    Signal.register("enemyDeath", function()
+        self.enemyKills = self.enemyKills + 1
+    end)
 end
 
 function game:reset()
@@ -180,7 +197,7 @@ function game:reset()
     if TWEAK.minimapOnGame then
         self.minimap = Map:new(self, {
             game = self,
-            position = Vector(60, 60),
+            position = Vector(CANVAS_WIDTH-60, 60),
         })
     end
 
@@ -244,18 +261,8 @@ function game:reset()
     self.camera.smoother = Camera.smooth.damped(5)
     self.cameraGoal = Vector(0, 0)
 
-    Signal.register("Enter Room", function()
-        local roomX, roomY, roomWidth, roomHeight = self:getActiveRoomBoundingBox()
-        if roomX then
-            -- camera centered on room
-            local gx, gy, gw, gh = game:getGridBoundingBox()
-            local translatedX = gx - game.gridX + gw/2
-            local translatedY = gy - game.gridY + gh/2
-
-            self.cameraGoal.x = -translatedX + roomX + roomWidth/2
-            self.cameraGoal.y = -translatedY + roomY + roomHeight/2
-        end
-    end)
+    self.roundTime = 0
+    self.enemyKills = 0
 
     Signal.emit('gameStart')
 end
@@ -266,6 +273,8 @@ end
 
 function game:update(dt)
     self.timer:update(dt)
+
+    self.roundTime = self.roundTime + dt
 
     -- Update all enemies
     for x = 1, self.gridWidth do

@@ -40,12 +40,24 @@ function victory:draw()
     local text = "YOU SURVIVED"
     love.graphics.setColor(33, 180, 33)
     love.graphics.setFont(Fonts.bold[72])
-    drawCenteredText(text, 100)
+    drawCenteredText(text, love.graphics.getHeight()/4)
+
+    -- SCORE
+    local scoreText = ""
+    if self.prevState.roundTime then
+        scoreText = scoreText .. string.format("Completed in %.3f seconds!\n", self.prevState.roundTime)
+    end
+    if self.prevState.enemyKills then
+        scoreText = scoreText .. string.format("You killed " .. self.prevState.enemyKills .. " space squids!\n")
+    end
+    love.graphics.setColor(238, 230, 35)
+    love.graphics.setFont(Fonts.bold[52])
+    drawCenteredText(scoreText, love.graphics.getHeight()/2)
 
     local text = "Press any key to restart"
     love.graphics.setColor(255, 255, 255)
     love.graphics.setFont(Fonts.default[36])
-    drawCenteredText(text, love.graphics.getHeight()/2)
+    drawCenteredText(text, love.graphics.getHeight()*3/4)
 end
 
 return victory
