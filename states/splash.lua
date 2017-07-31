@@ -6,7 +6,7 @@ function splash:init()
     self.componentList = {
         {
             parent = self,
-            image = Sprite:new('assets/images/splashscreen_logo.png'),
+            image = Sprite:new('assets/images/NezumiSplash.png'),
             initialAlpha = 0,
             finalAlpha = 255,
             fadeInTime = 2,

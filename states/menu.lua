@@ -1,11 +1,11 @@
 local menu = {}
 
 function menu:init()
-    self.titleText = "LÖVE Game"
+    self.titleText = "AT:%PKTWETT"
     self.titleFont = Fonts.bold[60]
     self.titleColor = {255, 255, 255}
 
-    self.startText = "Press any key or touch to start"
+    self.startText = "Press any key or click to start"
     self.startFont = Fonts.regular[24]
     self.startColor = {255, 255, 255}
 end
@@ -27,7 +27,7 @@ function menu:touchreleased(id, x, y, dx, dy, pressure)
 end
 
 function menu:mousepressed(x, y, mbutton)
-
+    State.switch(States.game)
 end
 
 function menu:draw()
