@@ -128,6 +128,12 @@ function Dynamo:toggleScreen()
     self.active = not self.active
 
     if self.active then
+        Signal.emit("Dynamo Toggle On")
+    else
+        Signal.emit("Dynamo Toggle Off")
+    end
+
+    if self.active then
         Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'linear', function()
             self:activateFidget()
         end)
