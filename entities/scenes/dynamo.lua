@@ -126,8 +126,6 @@ function Dynamo:initialize(parent, props)
 end
 
 function Dynamo:powerGridActivated(gridsPowered)
-    self.powerDropMultiplier = self.powerDropMultiplier + TWEAK.powerDropIncreaseForPowerGridActivate
-
     if self.unlockTable[gridsPowered] then
         self.unlockTable[gridsPowered]()
         self.unlockSignalWaiting = true

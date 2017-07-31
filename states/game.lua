@@ -46,6 +46,11 @@ function game:init()
 
     Signal.register("powerGridActivate", function()
         self.dynamo:powerGridActivated(self.totalPoweredRooms)
+        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.powerDropIncreaseForPowerGridActivate
+    end)
+
+    Signal.register("turretActivate", function()
+        self.dynamo.powerDropMultiplier = self.dynamo.powerDropMultiplier + TWEAK.powerDropIncreaseForTurretActivate
     end)
 end
 

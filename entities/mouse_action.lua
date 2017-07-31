@@ -81,7 +81,7 @@ function MouseAction:mousepressed(mx, my)
                 local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, turret.hitboxWidth, turret.hitboxHeight)
                 if isHovered then
                     if turret.roomHash == game.currentRoom then
-                        -- @TODO
+                        turret:activate()
                     end
                 end
             end

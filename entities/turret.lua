@@ -16,6 +16,15 @@ function Turret:initialize(game, x, y, roomHash)
     self.animation = Turret.animations.idle:clone()
 
     self.roomHash = roomHash or 0
+
+    self.activated = false
+end
+
+function Turret:activate()
+    if not self.activated then
+        self.activated = true
+        Signal.emit('turretActivate')
+    end
 end
 
 function Turret:update(dt)
