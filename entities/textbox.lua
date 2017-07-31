@@ -77,7 +77,7 @@ function TextGroup:resize(x, y, w, h, fontScale)
         -- {
         --     textInstance  = Text ...
         --     textPositions = {}   ...
-        --     activateInput = key  ... 
+        --     activateInput = key  ...
         --     fontSize      = Num  ...
         -- }
     }
@@ -104,7 +104,7 @@ function TextGroup:update(x, y)
     x, y = x or 0, y or 0
 
     local mx, my = love.mouse.getPosition()
-    
+
     local textObject, hoverX, hoverY, w, h = self:calculateHover(mx + x, my + y)
     if textObject then
         if textObject.hoverTrigger or textObject.clickTrigger then

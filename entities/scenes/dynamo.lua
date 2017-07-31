@@ -152,11 +152,11 @@ function Dynamo:toggleScreen()
     end
 
     if self.active then
-        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'linear', function()
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'quad', function()
             self:activateFidget()
         end)
     else
-        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y}, 'linear', function()
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y}, 'quad', function()
             for k, fidget in pairs(self.fidgets) do
                 fidget.activated = false
             end
