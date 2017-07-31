@@ -41,7 +41,7 @@ function ParticleSystem:initialize()
         255, 127, 0, 255
     )
     self.systems.gibs:setTexture(self.gibImage)
-    self.systems.gibs:setSizes(1, .75, 0.5, 0.25)
+    self.systems.gibs:setSizes(2, 1, 0.5, 0.25)
     self.systems.gibs:setSizeVariation(1)
     self.systems.gibs:setSpeed(100, 300)
     self.systems.gibs:setLinearAcceleration(0, 400)
