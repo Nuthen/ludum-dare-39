@@ -32,10 +32,12 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
         self:playMusic('buzzy', 0.6)
     end)
 
-    Signal.register('enemyDeath', function()
-        self:play('turret_shoot', 0.5, 1, 0.1)
-        self:play('enemy_death', 1, 1, 0.1, 1, 4)
-        self:play('enemy_death_impact', 0.6, 1, 0.1)
+    Signal.register('enemyDeath', function(isCurrentRoom)
+        if isCurrentRoom then
+            self:play('turret_shoot', 0.5, 1, 0.1)
+            self:play('enemy_death', 1, 1, 0.1, 1, 4)
+            self:play('enemy_death_impact', 0.6, 1, 0.1)
+        end
     end)
 
     Signal.register('powerGridActivate', function()

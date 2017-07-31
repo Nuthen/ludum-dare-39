@@ -34,6 +34,7 @@ function MouseAction:clickEnemy(x, y)
     local rightX, rightY = x + 1, y
 
     local isDead = enemy:hurt()
+    local roomType = game.rooms[x][y]
 
     if isDead then
         if enemy.stage == enemy.stages.LARGE then
@@ -72,9 +73,9 @@ function MouseAction:clickEnemy(x, y)
         screenX = screenX + CANVAS_WIDTH/2 - 15
         screenY = screenY - 65
 
-        Signal.emit('enemyDeath', enemy.stage, Vector(screenX, screenY))
+        Signal.emit('enemyDeath', roomType == game.currentRoom, enemy.stage, Vector(screenX, screenY))
     else
-        Signal.emit("Enemy Hurt")
+        Signal.emit("Enemy Hurt", roomType == game.currentRoom)
     end
 end
 

@@ -68,6 +68,8 @@ function Turret:update(dt)
             -- @Hack
             game.mouseAction:clickEnemy(target.x, target.y)
 
+            Signal.emit('turretFire', self.roomHash == game.currentRoom)
+
             self.canShoot = false
             self:switchAnimation('fire')
             self.animation.onLoop = function()

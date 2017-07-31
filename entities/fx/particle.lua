@@ -92,12 +92,14 @@ function ParticleSystem:initialize()
         s:setEmitterLifetime(.1)
     end)
 
-    Signal.register('enemyDeath', function(stage, position)
-        local s = createSystem("gibs")
-        s:setPosition(position:unpack())
-        s:start()
-        s:emit(20)
-        s:setEmitterLifetime(.1)
+    Signal.register('enemyDeath', function(isCurrentRoom, stage, position)
+        if isCurrentRoom then
+            local s = createSystem("gibs")
+            s:setPosition(position:unpack())
+            s:start()
+            s:emit(20)
+            s:setEmitterLifetime(.1)
+        end
     end)
 end
 
