@@ -16,8 +16,8 @@ return {
     backgroundColor = {32, 35, 46},
 
     drawRoomBoundingBox = false,
-    drawCanvasBoundingBox = true,
-    drawGridBoundingBox = true,
+    drawCanvasBoundingBox = false,
+    drawGridBoundingBox = false,
 
     drawRoomShadows = false,
 
