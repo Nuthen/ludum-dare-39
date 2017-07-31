@@ -38,11 +38,26 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     end)
 
     Signal.register('powerGridActivate', function()
-        self:playDelayed('powergrid_activate', 0.75)
+        self:play('powergrid_activate', 0.5)
         self:play('powergrid_activate_layer', 0.75)
         self:play('powergrid_zap', 0.8, 1, 0.05, 1, 4)
         self:playDelayed(0.2, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
         self:playDelayed(0.33, 'powergrid_zap', 0.8, 1, 0.05, 1, 4)
+    end)
+
+    Signal.register('Dynamo Correct', function(kind)
+        if kind == "button" then
+            self:play('widget_button_press', 1, 1, 0.1)
+        elseif kind == "wheel" then
+            self:play('widget_wheel', 1, 1, 0.1)
+        elseif kind == "flick" then
+            self:play('widget_flick', 1, 1, 0.1)
+        end
+        self:play('powergrid_zap', 0.66, 1, 0.05, 1, 4)
+    end)
+
+    Signal.register('Dynamo Incorrect', function(kind)
+
     end)
 end
 
