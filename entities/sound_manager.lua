@@ -117,6 +117,14 @@ function SoundManager:initialize(soundCatalog, musicCatalog)
     Signal.register('Wheel Spin Stop', function()
         self.wheelTurn:stop()
     end)
+
+    Signal.register('Dynamo Toggle On', function()
+        self:play('dynamo_open', 0.75)
+    end)
+
+    Signal.register('Dynamo Toggle Off', function()
+        self:play('dynamo_close', 0.75)
+    end)
 end
 
 function SoundManager:update(dt)

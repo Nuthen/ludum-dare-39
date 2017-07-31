@@ -14,6 +14,8 @@ return {
     powergrid_zap3           = 'assets/sounds/generator/zap3.wav',
     powergrid_zap4           = 'assets/sounds/generator/zap4.wav',
     powergrid_powered        = 'assets/sounds/generator/sci-fi_power_on_rise_beep_01.wav',
+    dynamo_open              = 'assets/sounds/widgets/switch_button_push_on_off_01.wav',
+    dynamo_close             = 'assets/sounds/widgets/switch_button_push_on_off_02.wav',
     widget_button_press      = 'assets/sounds/widgets/button/switch_button_push_on_off_08.wav',
     widget_wheel             = 'assets/sounds/widgets/wheel/lever_turn_push_crank_handle_small_13.wav',
     widget_wheel_turn        = 'assets/sounds/widgets/wheel/metal_rattle_spin_small_02.wav',
