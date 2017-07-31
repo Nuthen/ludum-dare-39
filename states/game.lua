@@ -141,16 +141,7 @@ function game:reset()
         local roomType = self.rooms[rx][ry]
         local grid = PowerGrid:new(self, x, y, roomType)
         self.powerGridRooms[roomType] = grid
-        -- This actually works
         self.powerGrids[x][y] = grid
-        self.powerGrids[x-1][y] = grid
-        self.powerGrids[x-2][y] = grid
-        self.powerGrids[x][y-1] = grid
-        self.powerGrids[x][y-2] = grid
-        self.powerGrids[x-1][y-1] = grid
-        self.powerGrids[x-2][y-2] = grid
-        self.powerGrids[x-2][y-1] = grid
-        self.powerGrids[x-1][y-2] = grid
     end
 
     -- x, y is the frontmost square from the camera's perspective
@@ -388,6 +379,12 @@ function game:update(dt)
     self.eventManager:update()
     self.camera:lockPosition(self.cameraGoal:unpack())
 
+    self.totalPoweredRooms = 0
+    for room, powergrid in pairs(self.powerGridRooms) do
+        if powergrid.powered then
+            self.totalPoweredRooms = self.totalPoweredRooms + 1
+        end
+    end
     if self.totalPoweredRooms >= self.totalRooms then
         State.switch(States.victory)
     end
@@ -538,6 +535,16 @@ function game:draw()
 
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
+
+        local charge = 0
+        local maxCharge = 0
+        for room, powergrid in pairs(self.powerGridRooms) do
+            charge = charge + powergrid.charge
+            maxCharge = maxCharge + powergrid.maxCharge
+        end
+
+        local percentage = Lume.round((charge / maxCharge) * 100, 1)
+        love.graphics.print("SHIP CHARGE: " .. percentage..'%', 10, 10)
 
         self.particleSystem:draw()
 

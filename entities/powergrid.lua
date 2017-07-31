@@ -19,15 +19,25 @@ function PowerGrid:initialize(game, x, y, roomHash)
 
     self.roomHash = roomHash or 0
     self.activated = false
+    self.powered = false
 
-    self.timer = 0
+    self.flashTimer = 0
+
+    self.timer = Timer.new()
+
+    self.charge = 0
+    self.chargePerSecond = TWEAK.powergrid_charge_per_second
+    self.maxCharge = TWEAK.powergrid_charge_required
 end
 
 function PowerGrid:activate()
     local game = self.game
     if not self.activated then
-        game.totalPoweredRooms = game.totalPoweredRooms + 1
         self.activated = true
+
+        self.timer:every(1, function()
+            self.charge = self.charge + self.chargePerSecond
+        end)
 
         self.animationName = 'online'
         self.image = PowerGrid.images.online
@@ -38,41 +48,49 @@ function PowerGrid:activate()
 end
 
 function PowerGrid:update(dt)
-    self.alreadyDrawn = false
     self.animation:update(dt)
+    self.timer:update(dt)
 
-    self.timer = self.timer + dt
+    if self.charge >= self.maxCharge then
+        self.charge = self.maxCharge
+
+        if not self.powered then
+            self.powered = true
+            Signal.emit('powerGridPowered')
+        end
+    end
+
+    self.flashTimer = self.flashTimer + dt
 end
 
 function PowerGrid:draw(isHovered)
-    if not self.alreadyDrawn then
-        local game = self.game
-        local x, y = game:gridToScreen(self.x, self.y)
-        local offset = PowerGrid.animationOffsets[self.animationName]
-        x = x + offset.x
-        y = y - self.image:getHeight() + offset.y
+    local game = self.game
+    local x, y = game:gridToScreen(self.x, self.y)
+    local offset = PowerGrid.animationOffsets[self.animationName]
+    x = x + offset.x
+    y = y - self.image:getHeight() + offset.y
 
-        self.screenX, self.screenY = x, y
+    self.screenX, self.screenY = x, y
 
-        local colorIncrease = 0
+    local colorIncrease = 0
 
-        if not self.activated then
-            colorIncrease = colorIncrease + (math.sin(self.timer/2)+1)/2 * 100
-            if isHovered then
-                colorIncrease = colorIncrease + 100
-            end
+    if not self.activated then
+        colorIncrease = colorIncrease + (math.sin(self.flashTimer/2)+1)/2 * 100
+        if isHovered then
+            colorIncrease = colorIncrease + 100
         end
+    end
 
-        love.graphics.setColor(255+colorIncrease, 255+colorIncrease, 255+colorIncrease)
-        self.animation:draw(self.image, x, y)
+    love.graphics.setColor(255+colorIncrease, 255+colorIncrease, 255+colorIncrease)
+    self.animation:draw(self.image, x, y)
 
-        if not self.activated then
-            local scale = (math.sin(self.timer)+1)/2 + 1
-            love.graphics.setColor(255, 0, 0)
-            love.graphics.draw(self.glowImage, x + self.image:getWidth()/2, y + self.image:getHeight() - 32, math.rad(45), scale, scale, self.glowImage:getWidth()/2, self.glowImage:getHeight()/2)
-        end
+    local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
+    love.graphics.print(charge..'%', x, y)
 
-        self.alreadyDrawn = true
+    if not self.activated then
+        local scale = (math.sin(self.flashTimer)+1)/2 + 1
+        love.graphics.setColor(255, 0, 0)
+        love.graphics.draw(self.glowImage, x + self.image:getWidth()/2, y + self.image:getHeight() - 32, math.rad(45), scale, scale, self.glowImage:getWidth()/2, self.glowImage:getHeight()/2)
     end
 end
 
