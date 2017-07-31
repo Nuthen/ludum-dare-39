@@ -61,7 +61,7 @@ function Meter:draw()
     local x, y, w, h = self.position.x, self.position.y, self.width, self.height
     x, y = x - w/2, y
     love.graphics.setColor(self.bgColor)
-    love.graphics.rectangle('fill', x, y, w, h)
+    --love.graphics.rectangle('fill', x, y, w, h)
     love.graphics.setColor(self.inactiveColor)
 
     x, y, w, h = x + margin, y + margin, w - margin*2, h - margin*2
