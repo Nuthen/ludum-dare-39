@@ -5,6 +5,7 @@ function ParticleSystem:initialize()
 
     self.defaultImage = love.graphics.newImage("assets/images/particles/1x1white.png")
     self.sparkImage = love.graphics.newImage("assets/images/particles/spark.png")
+    self.gibImage = love.graphics.newImage("assets/images/particles/gib.png")
 
     -- How many particles each system can have
     self.particleLimit = 500
@@ -31,6 +32,26 @@ function ParticleSystem:initialize()
     self.systems.sparks:setParticleLifetime(0.25, 1)
     self.systems.sparks:setEmissionRate(25)
     self.systems.sparks:setRelativeRotation(true)
+
+    self.systems.gibs = self.systems.default:clone()
+    self.systems.gibs:setColors(
+        255, 255, 255, 255,
+        255, 255, 0, 255,
+        255, 215, 0, 255,
+        255, 127, 0, 255
+    )
+    self.systems.gibs:setTexture(self.gibImage)
+    self.systems.gibs:setSizes(2, 1.5, 0.75, 0.25)
+    self.systems.gibs:setSizeVariation(1)
+    self.systems.gibs:setSpeed(100, 300)
+    self.systems.gibs:setLinearAcceleration(0, 400)
+    self.systems.gibs:setTangentialAcceleration(-100, 100)
+    self.systems.gibs:setRadialAcceleration(-100, 100)
+    self.systems.gibs:setSpread(math.pi / 2)
+    self.systems.gibs:setDirection(-math.pi/2)
+    self.systems.gibs:setParticleLifetime(0.25, 1)
+    self.systems.gibs:setEmissionRate(25)
+    self.systems.gibs:setRelativeRotation(true)
 
     -- For now, particle emitters and the ParticleSystem (this class) use different tables
     -- ParticleSystem uses object pooling, and ParticleEmitters just get 1 system per instance
@@ -65,6 +86,14 @@ function ParticleSystem:initialize()
 
     Signal.register('Dynamo Correct', function(sourceType, position)
         local s = createSystem("sparks")
+        s:setPosition(position:unpack())
+        s:start()
+        s:emit(20)
+        s:setEmitterLifetime(.1)
+    end)
+
+    Signal.register('enemyDeath', function(stage, position)
+        local s = createSystem("gibs")
         s:setPosition(position:unpack())
         s:start()
         s:emit(20)

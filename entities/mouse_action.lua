@@ -58,7 +58,7 @@ function MouseAction:mousepressed(mx, my)
 
         game.enemies[self.hoverX][self.hoverY] = nil
 
-        Signal.emit('enemyDeath')
+        Signal.emit('enemyDeath', enemy.stage, Vector(mx, my))
 
     elseif game:hasPowerGrid(self.hoverX, self.hoverY) then
         local powerGrid = game:getPowerGrid(self.hoverX, self.hoverY)
