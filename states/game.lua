@@ -235,12 +235,13 @@ function game:reset()
 
                     local powerGrid = game:getPowerGrid(x, y)
                     if powerGrid and powerGrid.roomHash == game.currentRoom then
-                        if game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY) then
-                            love.graphics.setColor(400, 400, 400)
-                        else
+                        local isHovered = game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY)
+                        --if game:hasPowerGrid(game.mouseAction.hoverX, game.mouseAction.hoverY) then
+                            --love.graphics.setColor(400, 400, 400)
+                        --else
                             love.graphics.setColor(255, 255, 255)
-                        end
-                        powerGrid:draw()
+                        --end
+                        powerGrid:draw(isHovered)
                     end
 
                     if TWEAK.drawTilePositions then

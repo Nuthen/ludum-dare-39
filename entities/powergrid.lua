@@ -33,7 +33,7 @@ function PowerGrid:update(dt)
     self.timer = self.timer + dt
 end
 
-function PowerGrid:draw()
+function PowerGrid:draw(isHovered)
     if not self.alreadyDrawn then
         local game = self.game
         local x, y = game:gridToScreen(self.x, self.y)
@@ -41,7 +41,12 @@ function PowerGrid:draw()
         x = x + offset.x
         y = y - self.image:getHeight() + offset.y
 
-        love.graphics.setColor(255, 255, 255)
+        local colorIncrease = (math.sin(self.timer)+1)/2 * 100
+        if isHovered then
+            colorIncrease = colorIncrease + 100
+        end
+
+        love.graphics.setColor(255+colorIncrease, 255+colorIncrease, 255+colorIncrease)
         self.animation:draw(self.image, x, y)
 
         if not self.activated then
@@ -49,7 +54,7 @@ function PowerGrid:draw()
             love.graphics.setColor(255, 0, 0)
             love.graphics.draw(self.glowImage, x + self.image:getWidth()/2, y + self.image:getHeight() - 32, math.rad(45), scale, scale, self.glowImage:getWidth()/2, self.glowImage:getHeight()/2)
         end
-        
+
         self.alreadyDrawn = true
     end
 end
