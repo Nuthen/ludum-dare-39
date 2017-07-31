@@ -167,20 +167,26 @@ function game:reset()
     -- Every so often add a new enemy
     self.timer = Timer.new()
     self.timer:every(TWEAK.enemySpawnRate, function()
-        local ex, ey
-        local enemy
-        local notAnEmptySpace
-        local tries = 0
-        local maxTries = TWEAK.enemySpawnMaxTries
-        -- Locate empty square
-        repeat
-            tries = tries + 1
-            ex = love.math.random(self.gridWidth)
-            ey = love.math.random(self.gridHeight)
-            enemy = self.enemies[ex][ey]
-            notAnEmptySpace = self.grid[ex][ey] > 0
-        until (notAnEmptySpace or tries >= maxTries)
-        self:addEnemy(ex, ey)
+        local possibleTiles = {}
+
+        for ix = 1, #self.grid do
+            for iy = 1, #self.grid[1] do
+                local roomType = self:getRoom(ix, iy)
+                local cellValue = self.grid[ix][iy]
+                local powerGrid = self.powerGridRooms[roomType]
+                if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid.activated then
+                    table.insert(possibleTiles, {x=ix, y=iy})
+                end
+            end
+        end
+
+        if #possibleTiles > 0 then
+            local randomTileIndex = love.math.random(1, #possibleTiles)
+            local chosenTile = possibleTiles[randomTileIndex]
+            self:addEnemy(chosenTile.x, chosenTile.y)
+        else
+            --error("No possible enemy location found.")
+        end
     end)
 
     -- Grid drawing code
@@ -251,8 +257,8 @@ function game:reset()
 
             if TWEAK.drawGridBoundingBox then
                 love.graphics.rectangle('line', gx, gy, gw, gh)
-                love.graphics.pop()
             end
+            love.graphics.pop()
         end,
     }
 
