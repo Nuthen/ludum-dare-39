@@ -17,6 +17,10 @@ return {
     power_drop_increase_for_power_grid_activate = 0.01,
     power_drop_increase_for_turret_activate = 0.005,
 
+    power_charged_for_button = .1,
+    power_charged_for_flick  = .2,
+    power_charged_for_spin   = .4,
+
     turretReloadTime = 1.5,
 
     backgroundColor = {32, 35, 46},

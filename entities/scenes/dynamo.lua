@@ -32,7 +32,7 @@ function Dynamo:initialize(parent, props)
             keybinds = SETTINGS.dynamoKeybinds.firstButton,
             image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_green.png'),
             onClicked = function(position)
-                self:addPower(.1, "button", position)
+                self:addPower(TWEAK.power_charged_for_button, "button", position)
             end,
         })
     table.insert(self.entities, firstButton)
@@ -45,7 +45,7 @@ function Dynamo:initialize(parent, props)
             locked = false,
             image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_pink.png'),
             onClicked = function(position)
-                self:addPower(.1, "button", position)
+                self:addPower(TWEAK.power_charged_for_button, "button", position)
             end,
         })
     table.insert(self.entities, secondButton)
@@ -57,7 +57,7 @@ function Dynamo:initialize(parent, props)
             keybinds = SETTINGS.dynamoKeybinds.thirdButton,
             image = love.graphics.newImage('assets/images/Dynamo/dynamo_button_blue.png'),
             onClicked = function(position)
-                self:addPower(.1, "button", position)
+                self:addPower(TWEAK.power_charged_for_button, "button", position)
             end,
         })
     table.insert(self.entities, thirdButton)
@@ -67,7 +67,7 @@ function Dynamo:initialize(parent, props)
             --inactiveColor = {147, 162, 77},
             --pressColor = {255, 202, 66},
             onClicked = function(position, dirRot) -- "cw", "ccw"
-                self:addPower(.1, "wheel", position)
+                self:addPower(TWEAK.power_charged_for_spin, "wheel", position)
             end,
         })
     table.insert(self.entities, wheel)
@@ -77,7 +77,7 @@ function Dynamo:initialize(parent, props)
             --inactiveColor = {147, 162, 77},
             --pressColor = {255, 202, 66},
             onClicked = function(position, dir) -- "up", "down", "left", "right"
-                self:addPower(.1, "flick", position)
+                self:addPower(TWEAK.power_charged_for_flick, "flick", position)
             end,
         })
     table.insert(self.entities, flick)
