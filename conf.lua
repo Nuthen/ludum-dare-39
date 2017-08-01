@@ -1,7 +1,7 @@
 function love.conf(t)
     t.identity = "spacesquid"                    -- The name of the save directory (string)
     t.version = "0.10.2"                -- The LÖVE version this game was made for (string)
-    t.console = true                    -- Attach a console (boolean, Windows only)
+    t.console = false                    -- Attach a console (boolean, Windows only)
     t.accelerometerjoystick = true      -- Enable the accelerometer on iOS and Android by exposing it as a Joystick (boolean)
     t.externalstorage = false           -- True to save files (and read from the save directory) in external storage on Android (boolean)
     t.gammacorrect = false              -- Enable gamma-correct rendering, when supported by the system (boolean)
@@ -39,4 +39,17 @@ function love.conf(t)
     t.modules.video = true              -- Enable the video module (boolean)
     t.modules.window = true             -- Enable the window module (boolean)
     t.modules.thread = true             -- Enable the thread module (boolean)
+    t.releases = {
+        title = "Spacesquid Spaceship",              -- The project title (string)
+        package = 'spacesquid-spaceship',            -- The project command and package name (string)
+        loveVersion = '0.10.2',        -- The project LÖVE version
+        version = '1.0',            -- The project version
+        author = "Nezumi Games",             -- Your name (string)
+        email = "gamesnezumi@gmail.com",              -- Your email (string)
+        description = "Spacesquid Spaceship",        -- The project description (string)
+        homepage = "https://nezumigames.com",           -- The project homepage (string)
+        identifier = 'com.nezumigames.spacesquid',         -- The project Uniform Type Identifier (string)
+        excludeFileList = {},     -- File patterns to exclude. (string list)
+        releaseDirectory = 'releases',   -- Where to store the project releases (string)
+    }
 end
