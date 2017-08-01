@@ -87,6 +87,15 @@ function love.keypressed(key, code, isRepeat)
     if not RELEASE and code == CONFIG.debug.key then
         DEBUG = not DEBUG
     end
+
+    if key == 'escape' then
+        love.event.quit()
+    end
+
+    if key == 'f11' then
+        local fullscreen, fstype = love.window.getFullscreen( )
+        love.window.setFullscreen(not fullscreen, "desktop")
+    end
 end
 
 function love.threaderror(thread, errorMessage)

@@ -27,6 +27,10 @@ function splash:init()
                 end)
             end,
             draw = function(self)
+                self.image.position = Vector(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+                self.image.scale = Vector(2, 2)
+                self.image:moveOriginToCorner('center')
+
                 self.image.color[4] = self.alpha
                 self.image:draw()
             end,
@@ -56,7 +60,9 @@ function splash:update(dt)
 end
 
 function splash:keyreleased(key, code)
-    State.switch(States.menu)
+    if key ~= 'f11' then
+        State.switch(States.menu)
+    end
 end
 
 function splash:touchreleased(id, x, y, dx, dy, pressure)
