@@ -450,7 +450,7 @@ function game:mousereleased(x, y, mbutton)
     self.scene:mousereleased(x, y, mbutton)
     self.dynamo:mousereleased(x, y, mbutton)
 
-    if self.minimap then self.minimap:mousereleased(x, y, mbutton) end
+    if self.minimap and not self.eventManager.firstEnemyDeath then self.minimap:mousereleased(x, y, mbutton) end
 end
 
 function game:mousemoved(x, y, dx, dy, istouch)
@@ -462,7 +462,7 @@ function game:mousemoved(x, y, dx, dy, istouch)
     self.scene:mousemoved(x, y, dx, dy, istouch)
     self.dynamo:mousemoved(x, y, dx, dy, istouch)
 
-    if self.minimap then self.minimap:mousemoved(x, y, dx, dy, istouch) end
+    if self.minimap and not self.eventManager.firstEnemyDeath then self.minimap:mousemoved(x, y, dx, dy, istouch) end
 end
 
 function game:wheelmoved(x, y)
@@ -551,7 +551,7 @@ function game:draw()
         self.camera:detach()
         love.graphics.pop()
 
-        if self.minimap then self.minimap:draw() end
+        if self.minimap and not self.eventManager.firstEnemyDeath then self.minimap:draw() end
         self.dynamo:draw()
 
         local charge = 0

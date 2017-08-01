@@ -10,7 +10,7 @@ function EventScene:initialize(parent)
 
     self.eventList = {
         prologue1 = function()
-            self.eventBox:addEntry("Welcome. Your goal is to restore power to all 7 power grids of your spaceship. Start by clicking on the first power grid.")
+            self.eventBox:addEntry("Welcome. Your goal is to restore power to all 7 power grids of your spaceship. Start by clicking on the first power grid (It is glowing red).")
             local onClick = function()
                 self.active = false
             end
@@ -34,7 +34,7 @@ function EventScene:initialize(parent)
         end,
 
         dynamoCorrect1 = function()
-            self.eventBox:addEntry("Well done! Make sure to return here often to keep enough power. When you are ready, close the interface by clicking on the power bar or by pressing SPACE.")
+            self.eventBox:addEntry("Well done! Make sure to return here often to keep enough power. Also, more tools will unlock as more grids are powered. When you are ready, close the interface by clicking on the power bar or by pressing SPACE.")
             local onClick = function()
                 self.active = false
             end
@@ -50,7 +50,15 @@ function EventScene:initialize(parent)
         end,
 
         enemyDeath1 = function()
-            self.eventBox:addEntry("To win the game you will need to fully charge all power grids in the ships by clicking on them until they reach 100%. You can do the same with turrets to help you against the aliens. Good luck.")
+            self.eventBox:addEntry("To win the game you will need to fully charge all power grids in the ship by clicking on them until they reach 100%. Click on a red room on the minimap at the top right corner of your screen.")
+            local onClick = function()
+                self.active = false
+            end
+            self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+        end,
+
+        roomEnter1 = function()
+            self.eventBox:addEntry("To help you against the aliens, you can activate turrets by clicking on them once a room is fully charged. Good Luck.")
             local onClick = function()
                 self.active = false
             end
@@ -111,6 +119,13 @@ function EventScene:initialize(parent)
         end
     end)
 
+    Signal.register("Enter Room", function()
+        if self.firstRoomEnter then
+            self.firstRoomEnter = false
+            self:setEvent("roomEnter1")
+        end
+    end)
+
     self:reset()
 end
 
@@ -128,6 +143,7 @@ function EventScene:reset()
     self.firstEnemyDeath = true
     self.firstTurretActive = true
     self.firstDynamoClose = true
+    self.firstRoomEnter = true
 
     self:setEvent("prologue1")
 
@@ -143,15 +159,18 @@ function EventScene:setPrologue()
 end
 
 function EventScene:setEvent(label)
-    local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
-    local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
+    Timer.after(TWEAK.tutorial_popup_delay, function()
 
-    self.eventBox = TextBox:new(x, y, w, h, true)
+        local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
+        local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
 
-    self.eventList[label]()
+        self.eventBox = TextBox:new(x, y, w, h, true)
 
-    self.eventBox:setToMaxScroll()
-    self.active = true
+        self.eventList[label]()
+
+        self.eventBox:setToMaxScroll()
+        self.active = true
+    end)
 end
 
 function EventScene:resize(screenWidth, screenHeight)

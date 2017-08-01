@@ -55,4 +55,6 @@ return {
     enemyStage1Health = 1,
     enemyStage2Health = 3,
     enemyStage3Health = 5,
+
+    tutorial_popup_delay = 2,
 }
