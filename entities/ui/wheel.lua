@@ -160,12 +160,11 @@ function Wheel:wheelmoved(x, y)
     if self.locked.cw  then y = math.max(0, y) end
     if self.locked.ccw then y = math.min(0, y) end
 
-    self.beingMoved = false
-    if y <= 0 then
-        self.beingMoved = true
+    --self.beingMoved = false
+    if y ~= 0 then
+        --self.beingMoved = true
+        self:solveAngle(-y * self.bindingSpinMultiplier)
     end
-
-    self:solveAngle(-y * self.bindingSpinMultiplier)
 end
 
 function Wheel:draw()
