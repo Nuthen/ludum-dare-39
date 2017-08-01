@@ -57,4 +57,5 @@ return {
     enemyStage3Health = 5,
 
     tutorial_popup_delay = 2,
+    tutorial_min_showtime = 0.5
 }

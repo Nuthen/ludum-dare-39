@@ -12,7 +12,7 @@ function EventScene:initialize(parent)
         prologue1 = function()
             self.eventBox:addEntry("Welcome. Your goal is to restore power to all 7 power grids of your spaceship. Start by clicking on the first power grid (It is glowing red).")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -20,7 +20,7 @@ function EventScene:initialize(parent)
         grid1 = function()
             self.eventBox:addEntry("Warning. Power grids will slowly deplete your power over time. If you run out of power, your ship will be lost. To recharge your power, click on the power bar at the bottom of the screen or press SPACE.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -28,7 +28,7 @@ function EventScene:initialize(parent)
         dynamo1 = function()
             self.eventBox:addEntry("Click on the active button (green light) to recharge your power levels.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -36,7 +36,7 @@ function EventScene:initialize(parent)
         dynamoCorrect1 = function()
             self.eventBox:addEntry("Well done! Make sure to return here often to keep enough power. Also, more tools will unlock as more grids are powered. When you are ready, close the interface by clicking on the power bar or by pressing SPACE.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -44,7 +44,7 @@ function EventScene:initialize(parent)
         dynamoToggleOff1 = function()
             self.eventBox:addEntry("Aliens are invading your ship! They're attracted to the active power grids.  Click on the aliens to destroy them.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -52,7 +52,7 @@ function EventScene:initialize(parent)
         enemyDeath1 = function()
             self.eventBox:addEntry("To win the game you will need to fully charge all power grids in the ship by clicking on them until they reach 100%. Click on a red room on the minimap at the top right corner of your screen.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -60,7 +60,7 @@ function EventScene:initialize(parent)
         roomEnter1 = function()
             self.eventBox:addEntry("To help you against the aliens, you can activate turrets by clicking on them once a room is fully charged. Good Luck.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -68,7 +68,7 @@ function EventScene:initialize(parent)
         turretActivate1 = function()
             self.eventBox:addEntry("Click on the turret until it reaches 100% to activate it. It will help you by automatically shooting the invaders.")
             local onClick = function()
-                self.active = false
+                self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
         end,
@@ -129,6 +129,13 @@ function EventScene:initialize(parent)
     self:reset()
 end
 
+function EventScene:deactivatePopup()
+    if self.shownTime >= TWEAK.tutorial_min_showtime then
+        self.shownTime = 0
+        self.active = false
+    end
+end
+
 function EventScene:reset()
     --[[
     self.firstPowerGrid
@@ -144,6 +151,8 @@ function EventScene:reset()
     self.firstTurretActive = true
     self.firstDynamoClose = true
     self.firstRoomEnter = true
+
+    self.shownTime = 0
 
     self:setEvent("prologue1")
 
@@ -184,8 +193,10 @@ function EventScene:resize(screenWidth, screenHeight)
     end
 end
 
-function EventScene:update()
+function EventScene:update(dt)
     if not self.active then return end
+
+    self.shownTime = self.shownTime + dt
 
     if self.eventBox then
         self.eventBox:update()
