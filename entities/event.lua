@@ -10,7 +10,7 @@ function EventScene:initialize(parent)
 
     self.eventList = {
         prologue1 = function()
-            self.eventBox:addEntry("Welcome. Your goal is to restore power to all 7 power grids of your spaceship. Start by clicking on the first power grid (It is glowing red).")
+            self.eventBox:addEntry("You are stranded on a derelict spaceship. Your goal is to restore power to all 7 power grids of your spaceship. Start by clicking on the first power grid (It is glowing red).")
             local onClick = function()
                 self:deactivatePopup()
             end
