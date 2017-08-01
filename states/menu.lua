@@ -1,7 +1,7 @@
 local menu = {}
 
 function menu:init()
-    self.titleText = "AT:%PKTWETT"
+    self.titleText = "Spacesquid Spaceship"
     self.titleFont = Fonts.bold[60]
     self.titleColor = {255, 255, 255}
 
