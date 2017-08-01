@@ -123,7 +123,7 @@ function Dynamo:initialize(parent, props)
         self.fidgets.flick.locked.up = false
         self.fidgets.flick.locked.right = false
         self.fidgets.flick.locked.down = false
-            self.fidgets.flick.locked.left  = false
+        self.fidgets.flick.locked.left  = false
     end
     --self.unlockTable[4] = function()
     --end
@@ -142,11 +142,15 @@ function Dynamo:initialize(parent, props)
     self.tweenMoveTime = .25
 
     self.unlockSignalWaiting = false
+
+    self.counter = 0
 end
 
 function Dynamo:powerGridActivated(gridsPowered)
-    if self.unlockTable[gridsPowered] then
-        self.unlockTable[gridsPowered]()
+    self.counter = self.counter + 1
+
+    if self.unlockTable[self.counter] then
+        self.unlockTable[self.counter]()
         self.unlockSignalWaiting = true
     end
 end
