@@ -410,7 +410,11 @@ function game:update(dt)
 
     if self.power <= 0 or occupiedRooms >= 1 then
         Signal.emit("Low Power Warning Toggle Off")
-        State.switch(States.gameover)
+        if self.power <= 0 then
+            State.switch(States.gameover, "TOTAL POWER LOSS")
+        elseif occupiedRooms >= 1 then
+            State.switch(States.gameover, "SHIP WAS OVERRUN")
+        end
     end
 end
 
