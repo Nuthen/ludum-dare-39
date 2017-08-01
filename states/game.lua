@@ -552,8 +552,25 @@ function game:draw()
         love.graphics.pop()
 
         if self.minimap and not self.eventManager.firstEnemyDeath then self.minimap:draw() end
+        --
+        -- Draw current room invasion level
+        local invadedCells = 0
+        local totalCells = #self:getRoomTiles(game.currentRoom)
+        for i, tile in ipairs(self:getRoomTiles(game.currentRoom)) do
+            if self:hasEnemy(tile.x, tile.y) then
+                invadedCells = invadedCells + 1
+            end
+        end
+
+        invasion = 'INVASION LEVEL: ' .. Lume.round((invadedCells/totalCells)*100, 1) .. '%'
+        local font = Fonts.pixelSmall[32]
+        love.graphics.setFont(font)
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print(invasion, CANVAS_WIDTH/2 - font:getWidth(invasion)/2, CANVAS_HEIGHT - 80)
+
         self.dynamo:draw()
 
+        -- Draw power grid progress
         local powered = 0
         for room, powergrid in pairs(self.powerGridRooms) do
             if powergrid.powered then
