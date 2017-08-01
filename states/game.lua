@@ -340,7 +340,7 @@ function game:reset()
     self.enemyKills = 0
 
     Signal.emit('gameStart')
-    Signal.emit("Enter Room")
+    Signal.emit("Enter Room", true)
 end
 
 function game:enter()

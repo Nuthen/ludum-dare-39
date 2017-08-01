@@ -119,8 +119,8 @@ function EventScene:initialize(parent)
         end
     end)
 
-    Signal.register("Enter Room", function()
-        if self.firstRoomEnter then
+    Signal.register("Enter Room", function(doesntCount)
+        if self.firstRoomEnter and not doesntCount then
             self.firstRoomEnter = false
             self:setEvent("roomEnter1")
         end
