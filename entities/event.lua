@@ -78,51 +78,65 @@ function EventScene:initialize(parent)
 
     Signal.register('powerGridActivate', function()
         if self.firstPowerGrid then
-            self.firstPowerGrid = false
-            self:setEvent("grid1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstPowerGrid = false
+                self:setEvent("grid1")
+            end)
         end
     end)
 
     Signal.register("Dynamo Toggle On", function()
         if self.firstDynamoOpen then
-            self.firstDynamoOpen = false
-            self:setEvent("dynamo1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstDynamoOpen = false
+                self:setEvent("dynamo1")
+            end)
         end
     end)
 
     Signal.register("Dynamo Correct", function()
         if self.firstDynamoCorrect then
-            self.firstDynamoCorrect = false
-            self:setEvent("dynamoCorrect1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstDynamoCorrect = false
+                self:setEvent("dynamoCorrect1")
+            end)
         end
     end)
 
     Signal.register("enemyDeath", function()
         if self.firstEnemyDeath then
-            self.firstEnemyDeath = false
-            self:setEvent("enemyDeath1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstEnemyDeath = false
+                self:setEvent("enemyDeath1")
+            end)
         end
     end)
 
     Signal.register("turretActivate", function()
         if self.firstTurretActive then
-            self.firstTurretActive = false
-            self:setEvent("turretActivate1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstTurretActive = false
+                self:setEvent("turretActivate1")
+            end)
         end
     end)
 
     Signal.register("Dynamo Toggle Off", function()
         if self.firstDynamoClose then
-            self.firstDynamoClose = false
-            self.parent:spawnEnemy(true)
-            self:setEvent("dynamoToggleOff1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstDynamoClose = false
+                self.parent:spawnEnemy(true)
+                self:setEvent("dynamoToggleOff1")
+            end)
         end
     end)
 
     Signal.register("Enter Room", function(doesntCount)
         if self.firstRoomEnter and not doesntCount then
-            self.firstRoomEnter = false
-            self:setEvent("roomEnter1")
+            Timer.after(TWEAK.tutorial_popup_delay, function()
+                self.firstRoomEnter = false
+                self:setEvent("roomEnter1")
+            end)
         end
     end)
 
@@ -168,18 +182,15 @@ function EventScene:setPrologue()
 end
 
 function EventScene:setEvent(label)
-    Timer.after(TWEAK.tutorial_popup_delay, function()
+    local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
+    local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
 
-        local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
-        local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
+    self.eventBox = TextBox:new(x, y, w, h, true)
 
-        self.eventBox = TextBox:new(x, y, w, h, true)
+    self.eventList[label]()
 
-        self.eventList[label]()
-
-        self.eventBox:setToMaxScroll()
-        self.active = true
-    end)
+    self.eventBox:setToMaxScroll()
+    self.active = true
 end
 
 function EventScene:resize(screenWidth, screenHeight)
