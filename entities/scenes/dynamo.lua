@@ -114,13 +114,27 @@ function Dynamo:initialize(parent, props)
     }
 
     self.unlockTable = {}
-    self.unlockTable[1] = function() self.fidgets.button3.locked     = false end
-    self.unlockTable[2] = function() self.fidgets.flick.locked.up    = false end
-    self.unlockTable[3] = function() self.fidgets.flick.locked.right = false end
-    self.unlockTable[4] = function() self.fidgets.flick.locked.down  = false end
-    self.unlockTable[5] = function() self.fidgets.flick.locked.left  = false end
-    self.unlockTable[6] = function() self.fidgets.wheel.locked.cw    = false end
-    self.unlockTable[7] = function() self.fidgets.wheel.locked.ccw   = false end
+    self.unlockTable[1] = function()
+        self.fidgets.button3.locked = false
+    end
+    --self.unlockTable[2] = function()
+    --end
+    self.unlockTable[3] = function()
+        self.fidgets.flick.locked.up = false
+        self.fidgets.flick.locked.right = false
+        self.fidgets.flick.locked.down = false
+            self.fidgets.flick.locked.left  = false
+    end
+    --self.unlockTable[4] = function()
+    --end
+    self.unlockTable[5] = function()
+        self.fidgets.wheel.locked.cw    = false
+        self.fidgets.wheel.locked.ccw   = false
+    end
+    --[[self.unlockTable[6] = function()
+    end
+    self.unlockTable[7] = function()
+    end]]
 
     self.active = false
     self.powerDropMultiplier = TWEAK.powerDropMultiplier
