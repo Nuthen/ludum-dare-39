@@ -60,7 +60,7 @@ end
 
 function TextGroup:resize(x, y, w, h, fontScale)
     self.fontScale = fontScale or 1
-    self.defaultFont = {font=Fonts.regular, size = 48}
+    self.defaultFont = {font=Fonts.regular, size = 32}
 
     self.origin = Vector(x, y)
     self.w, self.h = w, h
