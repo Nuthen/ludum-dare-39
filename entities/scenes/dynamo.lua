@@ -148,22 +148,23 @@ function Dynamo:addPower(amount, sourceType, position)
 end
 
 function Dynamo:toggleScreen()
-    if not self.parent.eventManager.firstPowerGrid then
-        self.active = not self.active
+    if self.parent.eventManager.firstPowerGrid then return end
+    if self.active and self.parent.eventManager.firstDynamoCorrect then return end
 
-        if self.active then
-            Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'quad', function()
-                self:activateFidget()
-                Signal.emit("Dynamo Toggle On")
-            end)
-        else
-            Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y}, 'quad', function()
-                for k, fidget in pairs(self.fidgets) do
-                    fidget.activated = false
-                end
-                Signal.emit("Dynamo Toggle Off")
-            end)
-        end
+    self.active = not self.active
+
+    if self.active then
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.x}, 'quad', function()
+            self:activateFidget()
+            Signal.emit("Dynamo Toggle On")
+        end)
+    else
+        Timer.tween(self.tweenMoveTime, self.position, {y = self.positionSet.y}, 'quad', function()
+            for k, fidget in pairs(self.fidgets) do
+                fidget.activated = false
+            end
+            Signal.emit("Dynamo Toggle Off")
+        end)
     end
 end
 
