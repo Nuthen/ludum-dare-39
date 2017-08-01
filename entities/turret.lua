@@ -43,17 +43,19 @@ function Turret:activate()
         self.activated = true
         Signal.emit('turretActivate')
     else
-        self.charge = self.charge + self.chargePerClick
+        if self.game.powerGridRooms[self.roomHash].powered then
+            self.charge = self.charge + self.chargePerClick
 
-        if self.charge >= self.maxCharge then
-            self.charge = self.maxCharge
+            if self.charge >= self.maxCharge then
+                self.charge = self.maxCharge
 
-            if not self.powered then
-                self.powered = true
-                Signal.emit('turretPowered')
+                if not self.powered then
+                    self.powered = true
+                    Signal.emit('turretPowered')
+                end
+            else
+                Signal.emit('turretCharge')
             end
-        else
-            Signal.emit('turretCharge')
         end
     end
 end
@@ -124,10 +126,15 @@ function Turret:draw()
     local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
     local font = Fonts.pixel[16]
     local text = charge..'%'
-    local tx, ty = x + 32, y + 16
+    if not game.powerGridRooms[self.roomHash].powered then
+        text = 'NEED POWER'
+    end
+    local tx, ty = x + 48 - font:getWidth(text)/2, y + 16
+    tx = Lume.round(tx)
+    ty = Lume.round(ty)
     love.graphics.setFont(font)
     love.graphics.setColor(0, 0, 0)
-    love.graphics.print(text, tx+2, ty+2)
+    love.graphics.print(text, tx+1, ty+1)
     love.graphics.setColor(255, 255, 255)
     love.graphics.print(text, tx, ty)
 end
