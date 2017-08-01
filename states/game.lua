@@ -554,17 +554,16 @@ function game:draw()
         if self.minimap then self.minimap:draw() end
         self.dynamo:draw()
 
-        local charge = 0
-        local maxCharge = 0
+        local powered = 0
         for room, powergrid in pairs(self.powerGridRooms) do
-            charge = charge + powergrid.charge
-            maxCharge = maxCharge + powergrid.maxCharge
+            if powergrid.powered then
+                powered = powered + 1
+            end
         end
 
-        local percentage = Lume.round((charge / maxCharge) * 100, 1)
-        love.graphics.setFont(Fonts.pixelSmall[48])
+        love.graphics.setFont(Fonts.pixelSmall[32])
         love.graphics.setColor(255, 255, 255)
-        love.graphics.print("SHIP CHARGE: " .. percentage..'%', 5, -5)
+        love.graphics.print("POWER GRIDS: " .. powered .. ' / ' .. self.totalRooms, 7, -2)
 
         self.particleSystem:draw()
 

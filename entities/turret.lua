@@ -123,23 +123,25 @@ function Turret:draw()
         self.animation:draw(self.image, x, y)
     end
 
-    local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
-    local font = Fonts.pixel[16]
-    local text = charge..'%'
-    if not game.powerGridRooms[self.roomHash].powered then
-        text = 'NEED POWER'
+    if game.powerGridRooms[self.roomHash].activated then
+        local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
+        local font = Fonts.pixel[16]
+        local text = 'CHARGE: '..charge..'%'
+        if not game.powerGridRooms[self.roomHash].powered then
+            text = 'NEED POWER'
+        end
+        local tx, ty = x + 48 - font:getWidth(text)/2, y + 16
+        if self.flip then
+            tx = self.screenX + 48 - font:getWidth(text)/2
+        end
+        tx = Lume.round(tx)
+        ty = Lume.round(ty)
+        love.graphics.setFont(font)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.print(text, tx+1, ty+1)
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print(text, tx, ty)
     end
-    local tx, ty = x + 48 - font:getWidth(text)/2, y + 16
-    if self.flip then
-        tx = self.screenX + 48 - font:getWidth(text)/2
-    end
-    tx = Lume.round(tx)
-    ty = Lume.round(ty)
-    love.graphics.setFont(font)
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.print(text, tx+1, ty+1)
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.print(text, tx, ty)
 end
 
 return Turret

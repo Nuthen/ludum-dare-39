@@ -90,15 +90,17 @@ function PowerGrid:draw(isHovered)
     love.graphics.setColor(255+colorIncrease, 255+colorIncrease, 255+colorIncrease)
     self.animation:draw(self.image, x, y)
 
-    if self.activated then
+    if self.activated and not self.powered then
         local charge = Lume.round((self.charge / self.maxCharge) * 100, 1)
-        local font = Fonts.pixel[32]
-        local text = charge..'%'
+        local font = Fonts.pixel[16]
+        local text = 'CHARGE: '..charge..'%'
         local tx, ty = x, y
         tx = tx + self.image:getWidth()/2 - font:getWidth(text)/2
+        tx = Lume.round(tx)
+        ty = Lume.round(ty)
         love.graphics.setFont(font)
         love.graphics.setColor(0, 0, 0)
-        love.graphics.print(text, tx+2, ty+2)
+        love.graphics.print(text, tx+1, ty+1)
         love.graphics.setColor(255, 255, 255)
         love.graphics.print(text, tx, ty)
     end
