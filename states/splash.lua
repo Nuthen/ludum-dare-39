@@ -9,9 +9,9 @@ function splash:init()
             image = Sprite:new('assets/images/NezumiSplash.png'),
             initialAlpha = 0,
             finalAlpha = 255,
-            fadeInTime = 2,
-            stillTime = 2,
-            fadeOutTime = 2,
+            fadeInTime = 1,
+            stillTime = 1.5,
+            fadeOutTime = 0.5,
             init = function(self)
                 self.image.position = Vector(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
                 self.image.scale = Vector(2, 2)
@@ -47,7 +47,7 @@ end
 function splash:incrementActive()
     self.active = self.active + 1
     if self.active > #self.componentList then
-        State.switch(States.menu)
+        State.switch(States.game)
     end
 end
 
@@ -56,11 +56,11 @@ function splash:update(dt)
 end
 
 function splash:keyreleased(key, code)
-    State.switch(States.menu)
+    State.switch(States.game)
 end
 
 function splash:touchreleased(id, x, y, dx, dy, pressure)
-    State.switch(States.menu)
+    State.switch(States.game)
 end
 
 function splash:mousepressed(x, y, mbutton)
