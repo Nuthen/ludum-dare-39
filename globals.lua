@@ -2,7 +2,7 @@
 -- !! This flag controls the ability to toggle the debug view.         !!
 -- !! You will want to turn this to 'true' when you publish your game. !!
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-RELEASE = false
+RELEASE = true
 
 -- Enables the debug stats
 DEBUG = not RELEASE
