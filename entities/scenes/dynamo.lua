@@ -259,14 +259,14 @@ end
 
 function Dynamo:keyreleased(key, code)
     if not self.active then return end
-    if self.parent.eventManager.firstDynamoOpen then return end
+    --if self.parent.eventManager.firstDynamoOpen then return end
 
     Scene.keyreleased(self, key, code)
 end
 
 function Dynamo:mousepressed(x, y, mbutton)
     --if not self.active then return end
-    if self.parent.eventManager.firstDynamoOpen then return end
+    --if self.parent.eventManager.firstDynamoOpen then return end
 
     x, y = x - self.position.x, y - self.position.y
     Scene.mousepressed(self, x, y, mbutton)
@@ -274,7 +274,7 @@ end
 
 function Dynamo:mousereleased(x, y, mbutton)
     --if not self.active then return end
-    if self.parent.eventManager.firstDynamoOpen then return end
+    --if self.parent.eventManager.firstDynamoOpen then return end
 
     x, y = x - self.position.x, y - self.position.y
     Scene.mousereleased(self, x, y, mbutton)
@@ -282,7 +282,7 @@ end
 
 function Dynamo:mousemoved(x, y, dx, dy, istouch)
     --if not self.active then return end
-    if self.parent.eventManager.firstDynamoOpen then return end
+    --if self.parent.eventManager.firstDynamoOpen then return end
 
     x, y = x - self.position.x, y - self.position.y
     Scene.mousemoved(self, x, y, dx, dy, istouch)
@@ -290,7 +290,7 @@ end
 
 function Dynamo:wheelmoved(x, y)
     --if not self.active then return end
-    if self.parent.eventManager.firstDynamoOpen then return end
+    --if self.parent.eventManager.firstDynamoOpen then return end
 
     Scene.wheelmoved(self, x, y)
 end
