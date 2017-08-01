@@ -42,7 +42,7 @@ function PowerGrid:activate()
         self.animation = PowerGrid.animations.online:clone()
 
         Signal.emit('powerGridActivate')
-    else
+    elseif not game.eventManager.firstEnemyDeath then
         self.charge = self.charge + self.chargePerClick
 
         if self.charge >= self.maxCharge then
