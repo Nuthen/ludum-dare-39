@@ -114,7 +114,7 @@ function Dynamo:initialize(parent, props)
     }
 
     self.unlockTable = {}
-    self.unlockTable[1] = function()
+    self.unlockTable[2] = function()
         self.fidgets.button3.locked = false
     end
     --self.unlockTable[2] = function()
