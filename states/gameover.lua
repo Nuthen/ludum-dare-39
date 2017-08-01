@@ -4,8 +4,9 @@ function gameover:init()
 
 end
 
-function gameover:enter(prev)
+function gameover:enter(prev, reason)
     self.prevState = prev
+    self.reason = reason
 end
 
 function gameover:update(dt)
@@ -38,6 +39,9 @@ function gameover:draw()
     love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
     local text = "YOU DIED"
+    if self.reason then
+        text = self.reason
+    end
     love.graphics.setColor(180, 33, 33)
     love.graphics.setFont(Fonts.bold[72])
     drawCenteredText(text, 100)
