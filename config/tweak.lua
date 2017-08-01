@@ -29,7 +29,7 @@ return {
 
     powergrid_cost_to_activate = 0.5, -- percent of power
 
-    turretReloadTime = 1.75,
+    turretReloadTime = 2.1,
 
     backgroundColor = {32, 35, 46},
 
