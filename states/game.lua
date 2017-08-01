@@ -80,7 +80,7 @@ function game:reset()
     end
 
     if not self.eventManager then
-        self.eventManager = EventScene:new()
+        self.eventManager = EventScene:new(self)
     else
         self.eventManager:reset()
     end
@@ -435,7 +435,9 @@ function game:mousepressed(x, y, mbutton)
     if self.eventManager.active then return end
 
     x, y = self:screenToCanvas(x, y)
-    self.scene:mousepressed(x, y, mbutton)
+    if not self.dynamo.active then
+        self.scene:mousepressed(x, y, mbutton)
+    end
     self.dynamo:mousepressed(x, y, mbutton)
 
     self.lastClickPosition = Vector(x, y)
@@ -582,26 +584,28 @@ function game:draw()
     end
 end
 
-function game:spawnEnemy()
-    local possibleTiles = {}
+function game:spawnEnemy(override)
+    if not self.eventManager.firstEnemyDeath or override then
+        local possibleTiles = {}
 
-    for ix = 1, #self.grid do
-        for iy = 1, #self.grid[1] do
-            local roomType = self:getRoom(ix, iy)
-            local cellValue = self.grid[ix][iy]
-            local powerGrid = self.powerGridRooms[roomType]
-            if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid and powerGrid.activated then
-                table.insert(possibleTiles, {x=ix, y=iy})
+        for ix = 1, #self.grid do
+            for iy = 1, #self.grid[1] do
+                local roomType = self:getRoom(ix, iy)
+                local cellValue = self.grid[ix][iy]
+                local powerGrid = self.powerGridRooms[roomType]
+                if cellValue == 1 and not self:hasEnemy(ix, iy) and powerGrid and powerGrid.activated then
+                    table.insert(possibleTiles, {x=ix, y=iy})
+                end
             end
         end
-    end
 
-    if #possibleTiles > 0 then
-        local randomTileIndex = love.math.random(1, #possibleTiles)
-        local chosenTile = possibleTiles[randomTileIndex]
-        self:addEnemy(chosenTile.x, chosenTile.y)
-    else
-        --error("No possible enemy location found.")
+        if #possibleTiles > 0 then
+            local randomTileIndex = love.math.random(1, #possibleTiles)
+            local chosenTile = possibleTiles[randomTileIndex]
+            self:addEnemy(chosenTile.x, chosenTile.y)
+        else
+            --error("No possible enemy location found.")
+        end
     end
 end
 
