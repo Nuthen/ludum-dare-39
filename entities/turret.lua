@@ -39,7 +39,7 @@ function Turret:switchAnimation(name)
 end
 
 function Turret:activate()
-    if not self.activated then
+    if not self.activated and self.game.powerGridRooms[self.roomHash].powered then
         self.activated = true
         Signal.emit('turretActivate')
     else
@@ -130,6 +130,9 @@ function Turret:draw()
         text = 'NEED POWER'
     end
     local tx, ty = x + 48 - font:getWidth(text)/2, y + 16
+    if self.flip then
+        tx = self.screenX + 48 - font:getWidth(text)/2
+    end
     tx = Lume.round(tx)
     ty = Lume.round(ty)
     love.graphics.setFont(font)
