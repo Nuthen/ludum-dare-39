@@ -16,5 +16,7 @@ return {
             left  = {'left',  'a'},
             right = {'right', 'd'},
         },
-    }
+    },
+
+    skipTutorialKeybind = "f2"
 }

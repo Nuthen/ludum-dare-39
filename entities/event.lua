@@ -7,6 +7,7 @@ function EventScene:initialize(parent)
     self.parent = parent
 
     local continueText = "\n(Click here or press space to continue)"
+    local skipText = "\nOr press '" .. string.upper(SETTINGS.skipTutorialKeybind) .. "' to skip the tutorial"
 
     self.eventList = {
         prologue1 = function()
@@ -15,6 +16,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         grid1 = function()
@@ -23,6 +25,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         dynamo1 = function()
@@ -31,6 +34,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         dynamoCorrect1 = function()
@@ -39,6 +43,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         dynamoToggleOff1 = function()
@@ -47,6 +52,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         enemyDeath1 = function()
@@ -55,6 +61,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         roomEnter1 = function()
@@ -63,6 +70,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
 
         turretActivate1 = function()
@@ -71,6 +79,7 @@ function EventScene:initialize(parent)
                 self:deactivatePopup()
             end
             self.eventBox:addEntry(continueText, nil, nil, {clickTrigger=onClick,hoverTrigger=function() end}, "space")
+            self.eventBox:addEntry(skipText, {font=Fonts.regular,size=24}, nil)
         end,
     }
 
@@ -173,6 +182,18 @@ function EventScene:reset()
     self.active = true
 end
 
+function EventScene:skipTutorial()
+    self.firstPowerGrid = false
+    self.firstDynamoOpen = false
+    self.firstDynamoCorrect = false
+    self.firstEnemyDeath = false
+    self.firstTurretActive = false
+    self.firstDynamoClose = false
+    self.firstRoomEnter = false
+
+    self.active = false
+end
+
 function EventScene:setPrologue()
     local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
     local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
@@ -215,6 +236,10 @@ function EventScene:update(dt)
 end
 
 function EventScene:keypressed(key, code)
+    if key == SETTINGS.skipTutorialKeybind then
+        self:skipTutorial()
+    end
+
     if not self.active then return end
 
     if self.eventBox then
