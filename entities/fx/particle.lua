@@ -3,6 +3,8 @@ local ParticleSystem = Class('ParticleSystem')
 function ParticleSystem:initialize()
     self.systems = {}
 
+    self.drawLater = {"sparks"}
+
     self.defaultImage = love.graphics.newImage("assets/images/particles/1x1white.png")
     self.sparkImage = love.graphics.newImage("assets/images/particles/spark.png")
     self.gibImage = love.graphics.newImage("assets/images/particles/gib.png")
@@ -126,15 +128,39 @@ end
 function ParticleSystem:draw()
     love.graphics.setColor(255, 255, 255)
 
-    for _, system in ipairs(self.usedSystems) do
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(system)
-    end
-
-    for _, kind in pairs(self.pool) do
-        for _, system in ipairs(kind) do
+    for k, system in ipairs(self.usedSystems) do
+        if not Lume.find(self.drawLater, k) then
             love.graphics.setColor(255, 255, 255)
             love.graphics.draw(system)
+        end
+    end
+
+    for k, kind in pairs(self.pool) do
+        for _, system in ipairs(kind) do
+            if not Lume.find(self.drawLater, k) then
+                love.graphics.setColor(255, 255, 255)
+                love.graphics.draw(system)
+            end
+        end
+    end
+end
+
+function ParticleSystem:drawAfter()
+    love.graphics.setColor(255, 255, 255)
+
+    for k, system in ipairs(self.usedSystems) do
+        if Lume.find(self.drawLater, k) then
+            love.graphics.setColor(255, 255, 255)
+            love.graphics.draw(system)
+        end
+    end
+
+    for k, kind in pairs(self.pool) do
+        for _, system in ipairs(kind) do
+            if Lume.find(self.drawLater, k) then
+                love.graphics.setColor(255, 255, 255)
+                love.graphics.draw(system)
+            end
         end
     end
 end

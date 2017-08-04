@@ -555,6 +555,8 @@ function game:draw()
         self.camera:detach()
         love.graphics.pop()
 
+        self.particleSystem:draw()
+
         if self.minimap and not self.eventManager.firstEnemyDeath then self.minimap:draw() end
         --
         -- Draw current room invasion level
@@ -574,6 +576,8 @@ function game:draw()
 
         self.dynamo:draw()
 
+        self.particleSystem:drawAfter()
+
         -- Draw power grid progress
         local powered = 0
         for room, powergrid in pairs(self.powerGridRooms) do
@@ -585,8 +589,6 @@ function game:draw()
         love.graphics.setFont(Fonts.pixelSmall[32])
         love.graphics.setColor(255, 255, 255)
         love.graphics.print("POWER GRIDS: " .. powered .. ' / ' .. self.totalRooms, 7, -2)
-
-        self.particleSystem:draw()
 
         if TWEAK.drawCanvasBoundingBox then
             love.graphics.setColor(127, 127, 127)
