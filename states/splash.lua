@@ -42,6 +42,8 @@ function splash:init()
     end
 
     self.active = 1
+
+    self.isStillActive = true
 end
 
 function splash:enter()
@@ -50,7 +52,7 @@ end
 
 function splash:incrementActive()
     self.active = self.active + 1
-    if self.active > #self.componentList then
+    if self.active > #self.componentList and self.isStillActive then
         State.switch(States.game)
     end
 end
@@ -61,16 +63,19 @@ end
 
 function splash:keyreleased(key, code)
     if key ~= 'f11' then
+        self.isStillActive = false
         State.switch(States.game)
     end
 end
 
 function splash:touchreleased(id, x, y, dx, dy, pressure)
+    self.isStillActive = false
     State.switch(States.game)
 end
 
 function splash:mousepressed(x, y, mbutton)
-
+    self.isStillActive = false
+    State.switch(States.game)
 end
 
 function splash:draw()
