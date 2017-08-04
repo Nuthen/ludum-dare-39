@@ -390,6 +390,7 @@ function game:update(dt)
         end
     end
     if self.totalPoweredRooms >= self.totalRooms then
+        Signal.emit("Low Power Warning Toggle Off")
         State.switch(States.victory)
     end
 

@@ -16,6 +16,7 @@ return {
 
     power_drop_increase_for_power_grid_activate = 0.009,
     power_drop_increase_for_turret_activate = 0.004,
+    power_drop_increase_during_charge = 0.01,
 
     power_charged_for_button = .1,
     power_charged_for_flick  = .2,

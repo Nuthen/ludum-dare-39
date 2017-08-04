@@ -20,7 +20,7 @@ function MouseAction:update(dt)
 
     if self.heldObject then
         local isHovered = self.game:pointInsideRect(self.canvasX, self.canvasY, self.heldObject.screenX + self.heldObject.hitboxX, self.heldObject.screenY + self.heldObject.hitboxY, self.heldObject.hitboxWidth, self.heldObject.hitboxHeight)
-        if not isHovered then
+        if not isHovered or self.heldObject.charge >= self.heldObject.maxCharge then
             self.heldObject.beingHeld = false
             self.heldObject = nil
         end

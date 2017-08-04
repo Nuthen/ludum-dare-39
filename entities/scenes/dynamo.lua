@@ -218,7 +218,13 @@ function Dynamo:update(dt)
 
     Scene.update(self, dt)
 
-    self:addPower(-dt*self.powerDropMultiplier)
+    local amount = -dt*self.powerDropMultiplier
+
+    if self.game.mouseAction.heldObject then -- charging an object
+        amount = amount - TWEAK.power_drop_increase_during_charge*dt
+    end
+
+    self:addPower(amount)
 
     if self.unlockSignalWaiting and self.active then
         Signal.emit("Dynamo Fidget Unlocked")
