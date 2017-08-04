@@ -28,6 +28,11 @@ function PowerGrid:initialize(game, x, y, roomHash)
     self.charge = 0
     self.chargePerClick = TWEAK.powergrid_charge_per_click
     self.maxCharge = TWEAK.powergrid_charge_required
+
+    self.beingHeld = false
+
+    self.chargeSignalAmount = TWEAK.powergrid_charge_per_click
+    self.chargeSignalDecumulator = 0
 end
 
 function PowerGrid:activate()
@@ -42,23 +47,41 @@ function PowerGrid:activate()
         self.animation = PowerGrid.animations.online:clone()
 
         Signal.emit('powerGridActivate')
-    elseif not game.eventManager.firstEnemyDeath then
-        self.charge = self.charge + self.chargePerClick
+    end
+end
 
-        if self.charge >= self.maxCharge then
-            self.charge = self.maxCharge
+function PowerGrid:addCharge(rawAmount)
+    local game = self.game
 
-            if not self.powered then
-                self.powered = true
-                Signal.emit('powerGridPowered')
-            end
-        else
+    if not self.activated then return end
+    if game.eventManager.firstEnemyDeath then return end
+
+    local amount = rawAmount * self.chargePerClick
+
+    self.charge = self.charge + amount
+
+    if self.charge >= self.maxCharge then
+        self.charge = self.maxCharge
+
+        if not self.powered then
+            self.powered = true
+            Signal.emit('powerGridPowered')
+        end
+    else
+        self.chargeSignalDecumulator = self.chargeSignalDecumulator - amount
+
+        if self.chargeSignalDecumulator <= 0 then
+            self.chargeSignalDecumulator = self.chargeSignalAmount
             Signal.emit('powerGridCharge')
         end
     end
 end
 
 function PowerGrid:update(dt)
+    if self.beingHeld then
+        self:addCharge(dt)
+    end
+
     self.animation:update(dt)
     self.timer:update(dt)
 

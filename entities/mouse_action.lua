@@ -6,6 +6,25 @@ function MouseAction:initialize(game)
     self.canvasX = 0
     self.canvasY = 0
     self.game = game
+
+    self.heldObject = nil
+end
+
+function MouseAction:update(dt)
+    if not love.mouse.isDown(1) then
+        if self.heldObject then
+            self.heldObject.beingHeld = false
+        end
+        self.heldObject = nil
+    end
+
+    if self.heldObject then
+        local isHovered = self.game:pointInsideRect(self.canvasX, self.canvasY, self.heldObject.screenX + self.heldObject.hitboxX, self.heldObject.screenY + self.heldObject.hitboxY, self.heldObject.hitboxWidth, self.heldObject.hitboxHeight)
+        if not isHovered then
+            self.heldObject.beingHeld = false
+            self.heldObject = nil
+        end
+    end
 end
 
 function MouseAction:mousemoved(mx, my, dx, dy, istouch)
@@ -79,7 +98,9 @@ function MouseAction:clickEnemy(x, y)
     end
 end
 
-function MouseAction:mousepressed(mx, my)
+function MouseAction:mousepressed(mx, my, mbutton)
+    if mbutton ~= 1 then return end
+
     local game = self.game
 
     -- Clicking on enemy
@@ -94,7 +115,11 @@ function MouseAction:mousepressed(mx, my)
                 local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, powerGrid.screenX + powerGrid.hitboxX, powerGrid.screenY + powerGrid.hitboxY, powerGrid.hitboxWidth, powerGrid.hitboxHeight)
                 if isHovered then
                     if powerGrid.roomHash == game.currentRoom then
-                        powerGrid:activate()
+                        if powerGrid.activated then
+                            self.heldObject = powerGrid
+                        else
+                            powerGrid:activate()
+                        end
                     end
                 end
             end
@@ -104,12 +129,29 @@ function MouseAction:mousepressed(mx, my)
                 local isHovered = game:pointInsideRect(self.canvasX, self.canvasY, turret.screenX + turret.hitboxX, turret.screenY + turret.hitboxY, turret.hitboxWidth, turret.hitboxHeight)
                 if isHovered then
                     if turret.roomHash == game.currentRoom then
-                        turret:activate()
+                        if turret.activated then
+                            self.heldObject = turret
+                        else
+                            turret:activate()
+                        end
                     end
                 end
             end
         end
     end
+
+    if self.heldObject then
+        self.heldObject.beingHeld = true
+    end
+end
+
+function MouseAction:mousereleased(mx, my, mbutton)
+    if mbutton ~= 1 then return end
+
+    if self.heldObject then
+        self.heldObject.beingHeld = false
+    end
+    self.heldObject = nil
 end
 
 return MouseAction

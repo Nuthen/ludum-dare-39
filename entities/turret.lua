@@ -30,6 +30,11 @@ function Turret:initialize(game, x, y, roomHash, offset, flip)
     self.charge = 0
     self.chargePerClick = TWEAK.turret_charge_per_click
     self.maxCharge = TWEAK.turret_charge_required
+
+    self.beingHeld = false
+
+    self.chargeSignalAmount = TWEAK.turret_charge_per_click
+    self.chargeSignalDecumulator = 0
 end
 
 function Turret:switchAnimation(name)
@@ -42,26 +47,43 @@ function Turret:activate()
     if not self.activated and self.game.powerGridRooms[self.roomHash].powered then
         self.activated = true
         Signal.emit('turretActivate')
+    end
+end
+
+function Turret:addCharge(rawAmount)
+    local game = self.game
+
+    if not self.activated then return end
+    if not self.game.powerGridRooms[self.roomHash].powered then return end
+
+    local amount = rawAmount * self.chargePerClick
+
+    self.charge = self.charge + amount
+
+    if self.charge >= self.maxCharge then
+        self.charge = self.maxCharge
+
+        if not self.powered then
+            self.powered = true
+            Signal.emit('turretPowered')
+        end
     else
-        if self.game.powerGridRooms[self.roomHash].powered then
-            self.charge = self.charge + self.chargePerClick
+        self.chargeSignalDecumulator = self.chargeSignalDecumulator - amount
 
-            if self.charge >= self.maxCharge then
-                self.charge = self.maxCharge
-
-                if not self.powered then
-                    self.powered = true
-                    Signal.emit('turretPowered')
-                end
-            else
-                Signal.emit('turretCharge')
-            end
+        if self.chargeSignalDecumulator <= 0 then
+            self.chargeSignalDecumulator = self.chargeSignalAmount
+            Signal.emit('turretCharge')
         end
     end
 end
 
 function Turret:update(dt)
     local game = self.game
+
+    if self.beingHeld then
+        self:addCharge(dt)
+    end
+
     self.animation:update(dt)
 
     self.timer:update(dt)

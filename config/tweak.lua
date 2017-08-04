@@ -21,10 +21,10 @@ return {
     power_charged_for_flick  = .2,
     power_charged_for_spin   = .4,
 
-    powergrid_charge_per_click = 1,
+    powergrid_charge_per_click = 4,
     powergrid_charge_required = 50,
 
-    turret_charge_per_click = 1,
+    turret_charge_per_click = 4,
     turret_charge_required = 30,
 
     powergrid_cost_to_activate = 0.5, -- percent of power
@@ -53,8 +53,8 @@ return {
     enemyStage2MaxEvolveTime = 35,
 
     enemyStage1Health = 1,
-    enemyStage2Health = 3,
-    enemyStage3Health = 5,
+    enemyStage2Health = 2,
+    enemyStage3Health = 4,
 
     tutorial_popup_delay = 2,
     tutorial_min_showtime = 0.5,
