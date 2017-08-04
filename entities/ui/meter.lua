@@ -6,6 +6,7 @@ function Meter:initialize(parent, props)
     self.bgColor = {127, 127, 127}
     self.inactiveColor = {255, 255, 255}
     self.activeColor = {127, 127, 127}
+    self.warningColor = {255, 0, 0}
     self.position = Vector(0, 0)
     self.width = 350
     self.height = 30
@@ -18,9 +19,11 @@ function Meter:initialize(parent, props)
 
     self.isPressed = false
     self.previouslyBelowThreshold = false
+
+    self.timer = 0
 end
 
-function Meter:update()
+function Meter:update(dt)
     local power = self.parent.game.power
     local belowThreshold = power <= TWEAK.powerWarningThreshold
 
@@ -31,6 +34,8 @@ function Meter:update()
     end
 
     self.previouslyBelowThreshold = belowThreshold
+
+    self.timer = self.timer + dt
 end
 
 function Meter:getPressed(x, y)
@@ -54,6 +59,7 @@ end
 
 function Meter:draw()
     local power = self.parent.game.power
+    local belowThreshold = power <= TWEAK.powerWarningThreshold
 
     love.graphics.setColor(self.inactiveColor)
 
@@ -67,6 +73,12 @@ function Meter:draw()
     x, y, w, h = x + margin, y + margin, w - margin*2, h - margin*2
     love.graphics.rectangle('fill', x, y, w, h)
     love.graphics.setColor(self.activeColor)
+    if belowThreshold then
+        local r, g, b = unpack(self.warningColor)
+        local a = (math.cos(self.timer*TWEAK.power_meter_warning_flash_rate)+1)/2 * 255
+        love.graphics.setColor(r, g, b, a)
+    end
+
     love.graphics.rectangle('fill', x, y, w*power, h)
 end
 

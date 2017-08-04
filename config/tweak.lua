@@ -58,4 +58,6 @@ return {
 
     tutorial_popup_delay = 2,
     tutorial_min_showtime = 0.5,
+
+    power_meter_warning_flash_rate = 4,
 }
