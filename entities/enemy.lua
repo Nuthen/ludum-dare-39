@@ -154,8 +154,8 @@ function Enemy:spawnEnemy()
         local tile = Lume.randomchoice(emptyTiles)
         game:addEnemy(tile.x, tile.y)
     elseif #availableTiles > 0 then
-        local tile = Lume.randomchoice(availableTiles)
-        game:addEnemy(tile.x, tile.y)
+        --local tile = Lume.randomchoice(availableTiles)
+        --game:addEnemy(tile.x, tile.y)
     end
 end
 
