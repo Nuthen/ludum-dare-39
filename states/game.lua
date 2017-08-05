@@ -196,6 +196,7 @@ function game:reset()
             for x = 1, game.gridWidth do
                 for y = 1, game.gridHeight do
                     local roomNumber = game:getRoom(x, y)
+                    local roomIsVisible = roomNumber == game.currentRoom
 
                     local sprite = game.emptyTile
 
@@ -211,12 +212,6 @@ function game:reset()
                         love.graphics.draw(sprite, tx, ty)
                     end
 
-                    local roomIsVisible = roomNumber == game.currentRoom
-
-                    local enemy = game:getEnemy(x, y)
-                    if enemy and roomIsVisible then
-                        enemy:draw()
-                    end
 
                     local turret = game:getTurret(x, y)
                     if turret and turret.roomHash == game.currentRoom then
@@ -250,6 +245,17 @@ function game:reset()
                         end
                         love.graphics.setFont(Fonts.monospace[7])
                         love.graphics.print(x..','..y, tx, ty)
+                    end
+                end
+            end
+
+            for x = 1, game.gridWidth do
+                for y = 1, game.gridHeight do
+                    local roomNumber = game:getRoom(x, y)
+                    local roomIsVisible = roomNumber == game.currentRoom
+                    local enemy = game:getEnemy(x, y)
+                    if enemy and roomIsVisible then
+                        enemy:draw()
                     end
                 end
             end
