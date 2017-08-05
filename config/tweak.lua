@@ -1,7 +1,7 @@
 -- Using underscores in places where camelCase becomes cumbersome - cmchenry
 return {
     enemySpawnRate = 1.5, -- seconds
-    enemy_spawn_rate_increase_per_power_grid = -0.15, -- seconds
+    enemy_spawn_rate_increase_per_power_grid = -0.13, -- seconds
     enemy_spawn_rate_increase_per_turret = -0.06, -- seconds
 
     power = 1,
@@ -47,11 +47,11 @@ return {
     drawObjectHitboxes = false,
 
     -- keep these to ints
-    enemyStage1MinEvolveTime = 5,
-    enemyStage1MaxEvolveTime = 10,
+    enemyStage1MinEvolveTime = 7,
+    enemyStage1MaxEvolveTime = 15,
 
-    enemyStage2MinEvolveTime = 25,
-    enemyStage2MaxEvolveTime = 35,
+    enemyStage2MinEvolveTime = 35,
+    enemyStage2MaxEvolveTime = 50,
 
     enemyStage1Health = 1,
     enemyStage2Health = 2,
@@ -59,11 +59,11 @@ return {
 
     enemy_spread_min_stage = 2,
 
-    enemy_stage2_spread_min_time = 40,
-    enemy_stage2_spread_max_time = 80,
+    enemy_stage2_spread_min_time = 35,
+    enemy_stage2_spread_max_time = 50,
 
-    enemy_stage3_spread_min_time = 20,
-    enemy_stage3_spread_max_time = 50,
+    enemy_stage3_spread_min_time = 25,
+    enemy_stage3_spread_max_time = 40,
 
     tutorial_popup_delay = 2,
     tutorial_min_showtime = 0.5,
