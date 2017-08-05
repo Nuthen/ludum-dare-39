@@ -59,7 +59,7 @@ function EventScene:initialize(parent)
         end,
 
         enemyDeath1 = function()
-            self.eventBox:addEntry("To win the game you will need to fully charge all power grids in the ship by clicking on them until they reach 100%. Click on a red room on the minimap at the top right corner of your screen.")
+            self.eventBox:addEntry("To win the game you will need to fully charge all power grids in the ship by clicking and holding on them until they reach 100%. Click on a red room on the minimap at the top right corner of your screen.")
             local onClick = function()
                 self:deactivatePopup()
             end
@@ -68,7 +68,7 @@ function EventScene:initialize(parent)
         end,
 
         roomEnter1 = function()
-            self.eventBox:addEntry("To help you against the aliens, you can activate turrets by clicking on them once a room is fully charged. Good Luck.")
+            self.eventBox:addEntry("To help you against the aliens, you can activate turrets by powering them up once a room is fully charged. Good Luck.")
             local onClick = function()
                 self:deactivatePopup()
             end
@@ -77,7 +77,7 @@ function EventScene:initialize(parent)
         end,
 
         turretActivate1 = function()
-            self.eventBox:addEntry("Click on the turret until it reaches 100% to activate it. It will help you by automatically shooting the invaders.")
+            self.eventBox:addEntry("Click and hold on the turret until it reaches 100% to activate it. It will help you by automatically shooting the invaders.")
             local onClick = function()
                 self:deactivatePopup()
             end
