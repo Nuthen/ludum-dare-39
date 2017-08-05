@@ -1,7 +1,7 @@
 -- Using underscores in places where camelCase becomes cumbersome - cmchenry
 return {
     enemySpawnRate = 1.5, -- seconds
-    enemy_spawn_rate_increase_per_power_grid = -0.1, -- seconds
+    enemy_spawn_rate_increase_per_power_grid = -0.15, -- seconds
     enemy_spawn_rate_increase_per_turret = -0.06, -- seconds
 
     power = 1,
@@ -30,7 +30,7 @@ return {
 
     powergrid_cost_to_activate = 0.5, -- percent of power
 
-    turretReloadTime = 2.1,
+    turretReloadTime = 2.5,
 
     backgroundColor = {32, 35, 46},
 
@@ -56,6 +56,14 @@ return {
     enemyStage1Health = 1,
     enemyStage2Health = 2,
     enemyStage3Health = 4,
+
+    enemy_spread_min_stage = 2,
+
+    enemy_stage2_spread_min_time = 40,
+    enemy_stage2_spread_max_time = 80,
+
+    enemy_stage3_spread_min_time = 20,
+    enemy_stage3_spread_max_time = 50,
 
     tutorial_popup_delay = 2,
     tutorial_min_showtime = 0.5,

@@ -417,6 +417,7 @@ function game:update(dt)
 
     if self.power <= 0 or occupiedRooms >= 1 then
         Signal.emit("Low Power Warning Toggle Off")
+        Signal.emit("Wheel Spin Stop")
         if self.power <= 0 then
             State.switch(States.gameover, "TOTAL POWER LOSS")
         elseif occupiedRooms >= 1 then

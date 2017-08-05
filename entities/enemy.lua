@@ -45,9 +45,19 @@ function Enemy:initialize(game, x, y)
         [self.stages.LARGE]  = TWEAK.enemyStage3Health,
     }
 
+    self.spawnTimes = {
+        [self.stages.SMALL]  = Vector(0, 0),
+        [self.stages.MEDIUM] = Vector(TWEAK.enemy_stage2_spread_min_time, TWEAK.enemy_stage2_spread_max_time),
+        [self.stages.LARGE]  = Vector(TWEAK.enemy_stage3_spread_min_time, TWEAK.enemy_stage3_spread_max_time),
+    }
+
     self:setEvolveTime()
+    self:setSpawnTime()
 
     self.clicks = 0
+
+    self.spawnTime = 20
+    self.spawnTimer = 0
 end
 
 function Enemy:hurt()
@@ -59,6 +69,12 @@ function Enemy:setEvolveTime()
     local evolveTimes = self.evolveTimes[self.stage]
     self.evolveTime = love.math.random(evolveTimes.x, evolveTimes.y)
     self.evolveTimer = 0
+end
+
+function Enemy:setSpawnTime()
+    local spawnTimes = self.spawnTimes[self.stage]
+    self.spawnTime = love.math.random(spawnTimes.x, spawnTimes.y)
+    self.spawnTimer = 0
 end
 
 function Enemy:evolve()
@@ -83,6 +99,63 @@ function Enemy:update(dt)
     self.evolveTimer = self.evolveTimer + dt
     if self.evolveTimer >= self.evolveTime and self.stage < self.maxStages then
         self:evolve()
+    end
+
+    if TWEAK.enemy_spread_min_stage >= 2 then
+        self.spawnTimer = self.spawnTimer + dt
+        if self.spawnTimer >= self.spawnTime then
+            self:setSpawnTime()
+            self:spawnEnemy()
+        end
+    end
+end
+
+function Enemy:spawnEnemy()
+    local game = self.game
+    local x, y = self.x, self.y
+
+    local upX,    upY    = x,     y + 1
+    local downX,  downY  = x,     y - 1
+    local leftX,  leftY  = x - 1, y
+    local rightX, rightY = x + 1, y
+
+    local emptyTiles = {}
+    local availableTiles = {}
+
+    if game:isShipTile(upX, upY) then
+        table.insert(availableTiles, {x=upX,y=upY})
+        if not game:hasEnemy(upX, upY) then
+            table.insert(emptyTiles, {x=upX,y=upY})
+        end
+    end
+
+    if game:isShipTile(downX, downY) then
+        table.insert(availableTiles, {x=downX,y=downY})
+        if not game:hasEnemy(downX, downY) then
+            table.insert(emptyTiles, {x=downX,y=downY})
+        end
+    end
+
+    if game:isShipTile(leftX, leftY) then
+        table.insert(availableTiles, {x=leftX,y=leftY})
+        if not game:hasEnemy(leftX, leftY) then
+            table.insert(emptyTiles, {x=leftX,y=leftY})
+        end
+    end
+
+    if game:isShipTile(rightX, rightY) then
+        table.insert(availableTiles, {x=rightX,y=rightY})
+        if not game:hasEnemy(rightX, rightY) then
+            table.insert(emptyTiles, {x=rightX,y=rightY})
+        end
+    end
+
+    if #emptyTiles > 0 then
+        local tile = Lume.randomchoice(emptyTiles)
+        game:addEnemy(tile.x, tile.y)
+    elseif #availableTiles > 0 then
+        local tile = Lume.randomchoice(availableTiles)
+        game:addEnemy(tile.x, tile.y)
     end
 end
 

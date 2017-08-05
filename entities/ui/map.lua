@@ -8,6 +8,7 @@ function Map:initialize(parent, props)
     self.borderColor = {255, 255, 255}
     self.unpoweredColor = {255, 0, 0}
     self.poweredColor = {255, 255, 255}
+    self.fullyChargedColor = {56, 151, 228}
     self.position = Vector(0, 0)
     self.width = 90
     self.height = 90
@@ -117,6 +118,9 @@ function Map:draw()
             local powerGrid = self.game.powerGridRooms[roomType]
             if powerGrid and powerGrid.activated then
                 r, g, b = unpack(self.poweredColor)
+            end
+            if powerGrid and powerGrid.charge >= powerGrid.maxCharge then
+                r, g, b = unpack(self.fullyChargedColor)
             end
 
             if roomType == self.hoveredRoom then
