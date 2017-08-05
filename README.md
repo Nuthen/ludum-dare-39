@@ -1,9 +1,10 @@
-Spacesquid Spaceship
+# Spacesquid Spaceship
 
 Created in 72h for Ludum Dare 39
 
-Patch Notes
-v1.0.1 "post-jam"
+## Patch Notes
+
+### v1.0.1 "post-jam"
 - To reduce clicking required, the power grids and turrets are now charged by clicking and holding instead of clicking many times.
 - More power is drained while charging power grids and turrets.
 - Added a new spawn behavior to enemies so they will gather in rooms more often.
