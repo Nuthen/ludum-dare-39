@@ -79,6 +79,8 @@ function splash:mousepressed(x, y, mbutton)
 end
 
 function splash:draw()
+    love.graphics.clear(255, 245, 248)
+
     local activeComponent = self.componentList[self.active]
     activeComponent:draw()
 end
