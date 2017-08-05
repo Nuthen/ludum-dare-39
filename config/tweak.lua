@@ -1,7 +1,7 @@
 -- Using underscores in places where camelCase becomes cumbersome - cmchenry
 return {
     enemySpawnRate = 1.5, -- seconds
-    enemy_spawn_rate_increase_per_power_grid = -0.13, -- seconds
+    enemy_spawn_rate_increase_per_power_grid = -0.11, -- seconds
     enemy_spawn_rate_increase_per_turret = -0.06, -- seconds
 
     power = 1,
