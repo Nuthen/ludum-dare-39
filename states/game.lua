@@ -480,7 +480,14 @@ function game:wheelmoved(x, y)
 end
 
 function game:resize(w, h)
-    self.eventManager:resize(w, h)
+    local drawnWidth, drawnHeight = self:getCanvasDrawnSize()
+    self.eventManager:resize(drawnWidth, drawnHeight)
+end
+
+function game:getCanvasDrawnSize()
+    local scale = self:getScale()
+    local drawnWidth, drawnHeight = CANVAS_WIDTH*scale, CANVAS_HEIGHT*scale
+    return drawnWidth, drawnHeight
 end
 
 function game:getActiveRoomBoundingBox()

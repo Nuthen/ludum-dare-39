@@ -6,6 +6,9 @@ local EventScene = Class("EventScene", Scene)
 function EventScene:initialize(parent)
     self.parent = parent
 
+    self.textBoxWidth = 0.8
+    self.textBoxHeight = 0.7
+
     local continueText = "\n(Click here or press space to continue)"
     local skipText = "\nOr press '" .. string.upper(SETTINGS.skipTutorialKeybind) .. "' to skip the tutorial"
 
@@ -194,16 +197,10 @@ function EventScene:skipTutorial()
     self.active = false
 end
 
-function EventScene:setPrologue()
-    local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
-    local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
-
-    self.eventBox = TextBox:new(x, y, w, h, true)
-    self:setEvent("prologue1")
-end
-
 function EventScene:setEvent(label)
-    local w, h = love.graphics.getWidth()*0.5, love.graphics.getHeight()*0.8
+    local drawnWidth, drawnHeight = self.parent:getCanvasDrawnSize()
+
+    local w, h = drawnWidth*self.textBoxWidth, drawnHeight*self.textBoxHeight
     local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
 
     self.eventBox = TextBox:new(x, y, w, h, true)
@@ -216,8 +213,8 @@ end
 
 function EventScene:resize(screenWidth, screenHeight)
     if self.eventBox then
-        local w, h = screenWidth*0.5, screenHeight*0.8
-        local x, y = screenWidth/2 - w/2, screenHeight/2 - h/2
+        local w, h = screenWidth*self.textBoxWidth, screenHeight*self.textBoxHeight
+        local x, y = love.graphics.getWidth()/2 - w/2, love.graphics.getHeight()/2 - h/2
 
         local fontScale = screenWidth / 1280
 
