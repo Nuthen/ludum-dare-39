@@ -456,6 +456,7 @@ function game:mousepressed(x, y, mbutton)
 end
 
 function game:mousereleased(x, y, mbutton)
+    self.eventManager:mousereleased(x, y, mbutton)
     if self.eventManager.active then return end
 
     x, y = self:screenToCanvas(x, y)

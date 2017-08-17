@@ -32,7 +32,7 @@ function EventScene:initialize(parent)
         end,
 
         dynamo1 = function()
-            self.eventBox:addEntry("Click on the active button (green light) to recharge your power levels.")
+            self.eventBox:addEntry("Click on the active button (below the green light) to recharge your power levels.")
             local onClick = function()
                 self:deactivatePopup()
             end
@@ -245,6 +245,11 @@ function EventScene:keypressed(key, code)
 end
 
 function EventScene:mousepressed(x, y, mbutton)
+    if not self.active then return end
+
+end
+
+function EventScene:mousereleased(x, y, mbutton)
     if not self.active then return end
 
     if self.eventBox then
